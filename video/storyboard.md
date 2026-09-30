@@ -1,19 +1,18 @@
 # BioSURE demonstration storyboard — no-prior profile
 
-The release demonstration is approximately 3 minutes 15 seconds, assembled from actual no-prior application-state captures and original captions. It is explicitly labeled a recorded-state montage, not continuous recording or real-time speed evidence. It includes the six-record batch interface: two corrected, one unchanged and three review-required records. There is no audio, music, stock image or third-party media. The narration is explanatory text, not a claim that audio was recorded. See [narration.md](narration.md).
+The v0.3.0 release demonstration is 4 minutes 48 seconds, assembled from actual no-prior v0.2 core and v0.3 application-state captures and original captions. It is explicitly labeled a recorded-state montage, not continuous recording or real-time speed evidence. It includes the six-record batch interface: two corrected, one unchanged and three review-required records, a review-only learned matcher that ties the lexical baseline, and a conservative PDF import warning on the JHU excerpt. There is no audio, music, stock image or patient data. The JHU text-layer view is separately attributed in RIGHTS; article prose is not an authored asset. The narration is explanatory text, not a claim that audio was recorded. See [narration.md](narration.md).
 
-The longer scene plan below was used as a capture checklist, not the final montage timeline. The release watch page links the actual final MP4. Code and media rights are documented in RIGHTS; competition registration remains a separate owner action.
+The table is the actual 4:48 montage timeline. The release watch page links the MP4. Code and media rights are documented in RIGHTS; competition registration remains a separate owner action.
 
 | Time | On-screen action | Narration constraint |
 |---|---|---|
-| 0:00–0:30 | Show local workbench and actual-input section. | Reference-conditioned conversion QC; no biological prediction or translation. |
-| 0:30–1:25 | Load fictitious omission, acknowledge reference assumption, check, show restored text and download JSON. | User-supplied reference, one bounded candidate, exact normalized output and receipt. |
-| 1:25–1:55 | Load duplicate, check; then substitution and show no applied change. | Supports exact duplicate removal; changed meaning is unsupported. |
-| 1:55–2:35 | Synthetic wrong-hash and ambiguity cases. | Candidate payload and unique support determine action, not candidate order. |
-| 2:35–3:10 | Article set, source card and summary. | Three CC BY 4.0 articles / nine constructed cases, same-source reference and gold, no article prose packaged. |
-| 3:10–4:05 | Stress set, `s01--forged-evidence`, summary and equal-evidence comparison. | Twelve false-reference errors are intentionally exposed; full reconstruction ties earlier probes. Do not claim superiority or a real-world error rate. |
-| 4:05–4:35 | Show CLI reproduction and scenario document. | Three separate offline sets; plain-paragraph adapter, not a PDF parser. |
-| 4:35–4:45 | Show review positions and describe batch triage. | Six fictional inputs, not an independent researcher study; no measured time savings. |
-| 4:45–5:00 | Show rights/release checklist. | Public links/license/registration require actual completion; no safety certification. |
+| 0:00–1:32 | Local workbench, fictitious omission, duplicate and substitution. | One supported edit or manual review; declared reference is not authenticated truth. |
+| 1:33–2:16 | Rejected and accepted pasted upstream proposals. | Actual proposal content is checked; no live AI call or producer authentication. |
+| 2:17–2:41 | Six fictional batch records. | Two corrected, one unchanged, three manual; not a measured time saving. |
+| 2:42–3:03 | Three attributed OoC article-derived structural cases. | Nine constructed cases, same-source reference and gold; no article prose packaged in the structural probe. |
+| 3:04–3:53 | Forged-reference failure and stress summary. | Twelve incorrect applications on constructed false evidence; no source authentication or deployment error-rate claim. |
+| 3:54–4:11 | v0.3 held-out model evidence card. | Learned model ties token Dice 284/284 on constructed queries; no superiority claim. |
+| 4:12–4:29 | v0.3 fictional number-change learned review. | `NUMBER_CHANGED` is a lexical alert; no automatic edit or scientific validation. |
+| 4:30–4:47 | v0.3 same JHU PDF excerpt import warning. | Two unverified chunks, three images, missing figure text and broken spacing; check the original pages. |
 
-Before recording: verify screen text matches the current release commit, hide local file paths and private applications, use only project-authored visuals, and ensure all audio/video media rights are clear.
+The captured montage includes no local paths or private applications. The JHU segment shows a brief modified text-layer excerpt, not the source PDF or figures; source DOI, CC BY 4.0 license and change notice are in RIGHTS and on the watch page. Verify the published MP4 and source revision before linking it in the competition account.

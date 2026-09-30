@@ -10,19 +10,22 @@
   </style>
 </head>
 <body><main>
-  <nav aria-label="Project links"><a href="https://github.com/HyunStudio/BioSURE-AI4S">Source code</a><a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/report/public-submission.md">Technical report</a><a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/tag/v0.2.0">Download v0.2.0</a></nav>
+  <nav aria-label="Project links"><a href="https://github.com/HyunStudio/BioSURE-AI4S">Source code</a><a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/report/public-submission.md">Technical report</a><a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/tag/v0.3.0">Download v0.3.0</a></nav>
   <h1>BioSURE</h1><span class="tag">AI4S · Tool &amp; Platform · Offline research prototype</span>
   <p class="lead">Inspect a converted paragraph sequence against a declared reference. Apply one supported structural edit, or leave the document for manual review.</p>
-  <video controls preload="metadata" aria-label="BioSURE captioned demonstration" src="https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.2.0/biosure-demo.mp4">Your browser cannot display this video. Use the download link below.</video>
-  <p class="note">Under five minutes. Captioned montage of actual application states, not continuous recording or speed evidence. No audio. <a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.2.0/biosure-demo.mp4">Download the MP4</a>.</p>
+  <video controls preload="metadata" aria-label="BioSURE captioned demonstration" src="https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.0/biosure-demo.mp4">Your browser cannot display this video. Use the download link below.</video>
+  <p class="note">4 minutes 48 seconds. Captioned montage of actual v0.2 core and v0.3 application states, not continuous recording or speed evidence. No audio. <a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.0/biosure-demo.mp4">Download the MP4</a>.</p>
   <div class="cards">
     <article><h2>Bounded correction</h2><p>One internal missing paragraph or one extra exact duplicate. Normalized output and difference positions remain inspectable.</p></article>
     <article><h2>Batch &amp; upstream review</h2><p>Inspect both paragraph sequences for each batch record. Validate an actual pasted upstream proposal: unsupported wording and unrelated changes are withheld, not silently replaced.</p></article>
+    <article><h2>Learned correspondence</h2><p>A trained model ranks likely paragraph matches and flags lexical number, unit and negation differences for review only. It tied a strong lexical baseline on constructed held-out queries; it cannot approve a repair.</p></article>
+    <article><h2>PDF text-layer review</h2><p>A local import returns unverified page chunks, not faithful paragraphs. In a JHU article excerpt, three embedded images had text the importer could not read; the app warns and requires manual page comparison.</p></article>
     <article><h2>Explicit trust boundary</h2><p>A false reference can produce a false output. Receipts bind content; they do not authenticate the reference or prove biological truth.</p></article>
   </div>
   <h2>Run the real workbench locally</h2><p>Download/extract the release, install Python 3.12 if needed, and run from its source root:</p>
-  <pre>python scripts/verify_reproduction.py .
+  <pre>python -m pip install -e .
+python scripts/verify_reproduction.py .
 python -m biosure.web_demo</pre>
-  <p>Open the printed loopback URL. The required path uses the standard library, with no model download, GPU, paid API or external inference. This page hosts only the demonstration, not an online document-upload service.</p>
-  <footer>HyunStudio · Project-authored source/UI/docs: MIT. Article-derived hashes retain CC BY 4.0 attribution in RIGHTS. No clinical use, semantic verification, learned-AI performance, source authentication or measured user time-saving is claimed. All graph evaluations are exploratory constructed conditions, not deployment error rates.</footer>
+  <p>Open the printed loopback URL. Runtime uses Python and BSD-licensed pypdf, with no model download, GPU, paid API or external inference. This page hosts only the demonstration, not an online document-upload service.</p>
+  <footer>HyunStudio · Project-authored source/UI/docs: MIT. Article-derived material retains CC BY 4.0 attribution in RIGHTS. The PDF-warning segment uses a text-layer excerpt of <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12645051/">Tward et al., DOI 10.1038/s41467-025-65317-7</a>, under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; the extracted view and warning are modified, and no endorsement is implied. No clinical use, semantic verification, learned superiority, source authentication or measured user time-saving is claimed. Graph evaluations are exploratory constructed conditions, not deployment error rates.</footer>
 </main></body></html>

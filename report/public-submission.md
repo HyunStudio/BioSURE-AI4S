@@ -6,7 +6,7 @@ Project: BioSURE. Public maintainer/account: HyunStudio (Hyun_Studio). Category:
 
 ## Demo video and code
 
-Code: [BioSURE-AI4S](https://github.com/HyunStudio/BioSURE-AI4S), a standalone no-prior repository, not the private monorepo. The [v0.2.0 release](https://github.com/HyunStudio/BioSURE-AI4S/releases/tag/v0.2.0) and [captioned demonstration](https://hyunstudio.github.io/BioSURE-AI4S/) show the earlier core workflow, not the present PDF import or learned-review additions. The video is under five minutes and shows captured actual application states, not continuous recording or speed evidence. It contains original UI, captions and fictional text; no music, private records or third-party visual media. A new release/video must be checked against the current candidate before account submission.
+Code: [BioSURE-AI4S](https://github.com/HyunStudio/BioSURE-AI4S), a standalone no-prior repository, not the private monorepo. The [v0.3.0 release](https://github.com/HyunStudio/BioSURE-AI4S/releases/tag/v0.3.0) and [captioned demonstration](https://hyunstudio.github.io/BioSURE-AI4S/) show the earlier core workflow plus actual learned-review and PDF-warning screens. The video is 4 minutes 48 seconds, assembled from captured application states; it is not continuous recording or speed evidence. It contains original UI, captions, fictional examples and a brief extracted view of the independently attributed CC BY 4.0 JHU article. No music, patient data, private records or unlicensed stock media is included. The text-layer view has broken spacing and omitted figure text; it is shown as a failure warning, not a successful conversion.
 
 ## Project summary
 

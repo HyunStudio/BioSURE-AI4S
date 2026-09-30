@@ -6,7 +6,7 @@ No external inference, paid API or GPU is required. The bundled offline model is
 
 Project: [HyunStudio/BioSURE-AI4S](https://github.com/HyunStudio/BioSURE-AI4S). Maintainer: HyunStudio. Project-authored assets are MIT; article derivatives retain CC BY 4.0 notices. See RIGHTS for the exact boundary.
 
-[Watch the captioned demonstration of the core workflow](https://hyunstudio.github.io/BioSURE-AI4S/). The current video shows the earlier core workbench; PDF import and learned review are documented here and can be tested locally. The watch page hosts video, not a public paragraph-upload server.
+[Watch the 4-minute-48-second captioned demonstration](https://hyunstudio.github.io/BioSURE-AI4S/). The v0.3 montage shows the earlier core workflow plus actual learned review and PDF warning screens. It is not a continuous recording or speed test. The watch page hosts video, not a public paragraph-upload server.
 
 ## Quick start — Python 3.12
 
