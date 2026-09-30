@@ -18,11 +18,12 @@ EXCLUDED = {"biosure/legacy.py", "biosure/legacy_benchmark.py", "results/source_
             "results/dke_prior_aggregate.json", MANIFEST}
 PUBLIC_DOCS = {"public-submission.md", "workflow-scenario.md", "practical-validation.md",
                "public-readme.md", "public-rights.md"}
+GENERATED_ROOTS = {".git", "biosure_ai4s.egg-info"}
 
 
 def _files(root: Path) -> dict[str, str]:
     return {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in sorted(root.rglob("*")) if p.is_file() and p.relative_to(root).parts[0] != ".git"
+            for p in sorted(root.rglob("*")) if p.is_file() and p.relative_to(root).parts[0] not in GENERATED_ROOTS
             and p.relative_to(root).as_posix() != MANIFEST}
 
 
