@@ -1,0 +1,8 @@
+[
+  {"record_id":"sample-omission","reference_paragraphs":["Fictitious assay record header.","Channel preparation methods placeholder.","Separate measurement record placeholder.","No actual experimental claims."],"observed_paragraphs":["Fictitious assay record header.","Separate measurement record placeholder.","No actual experimental claims."]},
+  {"record_id":"sample-duplicate","reference_paragraphs":["Fictitious assay record header.","Channel preparation methods placeholder.","Separate measurement record placeholder.","No actual experimental claims."],"observed_paragraphs":["Fictitious assay record header.","Channel preparation methods placeholder.","Channel preparation methods placeholder.","Separate measurement record placeholder.","No actual experimental claims."]},
+  {"record_id":"sample-unchanged","reference_paragraphs":["Fictitious record.","Methods placeholder.","Closing placeholder."],"observed_paragraphs":["Fictitious record.","Methods placeholder.","Closing placeholder."]},
+  {"record_id":"sample-substitution","reference_paragraphs":["Fictitious record.","Methods placeholder.","Closing placeholder."],"observed_paragraphs":["Fictitious record.","Unsupported changed methods.","Closing placeholder."]},
+  {"record_id":"sample-boundary","reference_paragraphs":["Fictitious record.","Methods placeholder.","Closing placeholder."],"observed_paragraphs":["Methods placeholder.","Closing placeholder."]},
+  {"record_id":"sample-ambiguous","reference_paragraphs":["Fictitious record.","Repeated placeholder.","Repeated placeholder.","Closing placeholder."],"observed_paragraphs":["Fictitious record.","Repeated placeholder.","Closing placeholder."]}
+]

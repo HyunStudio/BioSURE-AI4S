@@ -1,0 +1,174 @@
+{
+  "asset_groups": [
+    {
+      "origin": "project-authored fictional paragraph inputs; no experimental observations or article quotations",
+      "pattern": "fixtures/workflow_examples.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "fixtures/stress_challenge/*.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "fixtures/stress_gold/*.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "fixtures/stress_provenance.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "README.md",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "RIGHTS.md",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "LICENSE",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "pyproject.toml",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": ".gitignore",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": ".gitattributes",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": ".github/workflows/ci.yml",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "docs/index.html",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "biosure/*.py",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "biosure/static/*.html",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "biosure/static/*.css",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "biosure/static/*.js",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "scripts/*.py",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "tests/*.py",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "fixtures/provenance.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "fixtures/challenge/*.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "fixtures/gold/*.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "results/*.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "CC BY 4.0 PMC JATS article-derived hashes; see fixtures/article_provenance.json and RIGHTS.md",
+      "pattern": "fixtures/article_challenge/*.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
+    },
+    {
+      "origin": "CC BY 4.0 PMC JATS article-derived hashes; see fixtures/article_provenance.json and RIGHTS.md",
+      "pattern": "fixtures/article_gold/*.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
+    },
+    {
+      "origin": "CC BY 4.0 PMC JATS article-derived hashes; see fixtures/article_provenance.json and RIGHTS.md",
+      "pattern": "fixtures/article_provenance.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "report/*.md",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "video/*.md",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    }
+  ],
+  "author": "HyunStudio / BioSURE project",
+  "derived_cases": 8,
+  "limitations": "constructed examples, not independent articles or native errors",
+  "owner_authorization": "2026-09-30: project owner explicitly authorized agent-managed decisions and approval for submission preparation except registration. Applies only to the audited no-prior export, not private manuscript/source history or independent scientific validation.",
+  "rights": "MIT project-authored assets in the audited no-prior export; separately attributed CC BY 4.0 article derivatives",
+  "schema_version": "biosure.synthetic-provenance/1.0",
+  "seed": "biosure-synthetic-20260930-v2",
+  "source_graphs": 2
+}

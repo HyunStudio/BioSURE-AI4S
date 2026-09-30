@@ -1,0 +1,27 @@
+{
+  "blocks": [
+    {
+      "block_id": "p1",
+      "kind": "paragraph",
+      "section_level": 0,
+      "target_id": null,
+      "text_sha256": "b561f46d336427dc96f9732cd2457fa3919a344775db861a695c817249e6f5bd"
+    },
+    {
+      "block_id": "p2",
+      "kind": "paragraph",
+      "section_level": 0,
+      "target_id": null,
+      "text_sha256": "806faa2aae7ea17d556144bb1a2223d39b2731ad972abbaeb167accd5a99121f"
+    },
+    {
+      "block_id": "p3",
+      "kind": "paragraph",
+      "section_level": 0,
+      "target_id": null,
+      "text_sha256": "86c8995c51b5c0819eec686af3ad7e3d1c2e1b2fd98bfb34f68f634f06be24fd"
+    }
+  ],
+  "citation_anchors": [],
+  "record_id": "article-PMC7170869"
+}

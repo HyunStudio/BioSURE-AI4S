@@ -1,0 +1,79 @@
+{
+  "articles": [
+    {
+      "article_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5562747/",
+      "article_xml_sha256": "80394521eb890fbd945624b54502363be770547f168a45964331d02503ade23c",
+      "doi": "10.1038/s41598-017-08879-x",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "paragraphs": [
+        {
+          "source_locator": "body//p[1]",
+          "text_sha256": "6556740678992b538fd878d0854869d1b7eebcb46b53a52a1dfecf2ae647a592"
+        },
+        {
+          "source_locator": "body//p[2]",
+          "text_sha256": "3970595bb0e6c9e6c0c58dc566b81ef3f49a421a27f3d828f83bd9e761d4965d"
+        },
+        {
+          "source_locator": "body//p[3]",
+          "text_sha256": "32cda2a6c3cef251b49fc146bc8e84c364c350c36044c894791d68d8fc6c5045"
+        }
+      ],
+      "pmcid": "PMC5562747",
+      "source_api_url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:5562747&metadataPrefix=pmc",
+      "title": "Multi-tissue interactions in an integrated three-tissue organ-on-a-chip platform"
+    },
+    {
+      "article_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7170869/",
+      "article_xml_sha256": "03fdb323999c351b4ab3a6d5806d9a2cd2bcbd8556469487177242f71c784578",
+      "doi": "10.1038/s41598-020-63710-4",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "paragraphs": [
+        {
+          "source_locator": "body//p[1]",
+          "text_sha256": "b561f46d336427dc96f9732cd2457fa3919a344775db861a695c817249e6f5bd"
+        },
+        {
+          "source_locator": "body//p[2]",
+          "text_sha256": "806faa2aae7ea17d556144bb1a2223d39b2731ad972abbaeb167accd5a99121f"
+        },
+        {
+          "source_locator": "body//p[3]",
+          "text_sha256": "86c8995c51b5c0819eec686af3ad7e3d1c2e1b2fd98bfb34f68f634f06be24fd"
+        }
+      ],
+      "pmcid": "PMC7170869",
+      "source_api_url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:7170869&metadataPrefix=pmc",
+      "title": "WAT-on-a-chip integrating human mature white adipocytes for mechanistic research and pharmaceutical applications"
+    },
+    {
+      "article_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6745596/",
+      "article_xml_sha256": "2102c77d4f6ddaed8f42cdade8220eedf8e82f0e3d456ee0e75fc84aa7cb4c22",
+      "doi": "10.2144/fsoa-2019-0065",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "paragraphs": [
+        {
+          "source_locator": "body//p[1]",
+          "text_sha256": "673179aba312472d238163ba98af4e392b19c85a76676f5851aac33991347c06"
+        },
+        {
+          "source_locator": "body//p[2]",
+          "text_sha256": "167c6a63fdc885ff56a79afc2763a0561cadcde77ecd7a5fa6e2c6221772508a"
+        },
+        {
+          "source_locator": "body//p[3]",
+          "text_sha256": "09ebeb597725cf49b796bcb75d44a54d428cc514ecf774ce0decea051998a6f7"
+        }
+      ],
+      "pmcid": "PMC6745596",
+      "source_api_url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:6745596&metadataPrefix=pmc",
+      "title": "Autologous induced pluripotent stem cell-derived four-organ-chip"
+    }
+  ],
+  "case_design": "one correct insertion, one synthetic wrong-hash candidate, one missing-evidence abstention per article",
+  "generator": "scripts/build_article_challenge.py",
+  "limitations": "article-derived structure with constructed defects; not native errors, independent adjudication, or biological validation",
+  "paragraph_normalization": "join XML itertext, collapse whitespace to single ASCII spaces, UTF-8 SHA-256",
+  "schema_version": "biosure.article-provenance/1.0",
+  "selection": "first three nonempty body descendant p elements in document order"
+}

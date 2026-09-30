@@ -1,0 +1,30 @@
+{
+  "cases": 168,
+  "conditions": [
+    "insert-good",
+    "remove-good",
+    "no-change",
+    "missing-evidence",
+    "wrong-hash",
+    "wrong-location",
+    "wrong-id",
+    "extra-metadata",
+    "unrelated-edit",
+    "conflicting-evidence",
+    "supported-ambiguity",
+    "forged-evidence",
+    "wrong-retained",
+    "reordered"
+  ],
+  "generator": "scripts/build_stress_challenge.py",
+  "limitations": "Exploratory constructed stress test. Same-origin reference/gold. Forged reference is deliberately false; its gold remains unchanged. Not real articles or biological validation.",
+  "origin": "project-authored fictitious OoC document conversion hashes",
+  "paragraph_counts": [
+    16,
+    32,
+    64
+  ],
+  "schema_version": "biosure.stress-provenance/1.0",
+  "seed": "biosure-stress-20260930-v1",
+  "source_graphs": 12
+}

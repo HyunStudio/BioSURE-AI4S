@@ -1,0 +1,168 @@
+"""Deterministically regenerate the small, project-authored public challenge."""
+
+from __future__ import annotations
+
+import copy
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+
+SEED = "biosure-synthetic-20260930-v2"
+
+
+def block(block_id: str, text: str) -> dict:
+    return {
+        "block_id": block_id,
+        "kind": "paragraph",
+        "text_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+        "section_level": 0,
+        "target_id": None,
+    }
+
+
+def insertion() -> tuple[dict, dict]:
+    damaged = {"record_id": "synthetic-source-insertion", "blocks": [block("p1", "alpha"), block("p3", "gamma")], "citation_anchors": []}
+    gold = copy.deepcopy(damaged)
+    gold["blocks"].insert(1, block("p2", "beta"))
+    request = {
+        "case_id": "",
+        "damaged": damaged,
+        "candidates": [{"candidate_id": "candidate-1", "operation": "INSERT_PARAGRAPH", "document": copy.deepcopy(gold)}],
+        "evidence": {
+            "trusted_insertions": [
+                {
+                    "block_id": "p2",
+                    "text_sha256": block("p2", "beta")["text_sha256"],
+                    "before_id": "p1",
+                    "after_id": "p3",
+                    "source_id": "project-authored-registry-insertion",
+                }
+            ],
+            "trusted_identities": [],
+        },
+    }
+    return request, gold
+
+
+def duplicate() -> tuple[dict, dict]:
+    damaged = {
+        "record_id": "synthetic-source-duplicate",
+        "blocks": [block("p1", "alpha"), block("p1copy", "alpha"), block("p2", "beta")],
+        "citation_anchors": [],
+    }
+    gold = copy.deepcopy(damaged)
+    gold["blocks"].pop(1)
+    request = {
+        "case_id": "",
+        "damaged": damaged,
+        "candidates": [{"candidate_id": "candidate-1", "operation": "REMOVE_DUPLICATE", "document": copy.deepcopy(gold)}],
+        "evidence": {
+            "trusted_insertions": [],
+            "trusted_identities": [
+                {
+                    "retained_block_id": "p1",
+                    "duplicate_block_id": "p1copy",
+                    "text_sha256": block("p1", "alpha")["text_sha256"],
+                    "source_id": "project-authored-registry-duplicate",
+                }
+            ],
+        },
+    }
+    return request, gold
+
+
+def challenge_cases() -> dict[str, tuple[dict, dict]]:
+    good, insertion_gold = insertion()
+    cases: dict[str, tuple[dict, dict]] = {}
+
+    def add(name: str, request: dict, gold: dict) -> None:
+        request["case_id"] = name
+        cases[name] = (request, copy.deepcopy(gold))
+
+    add("01-insertion-good", copy.deepcopy(good), insertion_gold)
+    wrong_hash = copy.deepcopy(good)
+    wrong_hash["candidates"][0]["document"]["blocks"][1]["text_sha256"] = block("p2", "substituted")["text_sha256"]
+    add("02-insertion-wrong-hash", wrong_hash, insertion_gold)
+    wrong_location = copy.deepcopy(good)
+    inserted = wrong_location["candidates"][0]["document"]["blocks"].pop(1)
+    wrong_location["candidates"][0]["document"]["blocks"].insert(0, inserted)
+    add("03-insertion-wrong-location", wrong_location, insertion_gold)
+    wrong_id = copy.deepcopy(good)
+    wrong_id["candidates"][0]["document"]["blocks"][1]["block_id"] = "p9"
+    add("04-insertion-wrong-id", wrong_id, insertion_gold)
+    missing_evidence = copy.deepcopy(good)
+    missing_evidence["evidence"]["trusted_insertions"] = []
+    add("05-insertion-no-evidence", missing_evidence, insertion_gold)
+    ambiguous = copy.deepcopy(good)
+    second = copy.deepcopy(ambiguous["candidates"][0])
+    second["candidate_id"] = "candidate-2"
+    second["document"]["blocks"][1] = block("p4", "alternative")
+    ambiguous["candidates"].append(second)
+    ambiguous["evidence"]["trusted_insertions"].append(
+        {
+            "block_id": "p4",
+            "text_sha256": block("p4", "alternative")["text_sha256"],
+            "before_id": "p1",
+            "after_id": "p3",
+            "source_id": "project-authored-registry-alternative",
+        }
+    )
+    add("06-insertion-ambiguous", ambiguous, insertion_gold)
+
+    duplicate_good, duplicate_gold = duplicate()
+    add("07-duplicate-good", copy.deepcopy(duplicate_good), duplicate_gold)
+    wrong_removal = copy.deepcopy(duplicate_good)
+    wrong_removal["candidates"][0]["document"]["blocks"][0] = block("p1copy", "alpha")
+    add("08-duplicate-remove-retained", wrong_removal, duplicate_gold)
+    return cases
+
+
+def emit(root: Path) -> None:
+    (root / "challenge").mkdir(parents=True, exist_ok=True)
+    (root / "gold").mkdir(parents=True, exist_ok=True)
+    for name, (request, gold) in challenge_cases().items():
+        (root / "challenge" / f"{name}.json").write_bytes((json.dumps(request, sort_keys=True, indent=2) + "\n").encode("utf-8"))
+        (root / "gold" / f"{name}.json").write_bytes((json.dumps(gold, sort_keys=True, indent=2) + "\n").encode("utf-8"))
+    provenance = {
+        "schema_version": "biosure.synthetic-provenance/1.0",
+        "seed": SEED,
+        "author": "HyunStudio / BioSURE project",
+        "rights": "MIT project-authored assets in the audited no-prior export; separately attributed CC BY 4.0 article derivatives",
+        "owner_authorization": "2026-09-30: project owner explicitly authorized agent-managed decisions and approval for submission preparation except registration. Applies only to the audited no-prior export, not private manuscript/source history or independent scientific validation.",
+        "source_graphs": 2,
+        "derived_cases": 8,
+        "limitations": "constructed examples, not independent articles or native errors",
+        "asset_groups": [
+            {
+                "pattern": pattern,
+                "origin": ("project-authored fictional paragraph inputs; no experimental observations or article quotations"
+                           if pattern == "fixtures/workflow_examples.json" else
+                           "CC BY 4.0 PMC JATS article-derived hashes; see fixtures/article_provenance.json and RIGHTS.md"
+                           if pattern.startswith("fixtures/article_") else
+                           "project-authored synthetic or project-owned source; see RIGHTS.md"),
+                "rights": ("CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
+                           if pattern.startswith("fixtures/article_") else
+                           "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"),
+                "review_status": "approved_for_public_release",
+            }
+            for pattern in (
+                "fixtures/workflow_examples.json",
+                "fixtures/stress_challenge/*.json", "fixtures/stress_gold/*.json", "fixtures/stress_provenance.json",
+                "README.md", "RIGHTS.md", "LICENSE", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html",
+                "biosure/*.py", "biosure/static/*.html", "biosure/static/*.css", "biosure/static/*.js",
+                "scripts/*.py", "tests/*.py", "fixtures/provenance.json",
+                "fixtures/challenge/*.json", "fixtures/gold/*.json", "results/*.json",
+                "fixtures/article_challenge/*.json", "fixtures/article_gold/*.json", "fixtures/article_provenance.json",
+                "report/*.md", "video/*.md",
+            )
+        ],
+    }
+    (root / "provenance.json").write_bytes((json.dumps(provenance, sort_keys=True, indent=2) + "\n").encode("utf-8"))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        raise SystemExit("usage: build_challenge.py OUTPUT_DIR")
+    emit(Path(sys.argv[1]))

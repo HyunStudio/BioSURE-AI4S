@@ -1,0 +1,922 @@
+{
+  "candidates": [
+    {
+      "candidate_id": "candidate-1",
+      "document": {
+        "blocks": [
+          {
+            "block_id": "p2",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "4ebf0adcca84d2fd87e030b128b1dbf661c9c489aa396bba2a9e9fc9a7a3c79c"
+          },
+          {
+            "block_id": "p1",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "2b40e64f0e08a457c600d95ee25333939a8edf08175498ecdb6f3dda25d93556"
+          },
+          {
+            "block_id": "p3",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "d4a77907c404a348a49ea39f80b23c1c49a1aeb4168e2e0cca1d3ea89056b777"
+          },
+          {
+            "block_id": "p4",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "34d5977a0eb2be3cb192bddc1040e58d4636dd341168dc2e3f813354fe5f5154"
+          },
+          {
+            "block_id": "p5",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "bfe3c93bd757e3c6da263ee49427cbbda389dd9b88412d2ac6b4fb1e590ff2cb"
+          },
+          {
+            "block_id": "p6",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "a87f12e83eceeaa5a01ec37805255d48e4c6366b26bd0abae967fa2ed053833a"
+          },
+          {
+            "block_id": "p7",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "36d6f42c5758a85689b530b92f7ca5a7da0e51bec8d822186dd236d1d5a73f9f"
+          },
+          {
+            "block_id": "p8",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "bd98b2ea2943167d41c8046990abab95f0a8bc6bb8ad0318626a1ddc6486dc6a"
+          },
+          {
+            "block_id": "p9",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "0027df0cac3a5c91407faf6751b89d8756fc783f7e0ca53d8fe3010183cabfbb"
+          },
+          {
+            "block_id": "p10",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "eeca36e8e6843ac20ff58da3ec4c4b6f425fb2a26aadf80da3a4f0c8a0d48fa1"
+          },
+          {
+            "block_id": "p11",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "38ea6a9e675f370eef16e1af090137b4985c9b9fe6d1bf55354b65860a730b3e"
+          },
+          {
+            "block_id": "p12",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "fc478ba8048b6999855a3da8581679adaeb1db14bf9486fc4f7ace9bb937f7b5"
+          },
+          {
+            "block_id": "p13",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "2edb1807026befaf204da4864c512f67c58e837dea271d0338b36ac6ed9e02eb"
+          },
+          {
+            "block_id": "p14",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "6ae066acc5843272ca8fc8b250447968b197ec790829ef7dccc46a719d63838b"
+          },
+          {
+            "block_id": "p15",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "3f57152b911a853f6bef2403f3571936f71466702fc1a13aa448c55edee718f6"
+          },
+          {
+            "block_id": "p16",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "3994034cc63ff4077435733d81e9c0b185f79ebdee144a9662e8554163117707"
+          },
+          {
+            "block_id": "p17",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "548c30f0a2be73758455b1ae37db308d5586daca245a36ea6a7eaeb7cd323e96"
+          },
+          {
+            "block_id": "p18",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "644647d81a6d47f617c3ceac0bc1be6ce6d2070a51470a02c3b1cee973abdce4"
+          },
+          {
+            "block_id": "p19",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "4e53adc00e322d2666ff37416976f4562621b0f3b9bfb6e84f18639ce278d1c6"
+          },
+          {
+            "block_id": "p20",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "e81c191bf62234a128d02493c95222d206679d43fb396cb3bb74da8299bb05eb"
+          },
+          {
+            "block_id": "p21",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "a94c63a926f7cad618121907e78cf221fcc2be9108d301831d96c5427a5260c2"
+          },
+          {
+            "block_id": "p22",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "0d75770a074f0eb9cc1b1de92d4471ebd4d86342de8387d888d591823822d4d9"
+          },
+          {
+            "block_id": "p23",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "d854cd994b1520a93f42afa11688b09b5676162ce2db7dcf19c1b51b932f8795"
+          },
+          {
+            "block_id": "p24",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "a99792232daa189d4116f7188c18401a88a2d774a718aaee0504b6623232dfc1"
+          },
+          {
+            "block_id": "p25",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "bb00cc712259a00d2f2c1e017899929f0618b2970434a5e2cf7e72c322ba16ff"
+          },
+          {
+            "block_id": "p26",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "4b66625991b26812973a5fc4d575a9a74ea23daacc2fb483bfd081bd8082ac2b"
+          },
+          {
+            "block_id": "p27",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "4b2c8d1cdd138176e7b09bbf6a4397eb470e85e3c4a04259b423f09a7bdd1766"
+          },
+          {
+            "block_id": "p28",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "866fb833dd456e0e0bc7cee459a3ed7d73ba892d7eab08b09f99cee90dfeb7f4"
+          },
+          {
+            "block_id": "p29",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "3d3667b2b4b18c77913c31c108923caf6d30d09bea792ed93c4e3e8961fbb5f5"
+          },
+          {
+            "block_id": "p30",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "dfa838d264cc971f7458425d8ae5b7f8dced55e2668c51c2f5edd30852b55b64"
+          },
+          {
+            "block_id": "p31",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "413870c12f586b8885485d554a7416d2810ed64ac727c90e4072f1b13cb3e1aa"
+          },
+          {
+            "block_id": "p32",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "f0adca3ada958d0c54b02c41bffbb9fec5997e7eb789e0764cb852b5ce60ca19"
+          },
+          {
+            "block_id": "p33",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "856ce53f47b496a2daa6c2c18d7288925723b94d4c456b91cc50515c1ab3aac8"
+          },
+          {
+            "block_id": "p34",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "ef300b42b0f0affbc960605ad4614a2ec8ce1b8f486f29ee1c60d62deac2a9a5"
+          },
+          {
+            "block_id": "p35",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "31ac5e400f44bff0991fd71b712b449c1dbc09f8e4a201a44a88576cee18e5ba"
+          },
+          {
+            "block_id": "p36",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "1330ea050d7fa4355d2bdbd01685110911f6c3887627a05f19d449cf115090ea"
+          },
+          {
+            "block_id": "p37",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "f8f1276331a606bb063de69f04f65c45912cdba8010cd3a38655c1254a8a7615"
+          },
+          {
+            "block_id": "p38",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "80277457bd247ce2db144765de82d8c5621dd0ea0e30b60624f3fb492d3e3736"
+          },
+          {
+            "block_id": "p39",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "8e161010a2ef8f3fd332095ff097c9ca2fcceb8743d6cb0f79a3596a447cc975"
+          },
+          {
+            "block_id": "p40",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "4b5cbc16e1319d25b5334406e347b450eef76ee20d48b3c79ca5f6a3f55a7086"
+          },
+          {
+            "block_id": "p41",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "d7f72496ff7aba9e42ea53d61286a5c26117c4cbd5b530b4e7a14f2af5facc11"
+          },
+          {
+            "block_id": "p42",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "581398a18a06ac7861f1fd3075baea0b60ff4e8e776e3201f9b545acf84c38ab"
+          },
+          {
+            "block_id": "p43",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "04ad22b5d6c11e578189ae896d58d978df67835ce87fe9fa4006c56e109b5f65"
+          },
+          {
+            "block_id": "p44",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "cd916956d595b89537b28f6c612c8ffa703b145d94deae6f30fff713500f2434"
+          },
+          {
+            "block_id": "p45",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "1c08310199713a3283c6a7db95f45b8b1715c7032eff6ae4b24f48327b116ae4"
+          },
+          {
+            "block_id": "p46",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "d883d5f7f0751527f9da7751a9472964c5163e32c2c14487b793dfcd7ce91b29"
+          },
+          {
+            "block_id": "p47",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "ebd8a784304cd017cff69851db665a400f838d7a80fd96f5550d5c5be48ada6c"
+          },
+          {
+            "block_id": "p48",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "e1151d193da6faebfb2362929bc129455f2715d77dded6c171e1ea451872adaf"
+          },
+          {
+            "block_id": "p49",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "fe0676662ddc15803f40676aa1f9c9f0b03f41ba7fb2180c6edf36b51213daf8"
+          },
+          {
+            "block_id": "p50",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "af912373743a1f7839d6803994d146e6a443fdfb578d1eb7868b68612ead64b2"
+          },
+          {
+            "block_id": "p51",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "565ebdfb5a04b851d0625223db32c654305da2be2e78f28ba36451dba1953c5e"
+          },
+          {
+            "block_id": "p52",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "5b4788a139051cb7903e255b2b9761c16747e16a58bc0defa4549dfc8f5bba6c"
+          },
+          {
+            "block_id": "p53",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "0cb0c3749413679422a50cdf1fb6f2d2e66c35de2a0347bbc033cc8bcfc5e329"
+          },
+          {
+            "block_id": "p54",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "9314677178c9f0e70925e21be995a5def614e6e47983774b12317e3f8a22ce81"
+          },
+          {
+            "block_id": "p55",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "db76b0167234e4ac3f5784f9693468c5a8ddf7289211a2d222768d8fb4d3ae75"
+          },
+          {
+            "block_id": "p56",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "6adf4998a4922ce4785c057a739ad715281c22463e9d04ea6e78a1548a049291"
+          },
+          {
+            "block_id": "p57",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "c1c60da977728fb443c65cf7083e82be5ea712365eb09ab290f84ab9e8cd3ae1"
+          },
+          {
+            "block_id": "p58",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "c78c8ee0be14c30f3ff3b1745b9f4b88d57e24fbdc71a85ff1cd4f051a8e5663"
+          },
+          {
+            "block_id": "p59",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "edee3b329e91be0dee453848c53d583e06b4eeec22ddab7e74b7aa60de25d0c2"
+          },
+          {
+            "block_id": "p60",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "bc8d5977ccd4e8b5614c1fe00602a17a97408dcaa1f7f2234912419a46d08009"
+          },
+          {
+            "block_id": "p61",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "9e9e383d8742a9710f5347a79f333b594160a6c166bf5849220c3c41c3de324e"
+          },
+          {
+            "block_id": "p62",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "a7a58c16e04e770bf9ca5efd8dcbdffc747c92ff7fd24e6b2f59a142e65d8b77"
+          },
+          {
+            "block_id": "p63",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "ee43ba8053d807104885eb4ee2fa216708241dfcadf2d74f5cdfd925222830af"
+          },
+          {
+            "block_id": "p64",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "49b7626e02a4c7cba71ab03da0cc60eccd0fac352534f3ce8047296c7921a594"
+          }
+        ],
+        "citation_anchors": [],
+        "record_id": "stress-source-11"
+      },
+      "operation": "INSERT_PARAGRAPH"
+    }
+  ],
+  "case_id": "s11--reordered",
+  "damaged": {
+    "blocks": [
+      {
+        "block_id": "p1",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "2b40e64f0e08a457c600d95ee25333939a8edf08175498ecdb6f3dda25d93556"
+      },
+      {
+        "block_id": "p2",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "4ebf0adcca84d2fd87e030b128b1dbf661c9c489aa396bba2a9e9fc9a7a3c79c"
+      },
+      {
+        "block_id": "p3",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "d4a77907c404a348a49ea39f80b23c1c49a1aeb4168e2e0cca1d3ea89056b777"
+      },
+      {
+        "block_id": "p4",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "34d5977a0eb2be3cb192bddc1040e58d4636dd341168dc2e3f813354fe5f5154"
+      },
+      {
+        "block_id": "p5",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "bfe3c93bd757e3c6da263ee49427cbbda389dd9b88412d2ac6b4fb1e590ff2cb"
+      },
+      {
+        "block_id": "p6",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "a87f12e83eceeaa5a01ec37805255d48e4c6366b26bd0abae967fa2ed053833a"
+      },
+      {
+        "block_id": "p7",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "36d6f42c5758a85689b530b92f7ca5a7da0e51bec8d822186dd236d1d5a73f9f"
+      },
+      {
+        "block_id": "p8",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "bd98b2ea2943167d41c8046990abab95f0a8bc6bb8ad0318626a1ddc6486dc6a"
+      },
+      {
+        "block_id": "p9",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "0027df0cac3a5c91407faf6751b89d8756fc783f7e0ca53d8fe3010183cabfbb"
+      },
+      {
+        "block_id": "p10",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "eeca36e8e6843ac20ff58da3ec4c4b6f425fb2a26aadf80da3a4f0c8a0d48fa1"
+      },
+      {
+        "block_id": "p11",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "38ea6a9e675f370eef16e1af090137b4985c9b9fe6d1bf55354b65860a730b3e"
+      },
+      {
+        "block_id": "p12",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "fc478ba8048b6999855a3da8581679adaeb1db14bf9486fc4f7ace9bb937f7b5"
+      },
+      {
+        "block_id": "p13",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "2edb1807026befaf204da4864c512f67c58e837dea271d0338b36ac6ed9e02eb"
+      },
+      {
+        "block_id": "p14",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "6ae066acc5843272ca8fc8b250447968b197ec790829ef7dccc46a719d63838b"
+      },
+      {
+        "block_id": "p15",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "3f57152b911a853f6bef2403f3571936f71466702fc1a13aa448c55edee718f6"
+      },
+      {
+        "block_id": "p16",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "3994034cc63ff4077435733d81e9c0b185f79ebdee144a9662e8554163117707"
+      },
+      {
+        "block_id": "p17",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "548c30f0a2be73758455b1ae37db308d5586daca245a36ea6a7eaeb7cd323e96"
+      },
+      {
+        "block_id": "p18",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "644647d81a6d47f617c3ceac0bc1be6ce6d2070a51470a02c3b1cee973abdce4"
+      },
+      {
+        "block_id": "p19",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "4e53adc00e322d2666ff37416976f4562621b0f3b9bfb6e84f18639ce278d1c6"
+      },
+      {
+        "block_id": "p20",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "e81c191bf62234a128d02493c95222d206679d43fb396cb3bb74da8299bb05eb"
+      },
+      {
+        "block_id": "p21",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "a94c63a926f7cad618121907e78cf221fcc2be9108d301831d96c5427a5260c2"
+      },
+      {
+        "block_id": "p22",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "0d75770a074f0eb9cc1b1de92d4471ebd4d86342de8387d888d591823822d4d9"
+      },
+      {
+        "block_id": "p23",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "d854cd994b1520a93f42afa11688b09b5676162ce2db7dcf19c1b51b932f8795"
+      },
+      {
+        "block_id": "p24",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "a99792232daa189d4116f7188c18401a88a2d774a718aaee0504b6623232dfc1"
+      },
+      {
+        "block_id": "p25",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "bb00cc712259a00d2f2c1e017899929f0618b2970434a5e2cf7e72c322ba16ff"
+      },
+      {
+        "block_id": "p26",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "4b66625991b26812973a5fc4d575a9a74ea23daacc2fb483bfd081bd8082ac2b"
+      },
+      {
+        "block_id": "p27",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "4b2c8d1cdd138176e7b09bbf6a4397eb470e85e3c4a04259b423f09a7bdd1766"
+      },
+      {
+        "block_id": "p28",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "866fb833dd456e0e0bc7cee459a3ed7d73ba892d7eab08b09f99cee90dfeb7f4"
+      },
+      {
+        "block_id": "p29",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "3d3667b2b4b18c77913c31c108923caf6d30d09bea792ed93c4e3e8961fbb5f5"
+      },
+      {
+        "block_id": "p30",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "dfa838d264cc971f7458425d8ae5b7f8dced55e2668c51c2f5edd30852b55b64"
+      },
+      {
+        "block_id": "p31",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "413870c12f586b8885485d554a7416d2810ed64ac727c90e4072f1b13cb3e1aa"
+      },
+      {
+        "block_id": "p32",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "f0adca3ada958d0c54b02c41bffbb9fec5997e7eb789e0764cb852b5ce60ca19"
+      },
+      {
+        "block_id": "p34",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "ef300b42b0f0affbc960605ad4614a2ec8ce1b8f486f29ee1c60d62deac2a9a5"
+      },
+      {
+        "block_id": "p35",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "31ac5e400f44bff0991fd71b712b449c1dbc09f8e4a201a44a88576cee18e5ba"
+      },
+      {
+        "block_id": "p36",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "1330ea050d7fa4355d2bdbd01685110911f6c3887627a05f19d449cf115090ea"
+      },
+      {
+        "block_id": "p37",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "f8f1276331a606bb063de69f04f65c45912cdba8010cd3a38655c1254a8a7615"
+      },
+      {
+        "block_id": "p38",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "80277457bd247ce2db144765de82d8c5621dd0ea0e30b60624f3fb492d3e3736"
+      },
+      {
+        "block_id": "p39",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "8e161010a2ef8f3fd332095ff097c9ca2fcceb8743d6cb0f79a3596a447cc975"
+      },
+      {
+        "block_id": "p40",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "4b5cbc16e1319d25b5334406e347b450eef76ee20d48b3c79ca5f6a3f55a7086"
+      },
+      {
+        "block_id": "p41",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "d7f72496ff7aba9e42ea53d61286a5c26117c4cbd5b530b4e7a14f2af5facc11"
+      },
+      {
+        "block_id": "p42",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "581398a18a06ac7861f1fd3075baea0b60ff4e8e776e3201f9b545acf84c38ab"
+      },
+      {
+        "block_id": "p43",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "04ad22b5d6c11e578189ae896d58d978df67835ce87fe9fa4006c56e109b5f65"
+      },
+      {
+        "block_id": "p44",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "cd916956d595b89537b28f6c612c8ffa703b145d94deae6f30fff713500f2434"
+      },
+      {
+        "block_id": "p45",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "1c08310199713a3283c6a7db95f45b8b1715c7032eff6ae4b24f48327b116ae4"
+      },
+      {
+        "block_id": "p46",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "d883d5f7f0751527f9da7751a9472964c5163e32c2c14487b793dfcd7ce91b29"
+      },
+      {
+        "block_id": "p47",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "ebd8a784304cd017cff69851db665a400f838d7a80fd96f5550d5c5be48ada6c"
+      },
+      {
+        "block_id": "p48",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "e1151d193da6faebfb2362929bc129455f2715d77dded6c171e1ea451872adaf"
+      },
+      {
+        "block_id": "p49",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "fe0676662ddc15803f40676aa1f9c9f0b03f41ba7fb2180c6edf36b51213daf8"
+      },
+      {
+        "block_id": "p50",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "af912373743a1f7839d6803994d146e6a443fdfb578d1eb7868b68612ead64b2"
+      },
+      {
+        "block_id": "p51",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "565ebdfb5a04b851d0625223db32c654305da2be2e78f28ba36451dba1953c5e"
+      },
+      {
+        "block_id": "p52",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "5b4788a139051cb7903e255b2b9761c16747e16a58bc0defa4549dfc8f5bba6c"
+      },
+      {
+        "block_id": "p53",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "0cb0c3749413679422a50cdf1fb6f2d2e66c35de2a0347bbc033cc8bcfc5e329"
+      },
+      {
+        "block_id": "p54",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "9314677178c9f0e70925e21be995a5def614e6e47983774b12317e3f8a22ce81"
+      },
+      {
+        "block_id": "p55",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "db76b0167234e4ac3f5784f9693468c5a8ddf7289211a2d222768d8fb4d3ae75"
+      },
+      {
+        "block_id": "p56",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "6adf4998a4922ce4785c057a739ad715281c22463e9d04ea6e78a1548a049291"
+      },
+      {
+        "block_id": "p57",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "c1c60da977728fb443c65cf7083e82be5ea712365eb09ab290f84ab9e8cd3ae1"
+      },
+      {
+        "block_id": "p58",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "c78c8ee0be14c30f3ff3b1745b9f4b88d57e24fbdc71a85ff1cd4f051a8e5663"
+      },
+      {
+        "block_id": "p59",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "edee3b329e91be0dee453848c53d583e06b4eeec22ddab7e74b7aa60de25d0c2"
+      },
+      {
+        "block_id": "p60",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "bc8d5977ccd4e8b5614c1fe00602a17a97408dcaa1f7f2234912419a46d08009"
+      },
+      {
+        "block_id": "p61",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "9e9e383d8742a9710f5347a79f333b594160a6c166bf5849220c3c41c3de324e"
+      },
+      {
+        "block_id": "p62",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "a7a58c16e04e770bf9ca5efd8dcbdffc747c92ff7fd24e6b2f59a142e65d8b77"
+      },
+      {
+        "block_id": "p63",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "ee43ba8053d807104885eb4ee2fa216708241dfcadf2d74f5cdfd925222830af"
+      },
+      {
+        "block_id": "p64",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "49b7626e02a4c7cba71ab03da0cc60eccd0fac352534f3ce8047296c7921a594"
+      }
+    ],
+    "citation_anchors": [],
+    "record_id": "stress-source-11"
+  },
+  "evidence": {
+    "trusted_identities": [],
+    "trusted_insertions": [
+      {
+        "after_id": "p34",
+        "before_id": "p32",
+        "block_id": "p33",
+        "source_id": "project-authored-stress-registry-11",
+        "text_sha256": "856ce53f47b496a2daa6c2c18d7288925723b94d4c456b91cc50515c1ab3aac8"
+      }
+    ]
+  }
+}

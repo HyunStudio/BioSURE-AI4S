@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BioSURE — Structural evidence workbench</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand"><span class="brand-mark">B</span><span>BioSURE</span><span class="brand-sub">Structural evidence workbench</span></div>
+    <span class="mode">LOCAL · OFFLINE</span>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Candidate-dependent structural integrity</p>
+        <h1>Repair only when the candidate matches the evidence.</h1>
+        <p class="lead">Inspect a damaged research-document graph, a proposed edit, and the trusted structural evidence. BioSURE applies one uniquely supported candidate or abstains with a reason.</p>
+        <p class="disclaimer" id="dataset-note">Not clinical. Constructed structural faults in research-document graphs.</p>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-label" id="stat-label">Public synthetic challenge</span>
+        <strong id="coverage">—</strong>
+        <span id="coverage-caption">Loading outcome-free decision run…</span>
+      </div>
+    </section>
+    <nav class="section-links" aria-label="Workbench sections"><a href="#paragraph-check">Paragraph check</a><a href="#batch-check">Batch review</a><a href="#graph-check">Evidence benchmarks</a></nav>
+    <section class="input-workflow" id="paragraph-check" aria-labelledby="input-title">
+      <div class="section-heading"><div><p class="eyebrow">Your document / conversion QC</p><h2 id="input-title">Check your converted paragraphs</h2></div><span class="small-note">Reference → bounded edit → receipt</span></div>
+      <p class="pane-intro">Paste a reference you have permission to use and its transformed paragraph sequence. Separate paragraphs with a blank line. Supports one internal missing paragraph or one extra exact duplicate, not translation, PDF parsing, or biological validation.</p>
+      <p class="privacy-note">Local in-memory processing; no external inference or server-side input storage. Do not enter patient data. Downloads contain your supplied text. A false reference can produce a false result.</p>
+      <div class="sample-controls"><label for="example-select">Fictitious OoC example</label><select id="example-select"><option value="omission">Missing methods paragraph</option><option value="duplicate">Extra duplicate paragraph</option><option value="substitution">Changed paragraph (unsupported)</option></select><button id="load-example" type="button">Load example</button></div>
+      <div class="paragraph-inputs"><div><label for="reference-input">Reference paragraphs</label><textarea id="reference-input" rows="8" spellcheck="false" placeholder="Reference paragraph one&#10;&#10;Reference paragraph two"></textarea></div><div><label for="observed-input">Converted paragraphs</label><textarea id="observed-input" rows="8" spellcheck="false" placeholder="Paste the converted sequence here"></textarea></div></div>
+      <label class="acknowledgement"><input type="checkbox" id="reference-ack"> I understand the supplied reference is an assumption, not authenticated evidence.</label>
+      <div class="workflow-actions"><button type="button" id="run-workflow">Check paragraphs</button><button type="button" id="clear-workflow" class="secondary">Clear inputs &amp; result</button><button type="button" id="download-result" class="secondary" disabled>Download result JSON</button></div>
+      <details class="advanced-input"><summary>Advanced: inspect your own candidate JSON</summary><label for="candidate-input">Strict decision request (no gold/outcomes)</label><textarea id="candidate-input" rows="5" spellcheck="false" placeholder="Paste a BioSURE decision request JSON"></textarea><button type="button" id="run-candidate">Validate candidate JSON</button><p class="fineprint">Same v2 gate; no text reconstruction from hashes. Maximum 32 candidates, 128 blocks per graph, 256 evidence entries and 1 MiB HTTP body.</p></details>
+      <div class="workflow-result"><div class="decision" id="workflow-status" role="status" aria-live="polite">READY</div><p id="workflow-reason">Load a fictitious example or paste your own paragraphs.</p><h3>Review changes</h3><pre id="workflow-changes"></pre><p class="fineprint">Paragraph positions after whitespace normalization. A difference preview is not semantic approval.</p><h3>Applied output</h3><pre id="workflow-output"></pre><div class="receipt-box"><span>Decision receipt SHA-256</span><code id="workflow-receipt"></code></div></div>
+    </section>
+    <section class="input-workflow" id="batch-check" aria-labelledby="batch-title">
+      <div class="section-heading"><div><p class="eyebrow">Your documents / all-or-nothing triage</p><h2 id="batch-title">Review a paragraph batch</h2></div><span class="small-note">Corrected · unchanged · review</span></div>
+      <p class="pane-intro">Import or paste a JSON array of 1–100 records. Each has record_id, reference_paragraphs and observed_paragraphs. IDs must be unique. Invalid input rejects the whole batch, not just the failing record.</p>
+      <p class="privacy-note">Local in-memory processing. No source files are changed. Downloaded results include the supplied paragraph text. Reference truth remains an assumption; do not use patient or confidential data.</p>
+      <div class="sample-controls"><button type="button" id="load-batch">Load six fictional records</button><label for="batch-file">Import batch JSON (at most 1 MiB)</label><input type="file" id="batch-file" accept=".json,application/json"></div>
+      <label class="batch-label" for="batch-input">Batch records JSON</label><textarea id="batch-input" rows="6" spellcheck="false" placeholder='[{"record_id":"my-record","reference_paragraphs":["A","B","C"],"observed_paragraphs":["A","C"]}]'></textarea>
+      <label class="acknowledgement"><input type="checkbox" id="batch-ack"> I understand every supplied batch reference is an assumption, not authenticated evidence.</label>
+      <div class="workflow-actions"><button type="button" id="run-batch">Check batch</button><button type="button" id="clear-batch" class="secondary">Clear batch &amp; results</button><button type="button" id="download-batch" class="secondary" disabled>Download batch JSON</button></div>
+      <div class="workflow-result"><div class="decision" id="batch-status" role="status" aria-live="polite">READY</div><p id="batch-summary">No batch result yet.</p><div id="batch-records"></div></div>
+      <p class="fineprint">The web interface accepts at most 1 MiB of JSON. CLI batches accept up to 8 MiB. Neither corrects semantics, parses PDF/DOCX, translates text or authenticates evidence.</p>
+    </section>
+    <section class="workbench" id="graph-check" aria-labelledby="workbench-title">
+      <div class="section-heading"><div><p class="eyebrow">01 / Interactive inspection</p><h2 id="workbench-title">Public synthetic challenge</h2></div><span class="small-note" id="dataset-count">Loading…</span></div>
+      <div class="workbench-grid">
+        <aside class="case-list">
+          <label for="dataset-select">Choose an evaluation set</label>
+          <select id="dataset-select"><option value="synthetic">Project-authored synthetic</option><option value="article">PMC article-derived</option><option value="stress">Exploratory stress / negative controls</option></select>
+          <label for="case-select">Choose a case</label>
+          <select id="case-select" aria-label="Choose a case"></select>
+          <p class="hint" id="case-hint">Try a correct insertion, a substituted payload, and an abstention case.</p>
+          <div id="decision" class="decision" role="status" aria-live="polite">Loading…</div>
+          <div id="reason" class="reason"></div>
+        </aside>
+        <div class="graph-pane">
+          <div class="pane-title"><h3>Damaged graph</h3><span id="record-id"></span></div>
+          <ol id="damaged-blocks" class="blocks"></ol>
+          <div class="pane-title second"><h3>Proposed candidates</h3><span id="candidate-count"></span></div>
+          <div id="candidate-list"></div>
+        </div>
+        <div class="evidence-pane">
+          <h3>Evidence &amp; decision</h3>
+          <p class="pane-intro">The gate compares each candidate payload with declared source evidence. Gold is never part of this decision request.</p>
+          <div id="article-source" class="source-card" hidden><span>Article source · CC BY 4.0</span><a id="article-link" target="_blank" rel="noopener noreferrer"></a><code id="article-doi"></code></div>
+          <dl id="evidence-list" class="evidence-list"></dl>
+          <div class="receipt-box"><span>Receipt SHA-256</span><code id="receipt-hash">—</code></div>
+          <div class="receipt-box"><span>Selected output</span><code id="selected-output">—</code></div>
+        </div>
+      </div>
+    </section>
+    <section class="results-grid">
+      <article class="result-card" aria-labelledby="public-results-title">
+        <p class="eyebrow">02 / Reproducible in this package</p>
+        <h2 id="public-results-title">Public synthetic challenge</h2>
+        <p id="public-summary">Loading…</p>
+        <p class="fineprint">Constructed and paired examples. Case count is not an independent-article sample or a native-error estimate.</p>
+      </article>
+      <article class="result-card prior" id="prior-card" aria-labelledby="prior-title" hidden>
+        <p class="eyebrow">03 / Separate prior evidence</p>
+        <h2 id="prior-title">DKE prior study</h2>
+        <p id="dke-summary">Loading…</p>
+        <p class="fineprint">Known injected transformation specifications were available. The 120-case article-level run cannot be re-executed from this public package.</p>
+      </article>
+    </section>
+    <footer>BioSURE · Offline research-data integrity demonstrator · No external inference calls</footer>
+  </main>
+  <script src="/app.js" defer></script>
+  <script src="/workflow.js" defer></script>
+  <script src="/batch.js" defer></script>
+</body>
+</html>

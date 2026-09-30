@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biosure-ai4s"
+version = "0.1.0"
+description = "Offline candidate-dependent structural integrity checks"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["biosure*"]
+
+[tool.setuptools.package-data]
+biosure = ["static/*.html", "static/*.css", "static/*.js"]

@@ -1,0 +1,134 @@
+{
+  "abstentions": 132,
+  "accepted_error_rate": 0.3333333333333333,
+  "automatic": 36,
+  "by_condition": {
+    "conflicting-evidence": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "extra-metadata": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "forged-evidence": {
+      "automatic": 12,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 12
+    },
+    "insert-good": {
+      "automatic": 12,
+      "cases": 12,
+      "exact_auto": 12,
+      "incorrect_auto": 0
+    },
+    "missing-evidence": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "no-change": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "remove-good": {
+      "automatic": 12,
+      "cases": 12,
+      "exact_auto": 12,
+      "incorrect_auto": 0
+    },
+    "reordered": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "supported-ambiguity": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "unrelated-edit": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "wrong-hash": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "wrong-id": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "wrong-location": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "wrong-retained": {
+      "automatic": 0,
+      "cases": 12,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    }
+  },
+  "by_operation": {
+    "INSERT_PARAGRAPH": {
+      "automatic": 24,
+      "cases": 132,
+      "incorrect_auto": 12
+    },
+    "MIXED_OR_NONE": {
+      "automatic": 0,
+      "cases": 12,
+      "incorrect_auto": 0
+    },
+    "REMOVE_DUPLICATE": {
+      "automatic": 12,
+      "cases": 24,
+      "incorrect_auto": 0
+    }
+  },
+  "cases": 168,
+  "coverage": 0.21428571428571427,
+  "evidence_reconstruction_baseline": {
+    "automatic": 48,
+    "exact_auto": 36,
+    "incorrect_auto": 12
+  },
+  "exact_auto": 24,
+  "hash_evidence_baseline": {
+    "automatic": 96,
+    "exact_auto": 36,
+    "incorrect_auto": 60
+  },
+  "identity_baseline": {
+    "automatic": 0
+  },
+  "incorrect_auto": 12,
+  "mode": "candidate_dependent_public_evaluation",
+  "schema_locality_baseline": {
+    "automatic": 120,
+    "incorrect_auto": 72
+  },
+  "schema_version": "biosure.public-summary/1.1",
+  "source_graphs": 12,
+  "wrong_executable_candidates_accepted": 12,
+  "wrong_executable_candidates_total": 84
+}

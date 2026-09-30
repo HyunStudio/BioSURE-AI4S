@@ -1,0 +1,68 @@
+{
+  "candidates": [
+    {
+      "candidate_id": "candidate-1",
+      "document": {
+        "blocks": [
+          {
+            "block_id": "p1",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "673179aba312472d238163ba98af4e392b19c85a76676f5851aac33991347c06"
+          },
+          {
+            "block_id": "p2",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "c44208f248ca9daa740cd7242c28301fb72c8ec787fba388ba2173729a63cf91"
+          },
+          {
+            "block_id": "p3",
+            "kind": "paragraph",
+            "section_level": 0,
+            "target_id": null,
+            "text_sha256": "09ebeb597725cf49b796bcb75d44a54d428cc514ecf774ce0decea051998a6f7"
+          }
+        ],
+        "citation_anchors": [],
+        "record_id": "article-PMC6745596"
+      },
+      "operation": "INSERT_PARAGRAPH"
+    }
+  ],
+  "case_id": "PMC6745596-wrong-hash",
+  "damaged": {
+    "blocks": [
+      {
+        "block_id": "p1",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "673179aba312472d238163ba98af4e392b19c85a76676f5851aac33991347c06"
+      },
+      {
+        "block_id": "p3",
+        "kind": "paragraph",
+        "section_level": 0,
+        "target_id": null,
+        "text_sha256": "09ebeb597725cf49b796bcb75d44a54d428cc514ecf774ce0decea051998a6f7"
+      }
+    ],
+    "citation_anchors": [],
+    "record_id": "article-PMC6745596"
+  },
+  "evidence": {
+    "trusted_identities": [],
+    "trusted_insertions": [
+      {
+        "after_id": "p3",
+        "before_id": "p1",
+        "block_id": "p2",
+        "source_id": "PMC6745596:OAI-PMH:body//p[2]",
+        "text_sha256": "167c6a63fdc885ff56a79afc2763a0561cadcde77ecd7a5fa6e2c6221772508a"
+      }
+    ]
+  }
+}
