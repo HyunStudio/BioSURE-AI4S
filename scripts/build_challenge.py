@@ -148,7 +148,7 @@ def emit(root: Path) -> None:
                 "review_status": "approved_for_public_release",
             }
             for pattern in (
-                "fixtures/workflow_examples.json",
+                "tests/test_browser_logic.js", "fixtures/workflow_examples.json",
                 "fixtures/stress_challenge/*.json", "fixtures/stress_gold/*.json", "fixtures/stress_provenance.json",
                 "README.md", "RIGHTS.md", "LICENSE", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html",
                 "biosure/*.py", "biosure/static/*.html", "biosure/static/*.css", "biosure/static/*.js",

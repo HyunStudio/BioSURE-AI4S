@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .evaluate import decide_case, score_case, summarize
 from .schema import canonical_bytes, loads_json
-from .workflow import run_workflow
+from .workflow import run_workflow, run_proposal
 from .batch import run_batch
 
 
@@ -43,6 +43,8 @@ def main(argv: list[str] | None = None) -> int:
     demo.add_argument("--case", type=Path, required=True)
     workflow = commands.add_parser("workflow")
     workflow.add_argument("--input", type=Path, required=True)
+    proposal = commands.add_parser("proposal", help="Validate untrusted upstream proposed paragraphs offline")
+    proposal.add_argument("--input", type=Path, required=True)
     batch = commands.add_parser("batch", help="Triage paragraph records without overwriting inputs")
     batch.add_argument("--input", type=Path, required=True)
     batch.add_argument("--out", type=Path, required=True)
@@ -53,6 +55,10 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(blind_evaluate(args.cases, args.gold, args.out), sort_keys=True))
         elif args.command == "workflow":
             print(json.dumps(run_workflow(loads_json(args.input.read_text(encoding="utf-8"))), sort_keys=True))
+        elif args.command == "proposal":
+            if args.input.stat().st_size > 1048576:
+                raise ValueError("proposal input exceeds 1 MiB")
+            print(json.dumps(run_proposal(loads_json(args.input.read_text(encoding="utf-8"))), sort_keys=True))
         elif args.command == "batch":
             if args.input.stat().st_size > 8388608:
                 raise ValueError("batch input exceeds 8 MiB")

@@ -6,6 +6,8 @@ Six project-authored fictional inputs in `fixtures/workflow_examples.json` exerc
 
 No researcher study, naturally occurring extraction incident, time-saving measurement or independent reference adjudication has been conducted. The examples must not be described as a lab validation set, and record count must not be presented as independent article count.
 
+Version 0.2 supplies a real input/output integration boundary for untrusted upstream proposals through local UI, HTTP and CLI. The actual proposed text is validated rather than silently rewritten. Tests cover correct bounded insertion/removal, invented wording, unrelated changes, repeated candidates, reordering, unsupported original differences, strict input keys and a receipt binding rejected proposal content. The producer is not authenticated; these controlled inputs are not an independently logged AI run, a learned-model benchmark or a replacement for the future workflow evaluation below. Batch review includes both supplied sequences and normalized change positions. Race regressions cover acknowledgement during pending sample fetch/file read, premature checking and stale responses after input editing.
+
 ## The simple alternative must remain visible
 
 When a complete correct reference is already available, copying that reference reconstructs the desired text directly. BioSURE cannot claim a restoration-accuracy advantage over that alternative in its paragraph workflow. Its potential tool value is the explicit difference review, a restricted apply/abstain policy, batch triage and reproducible decision records. Whether this saves time compared with a normal diff viewer or improves downstream research work is unmeasured.

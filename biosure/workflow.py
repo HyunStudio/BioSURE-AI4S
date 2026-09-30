@@ -124,5 +124,48 @@ def run_workflow(payload: dict) -> dict:
     return {"mode": "declared_reference_paragraph_qc", "adapter_version": "biosure-paragraph-v1",
             "adapter_status": status, "reference_sha256": sha256(reference), "observed_sha256": sha256(observed),
             "review_changes": changes,
+            "reference_paragraphs": reference, "observed_paragraphs": observed,
             "reference_assumption": "User-supplied reference is not authenticated; consistency is not biological correctness.",
             "selected_paragraphs": reference if result["decision"]["action"] == "AUTO_REPAIR" else None, **result}
+
+
+def run_proposal(payload: dict) -> dict:
+    """Validate untrusted upstream text, never replace it with a generated repair.
+
+    Producer identity is deliberately absent: a pasted response is not evidence
+    that any specific model ran. Reference and observations remain locked inputs.
+    """
+    required = {"record_id", "reference_paragraphs", "observed_paragraphs", "proposed_paragraphs"}
+    if not isinstance(payload, dict) or set(payload) != required:
+        raise ValueError("proposal requires record_id, reference_paragraphs, observed_paragraphs and proposed_paragraphs only")
+    proposed = _paragraphs(payload["proposed_paragraphs"])
+    original = run_workflow({key: value for key, value in payload.items() if key != "proposed_paragraphs"})
+    if sum(map(len, proposed + original["reference_paragraphs"] + original["observed_paragraphs"])) > 262144:
+        raise ValueError("combined proposal paragraph text exceeds limit")
+    request = original["request"]
+    if request["candidates"]:
+        reference_blocks = [_block(f"r{i + 1}", text) for i, text in enumerate(original["reference_paragraphs"])]
+        by_hash = {block["text_sha256"]: block for block in reference_blocks}
+        used = Counter()
+        blocks = []
+        for i, text in enumerate(proposed):
+            digest = _digest(text)
+            block = by_hash[digest] if digest in by_hash and not used[digest] else _block(f"p{i + 1}", text)
+            blocks.append(block)
+            used[digest] += 1
+        candidate = request["candidates"][0]
+        request["candidates"] = [{**candidate, "candidate_id": "upstream-proposal",
+            "document": {**candidate["document"], "blocks": blocks}}]
+    checked = decision_payload(parse_request(request))
+    automatic = checked["decision"]["action"] == "AUTO_REPAIR"
+    binding = {"schema_version": "biosure.proposal-receipt/1.0",
+        "reference_sha256": original["reference_sha256"], "observed_sha256": original["observed_sha256"],
+        "proposal_sha256": sha256(proposed), "gate_receipt_sha256": checked["receipt"]["receipt_sha256"],
+        "adapter_version": "biosure-proposal-v1"}
+    return {**original, **checked, "mode": "untrusted_upstream_proposal_qc",
+        "proposal_receipt": {**binding, "receipt_sha256": sha256(binding)},
+        "adapter_status": "PROPOSAL_ACCEPTED" if automatic else "PROPOSAL_REJECTED",
+        "original_adapter_status": original["adapter_status"],
+        "proposed_paragraphs": proposed, "proposal_sha256": sha256(proposed),
+        "producer_assumption": "Pasted proposal origin is not authenticated; no model performance is inferred.",
+        "selected_paragraphs": proposed if automatic else None}

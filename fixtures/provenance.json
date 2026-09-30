@@ -1,6 +1,12 @@
 {
   "asset_groups": [
     {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "tests/test_browser_logic.js",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
       "origin": "project-authored fictional paragraph inputs; no experimental observations or article quotations",
       "pattern": "fixtures/workflow_examples.json",
       "review_status": "approved_for_public_release",

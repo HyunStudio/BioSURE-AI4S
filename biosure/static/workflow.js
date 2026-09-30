@@ -8,6 +8,7 @@ function resetWorkflowResult() {
   workflowElement("download-result").disabled = true;
   workflowElement("run-workflow").disabled = false;
   workflowElement("run-candidate").disabled = false;
+  workflowElement("run-proposal").disabled = false;
   workflowElement("workflow-output").textContent = "";
   workflowElement("workflow-changes").textContent = "";
   workflowElement("workflow-receipt").textContent = "";
@@ -18,7 +19,7 @@ function resetWorkflowResult() {
 
 function clearWorkflow() {
   resetWorkflowResult();
-  for (const id of ["reference-input", "observed-input", "candidate-input"]) workflowElement(id).value = "";
+  for (const id of ["reference-input", "observed-input", "candidate-input", "proposal-input"]) workflowElement(id).value = "";
   workflowElement("reference-ack").checked = false;
 }
 
@@ -52,6 +53,7 @@ async function submitWorkflow(endpoint, body) {
   }
   workflowElement("run-workflow").disabled = true;
   workflowElement("run-candidate").disabled = true;
+  workflowElement("run-proposal").disabled = true;
   workflowElement("workflow-status").textContent = "CHECKING…";
   try {
     const response = await fetch(endpoint, {method: "POST", headers: {"Content-Type": "application/json"}, body});
@@ -77,6 +79,7 @@ async function submitWorkflow(endpoint, body) {
     if (version === workflowVersion) {
       workflowElement("run-workflow").disabled = false;
       workflowElement("run-candidate").disabled = false;
+      workflowElement("run-proposal").disabled = false;
     }
   }
 }
@@ -85,6 +88,13 @@ async function runParagraphCheck() {
   return submitWorkflow("/api/workflow", JSON.stringify({record_id: "local-paragraph-conversion",
     reference_paragraphs: paragraphs(workflowElement("reference-input").value),
     observed_paragraphs: paragraphs(workflowElement("observed-input").value)}));
+}
+
+async function runProposalCheck() {
+  return submitWorkflow("/api/proposal", JSON.stringify({record_id: "local-upstream-proposal",
+    reference_paragraphs: paragraphs(workflowElement("reference-input").value),
+    observed_paragraphs: paragraphs(workflowElement("observed-input").value),
+    proposed_paragraphs: paragraphs(workflowElement("proposal-input").value)}));
 }
 
 function downloadWorkflowResult() {
@@ -100,8 +110,9 @@ function downloadWorkflowResult() {
 
 workflowElement("load-example").addEventListener("click", loadWorkflowExample);
 workflowElement("run-workflow").addEventListener("click", runParagraphCheck);
+workflowElement("run-proposal").addEventListener("click", runProposalCheck);
 workflowElement("clear-workflow").addEventListener("click", clearWorkflow);
 workflowElement("download-result").addEventListener("click", downloadWorkflowResult);
 workflowElement("run-candidate").addEventListener("click", () => submitWorkflow("/api/decide", workflowElement("candidate-input").value));
-for (const id of ["reference-input", "observed-input", "candidate-input"]) workflowElement(id).addEventListener("input", resetWorkflowResult);
+for (const id of ["reference-input", "observed-input", "candidate-input", "proposal-input"]) workflowElement(id).addEventListener("input", resetWorkflowResult);
 workflowElement("reference-ack").addEventListener("change", resetWorkflowResult);

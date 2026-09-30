@@ -11,7 +11,7 @@ from urllib.parse import parse_qs, unquote, urlsplit
 
 from .evaluate import decide_case, score_case, summarize
 from .schema import canonical_bytes, parse_request, loads_json
-from .workflow import decision_payload, run_workflow
+from .workflow import decision_payload, run_workflow, run_proposal
 from .batch import run_batch
 
 
@@ -73,7 +73,7 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                 self.json({"error": "Local same-origin requests only"}, 403)
                 return
             endpoint = urlsplit(self.path).path
-            if endpoint not in {"/api/workflow", "/api/decide", "/api/batch"}:
+            if endpoint not in {"/api/workflow", "/api/proposal", "/api/decide", "/api/batch"}:
                 self.json({"error": "not found"}, 404)
                 return
             if self.headers.get_content_type() != "application/json":
@@ -105,6 +105,8 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                 payload = loads_json(body.decode("utf-8"))
                 if endpoint == "/api/workflow":
                     result = run_workflow(payload)
+                elif endpoint == "/api/proposal":
+                    result = run_proposal(payload)
                 elif endpoint == "/api/batch":
                     result = run_batch(payload)
                 else:
