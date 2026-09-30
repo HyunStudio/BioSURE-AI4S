@@ -8,7 +8,7 @@ Choose **Load example** in the app. Four reference paragraphs describe a fictiti
 
 Unique exact paragraph hashes align surviving text to reference IDs. One internal omission with two surviving reference neighbors or one extra identical paragraph produces a candidate. The unchanged v2 gate checks it. Applied output contains actual normalized text and a replayable receipt, not prose reconstructed from hashes. Changed meaning, reordering, multiple faults, repeated reference content and boundary omissions abstain; identical sequences report `NO_CHANGE` without applying a repair.
 
-Whitespace is collapsed before hashing; whitespace-only differences are intentionally ignored. Inputs must have the same language and exact paragraph content, not translations/paraphrases. PDF/DOCX parsing and biological correctness are out of scope.
+Whitespace is collapsed before hashing; whitespace-only differences are intentionally ignored. Inputs must have the same language and exact paragraph content, not translations/paraphrases. A PDF text-layer importer can supply unverified page chunks for manual cleanup, but it does not establish paragraph boundaries, figure content or faithful document conversion. DOCX parsing and biological correctness are out of scope.
 
 ## Input contract
 

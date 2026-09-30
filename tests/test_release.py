@@ -233,6 +233,21 @@ def test_article_non_ccby_license_blocks_release(tmp_path: Path) -> None:
     assert any("article provenance" in finding for finding in findings)
 
 
+def test_ml_corpus_requires_ccby_license_and_bound_model_result(tmp_path: Path) -> None:
+    root = clean_package(tmp_path)
+    data = json.loads((ROOT / 'fixtures/ml_corpus.json').read_text(encoding='utf-8'))
+    data['articles'][0]['license_uri'] = 'https://creativecommons.org/licenses/by-nc/4.0/'
+    (root / 'fixtures/ml_corpus.json').write_text(json.dumps(data), encoding='utf-8')
+    provenance = root / 'fixtures/provenance.json'
+    rights = json.loads(provenance.read_text(encoding='utf-8'))
+    rights['asset_groups'].append({'pattern':'fixtures/ml_corpus.json','origin':'test article',
+                                   'rights':'test rights','review_status':'approved_for_public_release'})
+    provenance.write_text(json.dumps(rights), encoding='utf-8')
+    findings = audit(root)
+    assert any('ML corpus license' in finding for finding in findings)
+    assert any('incomplete ML bundle' in finding for finding in findings)
+
+
 def test_article_case_without_source_provenance_blocks_release(tmp_path: Path) -> None:
     root = clean_package(tmp_path)
     article_dir = root / "fixtures" / "article_challenge"

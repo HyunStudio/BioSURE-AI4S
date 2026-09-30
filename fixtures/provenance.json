@@ -157,6 +157,18 @@
       "rights": "CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
     },
     {
+      "origin": "24 explicitly CC BY 4.0 PMC JATS articles; full per-record authors, title, DOI, URL, license and excerpt/change notice in corpus and RIGHTS.md",
+      "pattern": "fixtures/ml_corpus.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed paragraph excerpts and constructed-variant source material; no source XML, PDF, images or patient data packaged"
+    },
+    {
+      "origin": "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md",
+      "pattern": "fixtures/ml_model.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-generated model artifact, distributed with CC BY 4.0 training-source attribution and change notice"
+    },
+    {
       "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
       "pattern": "report/*.md",
       "review_status": "approved_for_public_release",

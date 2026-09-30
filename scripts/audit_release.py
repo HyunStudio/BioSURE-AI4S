@@ -10,7 +10,8 @@ from fnmatch import fnmatchcase
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from biosure.schema import parse_document, parse_request
+from biosure.schema import parse_document, parse_request, sha256
+from biosure.ml_review import validate_model
 
 
 REQUIRED = ("README.md", "RIGHTS.md", "LICENSE", "fixtures/provenance.json")
@@ -157,6 +158,60 @@ def _article_metadata(root: Path, files: list[str]) -> list[str]:
     return findings
 
 
+def _ml_metadata(root: Path) -> list[str]:
+    names = ('fixtures/ml_corpus.json', 'fixtures/ml_model.json', 'results/ml_evaluation.json')
+    exists = [(root / name).is_file() for name in names]
+    if not any(exists):
+        return []
+    findings = []
+    if not all(exists):
+        findings.append('incomplete ML bundle')
+    if not exists[0]:
+        return findings
+    try:
+        corpus = json.loads((root / names[0]).read_text(encoding='utf-8'))
+        if corpus.get('schema_version') != 'biosure.ml-corpus/1.0':
+            return findings + ['invalid ML corpus schema']
+        articles = corpus.get('articles')
+        if not isinstance(articles, list) or len(articles) != 24:
+            return findings + ['invalid ML corpus source count']
+        ids = set()
+        for article in articles:
+            pmcid = article.get('pmcid')
+            if not isinstance(pmcid, str) or not re.fullmatch(r'PMC[0-9]+', pmcid) or pmcid in ids:
+                findings.append('invalid ML corpus identity')
+                break
+            ids.add(pmcid)
+            if article.get('license_uri') != 'https://creativecommons.org/licenses/by/4.0/':
+                findings.append('invalid ML corpus license')
+            if article.get('article_url') != f'https://pmc.ncbi.nlm.nih.gov/articles/{pmcid}/':
+                findings.append('invalid ML corpus attribution URL')
+            if not article.get('doi') or not article.get('title') or not article.get('authors'):
+                findings.append('missing ML corpus attribution')
+            paragraphs = article.get('paragraphs')
+            if not isinstance(paragraphs, list) or len(paragraphs) != 8 or any(
+                not isinstance(part, dict) or set(part) != {'locator','text'}
+                or not isinstance(part['text'], str) or not 80 <= len(part['text']) <= 3000
+                for part in paragraphs):
+                findings.append('invalid ML corpus excerpts')
+        if not all(exists):
+            return sorted(set(findings))
+        model = json.loads((root / names[1]).read_text(encoding='utf-8'))
+        result = json.loads((root / names[2]).read_text(encoding='utf-8'))
+        validate_model(model)
+        if result.get('schema_version') != 'biosure.ml-evaluation/1.0' or result.get('model') != model:
+            findings.append('ML result/model mismatch')
+        if result.get('corpus_sha256') != sha256(corpus):
+            findings.append('ML result/corpus mismatch')
+        partitions = result.get('split', {})
+        parts = [partitions.get(key, []) for key in ('train_sources','dev_sources','test_sources')]
+        if [len(part) for part in parts] != [12,6,6] or set(sum(parts, [])) != ids:
+            findings.append('invalid ML source split')
+    except (OSError, UnicodeError, ValueError, TypeError, AttributeError, KeyError, json.JSONDecodeError):
+        findings.append('invalid ML bundle')
+    return sorted(set(findings))
+
+
 def audit(root: Path) -> list[str]:
     root = root.resolve()
     findings: list[str] = []
@@ -200,6 +255,7 @@ def audit(root: Path) -> list[str]:
                     findings.append(f"broken link in {relative}: {target}")
     findings.extend(_rights_metadata(root, files))
     findings.extend(_article_metadata(root, files))
+    findings.extend(_ml_metadata(root))
     stress_cases = {Path(name).name for name in files if name.startswith("fixtures/stress_challenge/")}
     stress_gold = {Path(name).name for name in files if name.startswith("fixtures/stress_gold/")}
     if stress_cases != stress_gold:

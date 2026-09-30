@@ -11,6 +11,7 @@ from .evaluate import decide_case, score_case, summarize
 from .schema import canonical_bytes, loads_json
 from .workflow import run_workflow, run_proposal
 from .batch import run_batch
+from .pdf_extract import MAX_PDF_BYTES, extract_pdf
 
 
 def _write_json(path: Path, value: object) -> None:
@@ -48,6 +49,8 @@ def main(argv: list[str] | None = None) -> int:
     batch = commands.add_parser("batch", help="Triage paragraph records without overwriting inputs")
     batch.add_argument("--input", type=Path, required=True)
     batch.add_argument("--out", type=Path, required=True)
+    pdf = commands.add_parser("pdf-extract", help="Inspect a local PDF text layer; review against original pages")
+    pdf.add_argument("--input", type=Path, required=True)
     commands.add_parser("legacy-demo")
     args = parser.parse_args(argv)
     try:
@@ -67,6 +70,10 @@ def main(argv: list[str] | None = None) -> int:
             with args.out.open("xb") as output:
                 output.write(serialized)
             print(json.dumps(result["summary"], sort_keys=True))
+        elif args.command == "pdf-extract":
+            if args.input.stat().st_size > MAX_PDF_BYTES:
+                raise ValueError("PDF exceeds 16 MiB")
+            print(json.dumps(extract_pdf(args.input.read_bytes()), ensure_ascii=False, sort_keys=True))
         elif args.command == "demo":
             record = decide_case(args.case)
             print(

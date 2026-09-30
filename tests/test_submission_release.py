@@ -23,6 +23,9 @@ def test_offline_verifier_checks_all_frozen_sets_and_literal_text_workflows():
     assert report["sets"]["article"] == {"cases": 9, "sources": 3, "exact": 3, "incorrect": 0, "abstentions": 6}
     assert report["sets"]["stress"] == {"cases": 168, "sources": 12, "exact": 24, "incorrect": 12, "abstentions": 132}
     assert report["workflow_examples"] == {"records": 6, "automatic": 2, "unchanged": 1, "review_required": 3}
+    assert report['ml']['sources'] == {'train': 12, 'dev': 6, 'test': 6}
+    assert report['ml']['learned_correct'] == 284
+    assert report['ml']['best_lexical_correct'] == 284
 
 
 def test_frozen_result_drift_is_failure_not_silent_regeneration(tmp_path):

@@ -125,6 +125,15 @@ async function loadDataset(dataset) {
   }
 }
 
+async function loadModelSummary() {
+  try {
+    const result = await getJSON('/api/ml-summary');
+    byId('ml-summary').textContent = `${result.learned_correct}/${result.queries} intended references found on ${result.sources.test} unseen articles. The learned model ties ${result.baseline} (${result.best_lexical_correct}/${result.queries}); accuracy difference ${result.accuracy_delta.toFixed(3)}. ${result.unit_control_positives} constructed unit-change alerts tested. This is not natural PDF errors or biological validation.`;
+  } catch (error) {
+    byId('ml-summary').textContent = 'Model evaluation unavailable in these fixtures.';
+  }
+}
+
 async function init() {
   byId("dataset-select").addEventListener("change", () => loadDataset(byId("dataset-select").value));
   byId("case-select").addEventListener("change", () => {
@@ -135,6 +144,7 @@ async function init() {
     });
   });
   loadDataset(byId("dataset-select").value || "synthetic");
+  loadModelSummary();
   try {
     const prior = await getJSON("/api/prior");
     byId("prior-card").hidden = false;

@@ -13,6 +13,8 @@ from .evaluate import decide_case, score_case, summarize
 from .schema import canonical_bytes, parse_request, loads_json
 from .workflow import decision_payload, run_workflow, run_proposal
 from .batch import run_batch
+from .pdf_extract import MAX_PDF_BYTES, extract_pdf
+from .ml_review import review_paragraphs, validate_model
 
 
 STATIC = Path(__file__).resolve().parent / "static"
@@ -28,6 +30,25 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
     if host not in {"127.0.0.1", "localhost"}:
         raise ValueError("BioSURE input server must bind to loopback only")
     fixtures = fixtures.resolve()
+    model_path = fixtures / "ml_model.json"
+    model = json.loads(model_path.read_text(encoding="utf-8")) if model_path.is_file() else None
+    if model is not None:
+        validate_model(model)
+    evaluation_path = fixtures.parent / "results" / "ml_evaluation.json"
+    ml_summary = None
+    if evaluation_path.is_file():
+        evaluation = json.loads(evaluation_path.read_text(encoding="utf-8"))
+        split = evaluation["split"]
+        methods = evaluation["held_out"]["correspondence"]
+        comparison = evaluation["held_out"]["learned_minus_best_lexical"]
+        ml_summary = {"sources": {key: len(split[key + "_sources"]) for key in ("train", "dev", "test")},
+                      "queries": methods["learned_logistic"]["queries"],
+                      "learned_correct": methods["learned_logistic"]["correct"],
+                      "best_lexical_correct": methods[comparison["baseline"]]["correct"],
+                      "baseline": comparison["baseline"],
+                      "accuracy_delta": comparison["accuracy_delta"],
+                      "unit_control_positives": evaluation["held_out"]["critical_alerts"]["UNIT_CHANGED"]["tp"],
+                      "scope": "Constructed article-source holdout, not natural PDF-error or clinical validation."}
     datasets = {
         "synthetic": ("challenge", "gold", "Public synthetic challenge",
                       "Project-authored graphs with constructed faults. Two source graphs underlie eight paired cases."),
@@ -73,11 +94,13 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                 self.json({"error": "Local same-origin requests only"}, 403)
                 return
             endpoint = urlsplit(self.path).path
-            if endpoint not in {"/api/workflow", "/api/proposal", "/api/decide", "/api/batch"}:
+            if endpoint not in {"/api/workflow", "/api/proposal", "/api/decide", "/api/batch", "/api/pdf-extract", "/api/ml-review"}:
                 self.json({"error": "not found"}, 404)
                 return
-            if self.headers.get_content_type() != "application/json":
-                self.json({"error": "application/json required"}, 415)
+            pdf_upload = endpoint == "/api/pdf-extract"
+            expected_type = "application/pdf" if pdf_upload else "application/json"
+            if self.headers.get_content_type() != expected_type:
+                self.json({"error": expected_type + " required"}, 415)
                 return
             try:
                 lengths = self.headers.get_all("Content-Length", [])
@@ -87,14 +110,20 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                 length = int(lengths[0])
                 if length < 0:
                     raise ValueError("negative length")
-                if length > 1048576:
-                    self.json({"error": "Input exceeds 1 MiB"}, 413)
+                limit = MAX_PDF_BYTES if pdf_upload else 1048576
+                if length > limit:
+                    self.json({"error": "Input exceeds " + ("16 MiB" if pdf_upload else "1 MiB")}, 413)
                     # Windows can discard the response with a TCP reset if a
                     # normal oversized upload is closed with unread bytes.
                     # Drain only a bounded amount/time; never parse or retain it.
                     self.connection.settimeout(1)
                     try:
-                        self.rfile.read(min(length, 2097152))
+                        remaining = min(length, 32 * 1024 * 1024)
+                        while remaining:
+                            chunk = self.rfile.read(min(remaining, 65536))
+                            if not chunk:
+                                break
+                            remaining -= len(chunk)
                     except OSError:
                         pass
                     return
@@ -102,9 +131,17 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                 body = self.rfile.read(length)
                 if len(body) != length:
                     raise ValueError("incomplete body")
+                if pdf_upload:
+                    self.json(extract_pdf(body))
+                    return
                 payload = loads_json(body.decode("utf-8"))
                 if endpoint == "/api/workflow":
                     result = run_workflow(payload)
+                elif endpoint == "/api/ml-review":
+                    if model is None:
+                        self.json({"error": "Learned model unavailable in these fixtures"}, 503)
+                        return
+                    result = review_paragraphs(payload, model)
                 elif endpoint == "/api/proposal":
                     result = run_proposal(payload)
                 elif endpoint == "/api/batch":
@@ -136,6 +173,12 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                 dataset = selections[0]
                 if path == "/api/examples/batch":
                     self.json(loads_json((fixtures / "workflow_examples.json").read_text(encoding="utf-8")))
+                    return
+                if path == "/api/ml-summary":
+                    if ml_summary is None:
+                        self.json({"error": "Learned evaluation unavailable"}, 404)
+                    else:
+                        self.json(ml_summary)
                     return
                 case_dir, gold_dir, label, note = datasets[dataset]
                 cases, gold = fixtures / case_dir, fixtures / gold_dir

@@ -28,15 +28,18 @@
     <nav class="section-links" aria-label="Workbench sections"><a href="#paragraph-check">Paragraph check</a><a href="#batch-check">Batch review</a><a href="#graph-check">Evidence benchmarks</a></nav>
     <section class="input-workflow" id="paragraph-check" aria-labelledby="input-title">
       <div class="section-heading"><div><p class="eyebrow">Your document / conversion QC</p><h2 id="input-title">Check your converted paragraphs</h2></div><span class="small-note">Reference → bounded edit → receipt</span></div>
-      <p class="pane-intro">Paste a reference you have permission to use and its transformed paragraph sequence. Separate paragraphs with a blank line. Supports one internal missing paragraph or one extra exact duplicate, not translation, PDF parsing, or biological validation.</p>
+      <p class="pane-intro">Paste a reference you have permission to use and its transformed paragraph sequence. Separate paragraphs with a blank line. Supports one internal missing paragraph or one extra exact duplicate, not translation or biological validation. PDF text-layer import is a review aid, not a faithful document conversion.</p>
       <p class="privacy-note">Local in-memory processing; no external inference or server-side input storage. Do not enter patient data. Downloads contain your supplied text. A false reference can produce a false result.</p>
+      <div class="sample-controls"><label for="pdf-file">Import a PDF text layer (16 MiB, 32 pages max)</label><input type="file" id="pdf-file" accept=".pdf,application/pdf"><label for="pdf-target">Place extracted text in</label><select id="pdf-target"><option value="reference">Reference</option><option value="observed">Converted</option></select><button id="import-pdf" type="button">Extract for review</button></div>
+      <p class="privacy-note" id="pdf-status" role="status" aria-live="polite">PDF import does not read text baked into figures. Check the original pages, columns, formulas, tables and every unverified page chunk before acknowledging a reference.</p>
+      <label class="acknowledgement"><input type="checkbox" id="pdf-ack"> If I imported a PDF, I compared the output with its pages and manually corrected the page-text chunks into intended paragraphs.</label>
       <div class="sample-controls"><label for="example-select">Fictitious OoC example</label><select id="example-select"><option value="omission">Missing methods paragraph</option><option value="duplicate">Extra duplicate paragraph</option><option value="substitution">Changed paragraph (unsupported)</option></select><button id="load-example" type="button">Load example</button></div>
       <div class="paragraph-inputs"><div><label for="reference-input">Reference paragraphs</label><textarea id="reference-input" rows="8" spellcheck="false" placeholder="Reference paragraph one&#10;&#10;Reference paragraph two"></textarea></div><div><label for="observed-input">Converted paragraphs</label><textarea id="observed-input" rows="8" spellcheck="false" placeholder="Paste the converted sequence here"></textarea></div></div>
       <label class="acknowledgement"><input type="checkbox" id="reference-ack"> I understand the supplied reference is an assumption, not authenticated evidence.</label>
-      <div class="workflow-actions"><button type="button" id="run-workflow">Check paragraphs</button><button type="button" id="clear-workflow" class="secondary">Clear inputs &amp; result</button><button type="button" id="download-result" class="secondary" disabled>Download result JSON</button></div>
+      <div class="workflow-actions"><button type="button" id="run-workflow">Check paragraphs</button><button type="button" id="run-ml" class="secondary">Learned correspondence review</button><button type="button" id="clear-workflow" class="secondary">Clear inputs &amp; result</button><button type="button" id="download-result" class="secondary" disabled>Download result JSON</button></div>
       <details class="advanced-input" id="proposal-panel"><summary>AI / upstream proposal: validate pasted output</summary><p class="pane-intro">Paste a proposed repaired sequence from your upstream tool or AI assistant. BioSURE checks that actual proposal against the reference and converted inputs above; it never silently replaces the proposal. This local app does not call an AI model or authenticate the producer.</p><label for="proposal-input">Untrusted proposed paragraphs (blank-line separated)</label><textarea id="proposal-input" rows="6" spellcheck="false" placeholder="Paste the proposed repaired sequence"></textarea><button type="button" id="run-proposal">Check upstream proposal</button><p class="fineprint">A supported one-edit match may be applied. Invented wording, unrelated edits and unsupported original differences require manual review. No learned-model accuracy or source truth is inferred.</p></details>
       <details class="advanced-input"><summary>Advanced: inspect your own candidate JSON</summary><label for="candidate-input">Strict decision request (no gold/outcomes)</label><textarea id="candidate-input" rows="5" spellcheck="false" placeholder="Paste a BioSURE decision request JSON"></textarea><button type="button" id="run-candidate">Validate candidate JSON</button><p class="fineprint">Same v2 gate; no text reconstruction from hashes. Maximum 32 candidates, 128 blocks per graph, 256 evidence entries and 1 MiB HTTP body.</p></details>
-      <div class="workflow-result"><div class="decision" id="workflow-status" role="status" aria-live="polite">READY</div><p id="workflow-reason">Load a fictitious example or paste your own paragraphs.</p><h3>Review changes</h3><pre id="workflow-changes"></pre><p class="fineprint">Paragraph positions after whitespace normalization. A difference preview is not semantic approval.</p><h3>Applied output</h3><pre id="workflow-output"></pre><div class="receipt-box"><span>Decision receipt SHA-256</span><code id="workflow-receipt"></code></div></div>
+      <div class="workflow-result"><div class="decision" id="workflow-status" role="status" aria-live="polite">READY</div><p id="workflow-reason">Load a fictitious example or paste your own paragraphs.</p><h3>Review changes</h3><pre id="workflow-changes"></pre><p class="fineprint">Paragraph positions after whitespace normalization. A difference preview is not semantic approval.</p><h3>Learned correspondence (review-only)</h3><pre id="ml-rankings"></pre><p class="fineprint">The trained model ranks likely reference matches and flags numeric, unit or negation differences. These are lexical alerts, not validated scientific meaning; probabilities never authorize repair.</p><h3>Applied output</h3><pre id="workflow-output"></pre><div class="receipt-box"><span>Decision receipt SHA-256</span><code id="workflow-receipt"></code></div></div>
     </section>
     <section class="input-workflow" id="batch-check" aria-labelledby="batch-title">
       <div class="section-heading"><div><p class="eyebrow">Your documents / all-or-nothing triage</p><h2 id="batch-title">Review a paragraph batch</h2></div><span class="small-note">Corrected · unchanged · review</span></div>
@@ -47,7 +50,7 @@
       <label class="acknowledgement"><input type="checkbox" id="batch-ack"> I understand every supplied batch reference is an assumption, not authenticated evidence.</label>
       <div class="workflow-actions"><button type="button" id="run-batch">Check batch</button><button type="button" id="clear-batch" class="secondary">Clear batch &amp; results</button><button type="button" id="download-batch" class="secondary" disabled>Download batch JSON</button></div>
       <div class="workflow-result"><div class="decision" id="batch-status" role="status" aria-live="polite">READY</div><p id="batch-summary">No batch result yet.</p><div id="batch-records"></div></div>
-      <p class="fineprint">The web interface accepts at most 1 MiB of JSON. CLI batches accept up to 8 MiB. Neither corrects semantics, parses PDF/DOCX, translates text or authenticates evidence.</p>
+      <p class="fineprint">The web interface accepts at most 1 MiB of JSON. CLI batches accept up to 8 MiB. PDF text-layer import is separate and review-only. BioSURE neither corrects semantics, parses DOCX, translates text nor authenticates evidence.</p>
     </section>
     <section class="workbench" id="graph-check" aria-labelledby="workbench-title">
       <div class="section-heading"><div><p class="eyebrow">01 / Interactive inspection</p><h2 id="workbench-title">Public synthetic challenge</h2></div><span class="small-note" id="dataset-count">Loading…</span></div>
@@ -78,14 +81,20 @@
       </div>
     </section>
     <section class="results-grid">
+      <article class="result-card" aria-labelledby="model-results-title">
+        <p class="eyebrow">02 / Source-held-out model evidence</p>
+        <h2 id="model-results-title">Learned correspondence, measured honestly</h2>
+        <p id="ml-summary">Loading frozen model evaluation…</p>
+        <p class="fineprint">Constructed paragraph alterations, not naturally occurring PDF defects. The learned ranking cannot approve a repair.</p>
+      </article>
       <article class="result-card" aria-labelledby="public-results-title">
-        <p class="eyebrow">02 / Reproducible in this package</p>
+        <p class="eyebrow">03 / Reproducible in this package</p>
         <h2 id="public-results-title">Public synthetic challenge</h2>
         <p id="public-summary">Loading…</p>
         <p class="fineprint">Constructed and paired examples. Case count is not an independent-article sample or a native-error estimate.</p>
       </article>
       <article class="result-card prior" id="prior-card" aria-labelledby="prior-title" hidden>
-        <p class="eyebrow">03 / Separate prior evidence</p>
+        <p class="eyebrow">04 / Separate prior evidence</p>
         <h2 id="prior-title">DKE prior study</h2>
         <p id="dke-summary">Loading…</p>
         <p class="fineprint">Known injected transformation specifications were available. The 120-case article-level run cannot be re-executed from this public package.</p>

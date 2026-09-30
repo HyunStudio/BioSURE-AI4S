@@ -141,9 +141,17 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/workflow_examples.json" else
                            "CC BY 4.0 PMC JATS article-derived hashes; see fixtures/article_provenance.json and RIGHTS.md"
                            if pattern.startswith("fixtures/article_") else
+                           "24 explicitly CC BY 4.0 PMC JATS articles; full per-record authors, title, DOI, URL, license and excerpt/change notice in corpus and RIGHTS.md"
+                           if pattern == "fixtures/ml_corpus.json" else
+                           "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md"
+                           if pattern == "fixtures/ml_model.json" else
                            "project-authored synthetic or project-owned source; see RIGHTS.md"),
                 "rights": ("CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
                            if pattern.startswith("fixtures/article_") else
+                           "CC BY 4.0 attributed paragraph excerpts and constructed-variant source material; no source XML, PDF, images or patient data packaged"
+                           if pattern == "fixtures/ml_corpus.json" else
+                           "MIT project-generated model artifact, distributed with CC BY 4.0 training-source attribution and change notice"
+                           if pattern == "fixtures/ml_model.json" else
                            "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"),
                 "review_status": "approved_for_public_release",
             }
@@ -155,6 +163,7 @@ def emit(root: Path) -> None:
                 "scripts/*.py", "tests/*.py", "fixtures/provenance.json",
                 "fixtures/challenge/*.json", "fixtures/gold/*.json", "results/*.json",
                 "fixtures/article_challenge/*.json", "fixtures/article_gold/*.json", "fixtures/article_provenance.json",
+                "fixtures/ml_corpus.json", "fixtures/ml_model.json",
                 "report/*.md", "video/*.md",
             )
         ],

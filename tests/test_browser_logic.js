@@ -71,3 +71,62 @@ test('manual review displays both paragraph sequences and the changed position a
   const text = allText(h.get('batch-records'));
   assert.match(text, /source <script>/); assert.match(text, /altered <img>/); assert.match(text, /CHANGED/);
 });
+
+test('PDF import populates only the chosen side and preserves image omission warning', async () => {
+  const h = harness('workflow.js'); let endpoint;
+  const file = {size: 100, type: 'application/pdf'};
+  h.get('pdf-file').files = [file];
+  h.get('pdf-target').value = 'reference';
+  h.get('observed-input').value = 'Converted text';
+  h.get('reference-ack').checked = true;
+  h.context.fetch = async (url, options) => {
+    endpoint = url; assert.equal(options.body, file);
+    return {ok: true, json: async () => ({paragraphs: [{text:'A'},{text:'B'}],
+      pages: 2, image_count: 3, warnings:['IMAGE_TEXT_NOT_EXTRACTED','TEXT_SPACING_ARTIFACTS'], review_required:true})};
+  };
+  await h.call('importPdf');
+  assert.equal(endpoint, '/api/pdf-extract');
+  assert.equal(h.get('reference-input').value, 'A\n\nB');
+  assert.equal(h.get('observed-input').value, 'Converted text');
+  assert.equal(h.get('reference-ack').checked, false);
+  assert.match(h.get('pdf-status').textContent, /3 image/);
+  assert.match(h.get('pdf-status').textContent, /not extracted/);
+  assert.match(h.get('pdf-status').textContent, /Broken letter spacing/);
+  h.get('reference-ack').checked = true;
+  h.context.fetch = async () => {throw new Error('workflow must not submit before PDF review');};
+  await h.call('runParagraphCheck');
+  assert.match(h.get('workflow-reason').textContent, /acknowledge PDF review/);
+});
+
+test('learned review displays lexical alerts without claiming automatic approval', async () => {
+  const h = harness('workflow.js'); let endpoint;
+  h.get('reference-input').value = 'Dose 5 mg.\n\nNo increase.';
+  h.get('observed-input').value = 'Dose 6 mg.\n\nNo increase.';
+  h.get('reference-ack').checked = true;
+  h.context.fetch = async (url) => {
+    endpoint = url;
+    return {ok:true, json:async () => ({decision:{action:'ABSTAIN',reason_codes:['UNSUPPORTED']},
+      mode:'learned_correspondence_review', adapter_status:'UNSUPPORTED_DIFFERENCE',
+      selected_paragraphs:null, receipt:{receipt_sha256:'abc'}, review_changes:[],
+      correspondences:[{observed_index:0,reference_index:0,probability:0.93,
+        flags:['NUMBER_CHANGED'], ambiguous:false}]})};
+  };
+  await h.call('runLearnedReview');
+  assert.equal(endpoint, '/api/ml-review');
+  assert.match(h.get('ml-rankings').textContent, /NUMBER_CHANGED/);
+  assert.match(h.get('workflow-status').textContent, /NO AUTOMATIC CHANGE/);
+});
+
+test('model evidence card reports the held-out lexical tie plainly', async () => {
+  const h = harness('app.js');
+  h.context.fetch = async url => {
+    assert.equal(url, '/api/ml-summary');
+    return {ok:true, json:async () => ({sources:{train:12,dev:6,test:6},queries:284,
+      learned_correct:284,best_lexical_correct:284,baseline:'token_dice',
+      accuracy_delta:0,unit_control_positives:8})};
+  };
+  await h.call('loadModelSummary');
+  assert.match(h.get('ml-summary').textContent, /284\/284/);
+  assert.match(h.get('ml-summary').textContent, /ties/);
+  assert.match(h.get('ml-summary').textContent, /not natural PDF errors/);
+});

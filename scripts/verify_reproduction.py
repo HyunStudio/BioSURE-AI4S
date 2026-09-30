@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from biosure.batch import run_batch
 from biosure.evaluate import decide_case, score_case, summarize
 from biosure.schema import loads_json
+from scripts.evaluate_ml import evaluate
 
 
 def verify(root: Path) -> dict:
@@ -47,7 +48,22 @@ def verify(root: Path) -> dict:
             raise ValueError("workflow normalized output mismatch")
         if wanted[0] != "AUTO_REPAIR" and result["selected_paragraphs"] is not None:
             raise ValueError("workflow unexpected applied output")
+    corpus = loads_json((root / 'fixtures/ml_corpus.json').read_text(encoding='utf-8'))
+    replay = evaluate(corpus)
+    if replay != loads_json((root / 'results/ml_evaluation.json').read_text(encoding='utf-8')):
+        raise ValueError('ML frozen evaluation mismatch')
+    if replay['model'] != loads_json((root / 'fixtures/ml_model.json').read_text(encoding='utf-8')):
+        raise ValueError('ML frozen model mismatch')
+    correspondence = replay['held_out']['correspondence']
+    best = replay['held_out']['learned_minus_best_lexical']['baseline']
+    ml = {'sources': {'train': len(replay['split']['train_sources']),
+                      'dev': len(replay['split']['dev_sources']),
+                      'test': len(replay['split']['test_sources'])},
+          'learned_correct': correspondence['learned_logistic']['correct'],
+          'best_lexical_correct': correspondence[best]['correct'],
+          'scope': 'Constructed alterations on unseen CC BY 4.0 article sources; no natural-error superiority claim.'}
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
+            'ml': ml,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 
