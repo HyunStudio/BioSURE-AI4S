@@ -43,7 +43,9 @@ def test_pdf_upload_returns_provenance_for_review_without_persisting_bytes(servi
 
 
 def test_pdf_upload_rejects_cross_origin(service):
-    request = urllib.request.Request(service + '/api/pdf-extract', data=pdf_data(),
+    # Origin is rejected before body parsing. An unread POST body can cause a
+    # Windows TCP reset that obscures the intended HTTP 403 in this test.
+    request = urllib.request.Request(service + '/api/pdf-extract', data=b'',
                                      headers={'Content-Type': 'application/pdf', 'Origin': 'https://evil.example'})
     with pytest.raises(urllib.error.HTTPError) as caught:
         urllib.request.urlopen(request, timeout=5)
