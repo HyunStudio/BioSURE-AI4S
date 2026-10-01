@@ -6,7 +6,14 @@ authenticates the reference or estimates natural-error prevalence.
 
 from __future__ import annotations
 
+import hashlib
+import io
+
+from pypdf import PdfReader
+from pypdf.errors import PdfReadError
+
 from .ml_review import review_paragraphs
+from .pdf_extract import _normalise_lines
 from .schema import sha256
 from .workflow import run_workflow
 
@@ -48,17 +55,16 @@ def decide_inputs(inputs: dict, model: dict) -> dict:
                                         "output_paragraphs": workflow["reference_paragraphs"]},
                         "diff_review": {"action": "REVIEW" if changed else "NO_CHANGE",
                                         "changed_spans": workflow["review_changes"]},
-                        "learned_review": {"action": "REVIEW" if changed else "NO_CHANGE",
-                                           "correspondences": learned["correspondences"],
+                        "learned_review": {"correspondences": learned["correspondences"],
                                            "selected_paragraphs": None}})
-    output = {"schema_version": "biosure.native-pilot-decisions/1.0",
+    output = {"schema_version": "biosure.native-pilot-decisions/1.1",
               "source_id": source["id"], "input_sha256": sha256(inputs), "cases": results,
               "scope": "Selected one-source native PDF extraction pilot; declared reference is unauthenticated."}
     return {**output, "decision_sha256": sha256(output)}
 
 
 def score_decisions(decisions: dict, gold: dict) -> dict:
-    if not isinstance(decisions, dict) or decisions.get("schema_version") != "biosure.native-pilot-decisions/1.0":
+    if not isinstance(decisions, dict) or decisions.get("schema_version") != "biosure.native-pilot-decisions/1.1":
         raise ValueError("invalid pilot decisions")
     if not isinstance(gold, dict) or gold.get("schema_version") != "biosure.native-pilot-gold/1.0":
         raise ValueError("invalid pilot gold")
@@ -70,13 +76,15 @@ def score_decisions(decisions: dict, gold: dict) -> dict:
     cases, answers = decisions.get("cases"), gold.get("cases")
     if not isinstance(cases, list) or not isinstance(answers, list) or [x.get("case_id") for x in cases] != [x.get("case_id") for x in answers]:
         raise ValueError("pilot case IDs mismatch")
-    out = {"schema_version": "biosure.native-pilot-results/1.0", "input_sha256": decisions["input_sha256"],
+    out = {"schema_version": "biosure.native-pilot-results/1.1", "input_sha256": decisions["input_sha256"],
            "sources": 1, "cases": len(cases),
            "native_error_cases": sum(x["condition"] == "native_extraction_error" for x in cases),
            "biosure": {"exact_auto": 0, "incorrect_auto": 0, "abstentions": 0, "manual_review_records": 0},
            "direct_copy": {"exact_auto": 0, "incorrect_auto": 0, "abstentions": 0},
            "diff_review": {"manual_review_records": 0},
-           "learned_review": {"manual_review_records": 0}, "case_results": []}
+           "learned_review": {"native_error_cases_with_lexical_alerts": 0,
+                              "native_error_cases_below_match_threshold": 0,
+                              "automatic_repairs": 0}, "case_results": []}
     for item, answer in zip(cases, answers):
         expected = answer.get("gold_paragraphs")
         if not isinstance(expected, list) or not expected or any(not isinstance(text, str) or not text for text in expected):
@@ -92,10 +100,55 @@ def score_decisions(decisions: dict, gold: dict) -> dict:
         copy = item["direct_copy"]
         copy_key = "exact_auto" if copy["output_paragraphs"] == expected else "incorrect_auto"
         out["direct_copy"][copy_key] += 1
-        for name in ("diff_review", "learned_review"):
-            if item[name]["action"] == "REVIEW":
-                out[name]["manual_review_records"] += 1
+        if item["diff_review"]["action"] == "REVIEW":
+            out["diff_review"]["manual_review_records"] += 1
+        learned = item["learned_review"]
+        if learned["selected_paragraphs"] is not None:
+            out["learned_review"]["automatic_repairs"] += 1
+        if item["condition"] == "native_extraction_error":
+            if any(match["flags"] for match in learned["correspondences"]):
+                out["learned_review"]["native_error_cases_with_lexical_alerts"] += 1
+            if any(not match["above_threshold"] for match in learned["correspondences"]):
+                out["learned_review"]["native_error_cases_below_match_threshold"] += 1
         out["case_results"].append({"case_id": item["case_id"], "condition": item["condition"],
                                     "biosure_action": bio["action"], "direct_copy_exact": copy_key == "exact_auto",
                                     "diff_changed_spans": len(item["diff_review"]["changed_spans"])})
     return out
+
+
+def verify_native_pdf_source(pdf_bytes: bytes, inputs: dict) -> dict:
+    """Confirm frozen observed text comes from the stated PDF text layer.
+
+    This checks source identity and pypdf observations, never visual gold.
+    The public full PDF has a repository cover before article page one.
+    """
+    if not isinstance(pdf_bytes, bytes) or not pdf_bytes.startswith(b"%PDF-"):
+        raise ValueError("a PDF byte stream is required")
+    source = inputs.get("source") if isinstance(inputs, dict) else None
+    if not isinstance(source, dict):
+        raise ValueError("pilot source metadata is required")
+    digest = hashlib.sha256(pdf_bytes).hexdigest()
+    if digest == source.get("full_pdf_sha256"):
+        source_format, article_index = "full_pdf_with_cover", 1
+    elif digest == source.get("pdf_excerpt_sha256"):
+        source_format, article_index = "two_page_excerpt", 0
+    else:
+        raise ValueError("source PDF SHA-256 does not match frozen source")
+    try:
+        reader = PdfReader(io.BytesIO(pdf_bytes), strict=True)
+        if reader.is_encrypted or len(reader.pages) <= article_index:
+            raise ValueError("source PDF article page is unavailable")
+        page_text, _ = _normalise_lines(reader.pages[article_index].extract_text(extraction_mode="plain") or "")
+    except (PdfReadError, KeyError, TypeError, RecursionError) as error:
+        raise ValueError("source PDF text layer could not be read") from error
+    cases = inputs.get("cases")
+    if not isinstance(cases, list) or not cases:
+        raise ValueError("pilot cases are required")
+    for case in cases:
+        observed = case.get("observed_paragraphs") if isinstance(case, dict) else None
+        if not isinstance(observed, list) or len(observed) != 1 or not isinstance(observed[0], str) or not observed[0]:
+            raise ValueError("source verification requires one nonempty observed text unit per case")
+        if observed[0] not in page_text:
+            raise ValueError("observed text not found on source article page: " + str(case.get("case_id")))
+    return {"source_format": source_format, "source_sha256": digest,
+            "article_page": article_index + 1, "observed_cases_verified": len(cases), "gold_verified": False}

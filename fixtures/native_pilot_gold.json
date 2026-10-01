@@ -1,6 +1,6 @@
 {
   "schema_version": "biosure.native-pilot-gold/1.0",
-  "input_sha256": "a54c71991ccd0b28cabebb40964f8835d27432c09a66a95303e38bac8fd268cd",
+  "input_sha256": "f30b6a5f0774a0cba3a3e644b4ad7134baae19d48a8de7f557d26292b777d23a",
   "adjudication": "Single-agent transcription checked against rendered PDF pages and official JATS on 2026-10-01. Not blinded human or domain-expert adjudication; reference and gold come from the same article.",
   "cases": [
     {

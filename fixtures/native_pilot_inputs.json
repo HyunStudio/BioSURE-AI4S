@@ -6,9 +6,12 @@
     "doi": "10.1038/s41467-025-65317-7",
     "pmcid": "PMC12645051",
     "article_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12645051/",
+    "full_pdf_source_url": "https://escholarship.org/content/qt8cc3z8ph/qt8cc3z8ph.pdf",
     "jats_url": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:12645051&metadataPrefix=pmc",
     "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+    "full_pdf_sha256": "9fc60bd279d1ff93473981db0855ec9715442823acda2d1299ed210364093d15",
     "pdf_excerpt_sha256": "6353c3906d9be257e97cc15e19993bb7cc8aea89b3155d69097af78009ef3eca",
+    "pdf_page_mapping": "The public full PDF has an eScholarship cover page; article page 1 is PDF page 2. The two-page excerpt starts at article page 1.",
     "extractor": "pypdf 6.16.2 plain text, NFKC and line/dehyphenation normalization",
     "selection": "Post-hoc selected contiguous title, complete abstract, and first body paragraph through 'different preparations.' from page 1; one article and two native extraction-error records, not a random sample."
   },
