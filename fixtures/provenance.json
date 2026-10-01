@@ -175,6 +175,18 @@
       "rights": "CC BY 4.0 attributed short excerpts; not independent expert adjudication"
     },
     {
+      "origin": "Short modified first-page title/abstract text-layer excerpts from Skardal et al. DOI 10.1038/s41598-017-08879-x and Rogal et al. DOI 10.1038/s41598-020-63710-4; CC BY 4.0 attribution and change notice in report/public-rights.md",
+      "pattern": "fixtures/ooc_pdf_*_inputs.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed short excerpts; no publisher PDF, figures or full article packaged"
+    },
+    {
+      "origin": "Single-agent visually checked publisher HTML/rendered-PDF title/abstract transcription of the two credited OoC articles; see report/public-rights.md",
+      "pattern": "fixtures/ooc_pdf_*_gold.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed short excerpts; not independent expert adjudication"
+    },
+    {
       "origin": "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md",
       "pattern": "fixtures/ml_model.json",
       "review_status": "approved_for_public_release",

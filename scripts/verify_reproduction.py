@@ -77,8 +77,33 @@ def verify(root: Path) -> dict:
              'biosure_incorrect_auto': pilot_result['biosure']['incorrect_auto'],
              'copy_exact_auto': pilot_result['direct_copy']['exact_auto'],
              'copy_incorrect_auto': pilot_result['direct_copy']['incorrect_auto']}
+    ooc_pdf_audit = {'sources': 0, 'attempted_units': 0, 'native_error_units': 0,
+                     'biosure_exact_auto': 0, 'biosure_incorrect_auto': 0,
+                     'biosure_abstentions': 0, 'copy_exact_auto': 0,
+                     'diff_review_records': 0, 'learned_lexical_alert_records': 0}
+    for pmcid in ('PMC5562747', 'PMC7170869'):
+        inputs = loads_json((root / f'fixtures/ooc_pdf_{pmcid}_inputs.json').read_text(encoding='utf-8'))
+        decisions = decide_inputs(inputs, replay['model'])
+        gold = loads_json((root / f'fixtures/ooc_pdf_{pmcid}_gold.json').read_text(encoding='utf-8'))
+        result = score_decisions(decisions, gold)
+        if result != loads_json((root / f'results/ooc_pdf_{pmcid}.json').read_text(encoding='utf-8')):
+            raise ValueError(pmcid + ' OoC PDF audit frozen result mismatch')
+        ooc_pdf_audit['sources'] += result['sources']
+        ooc_pdf_audit['attempted_units'] += result['cases']
+        ooc_pdf_audit['native_error_units'] += result['native_error_cases']
+        ooc_pdf_audit['biosure_exact_auto'] += result['biosure']['exact_auto']
+        ooc_pdf_audit['biosure_incorrect_auto'] += result['biosure']['incorrect_auto']
+        ooc_pdf_audit['biosure_abstentions'] += result['biosure']['abstentions']
+        ooc_pdf_audit['copy_exact_auto'] += result['direct_copy']['exact_auto']
+        ooc_pdf_audit['diff_review_records'] += result['diff_review']['manual_review_records']
+        ooc_pdf_audit['learned_lexical_alert_records'] += result['learned_review']['native_error_cases_with_lexical_alerts']
+    if ooc_pdf_audit != {'sources': 2, 'attempted_units': 4, 'native_error_units': 4,
+                         'biosure_exact_auto': 0, 'biosure_incorrect_auto': 0,
+                         'biosure_abstentions': 4, 'copy_exact_auto': 4,
+                         'diff_review_records': 4, 'learned_lexical_alert_records': 0}:
+        raise ValueError('OoC PDF audit expected counts mismatch')
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
-            'ml': ml, 'native_pilot': pilot,
+            'ml': ml, 'native_pilot': pilot, 'ooc_pdf_audit': ooc_pdf_audit,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 

@@ -1,0 +1,17 @@
+{
+  "schema_version": "biosure.native-pilot-gold/1.0",
+  "input_sha256": "2f657ec2993592628fa1a629c0895b30232307d2adc89b5118e19b922f173311",
+  "adjudication": "One development agent compared publisher HTML title/abstract against rendered publisher PDF page 1 on 2026-10-01. Gold is the article's own declared text, not independent scientific truth or expert adjudication.",
+  "cases": [
+    {
+      "case_id": "PMC7170869-title",
+      "gold_paragraphs": ["WAT-on-a-chip integrating human mature white adipocytes for mechanistic research and pharmaceutical applications"],
+      "defect_note": "The extracted title uses lower-case t in WAT although the rendered title and publisher HTML use uppercase T."
+    },
+    {
+      "case_id": "PMC7170869-abstract",
+      "gold_paragraphs": ["Obesity and its numerous adverse health consequences have taken on global, pandemic proportions. White adipose tissue (WAT) – a key contributor in many metabolic diseases – contributes about one fourth of a healthy human’s body mass. Despite its significance, many WAT-related pathophysiogical mechanisms in humans are still not understood, largely due to the reliance on non-human animal models. In recent years, Organ-on-a-chip (OoC) platforms have developed into promising alternatives for animal models; these systems integrate engineered human tissues into physiological microenvironment supplied by a vasculature-like microfluidic perfusion. Here, we report the development of a novel OoC that integrates functional mature human white adipocytes. The WAT-on-a-chip is a multilayer device that features tissue chambers tailored specifically for the maintenance of 3D tissues based on human primary adipocytes, with supporting nourishment provided through perfused media channels. The platform’s capability to maintain long-term viability and functionality of white adipocytes was confirmed by real-time monitoring of fatty acid uptake, by quantification of metabolite release into the effluent media as well as by an intact responsiveness to a therapeutic compound. The novel system provides a promising tool for wide-ranging applications in mechanistic research of WAT-related biology, in studying of pathophysiological mechanisms in obesity and diabetes, and in R&D of pharmaceutical industry."],
+      "defect_note": "The text layer changes WAT to WAt twice and joins WAT-on-a-chip and WAT-related across line breaks."
+    }
+  ]
+}

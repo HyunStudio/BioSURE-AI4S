@@ -73,7 +73,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "pdf-extract":
             if args.input.stat().st_size > MAX_PDF_BYTES:
                 raise ValueError("PDF exceeds 16 MiB")
-            print(json.dumps(extract_pdf(args.input.read_bytes()), ensure_ascii=False, sort_keys=True))
+            print(json.dumps(extract_pdf(args.input.read_bytes()), sort_keys=True))
         elif args.command == "demo":
             record = decide_case(args.case)
             print(

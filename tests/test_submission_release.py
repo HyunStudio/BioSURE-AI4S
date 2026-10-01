@@ -26,6 +26,12 @@ def test_offline_verifier_checks_all_frozen_sets_and_literal_text_workflows():
     assert report['ml']['sources'] == {'train': 12, 'dev': 6, 'test': 6}
     assert report['ml']['learned_correct'] == 284
     assert report['ml']['best_lexical_correct'] == 284
+    assert report['ooc_pdf_audit'] == {
+        'sources': 2, 'attempted_units': 4, 'native_error_units': 4,
+        'biosure_exact_auto': 0, 'biosure_incorrect_auto': 0,
+        'biosure_abstentions': 4, 'copy_exact_auto': 4,
+        'diff_review_records': 4, 'learned_lexical_alert_records': 0,
+    }
 
 
 def test_frozen_result_drift_is_failure_not_silent_regeneration(tmp_path):

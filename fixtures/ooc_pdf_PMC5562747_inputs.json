@@ -1,0 +1,38 @@
+{
+  "schema_version": "biosure.native-pilot-inputs/1.0",
+  "source": {
+    "id": "PMC5562747-publisher-pdf-page1",
+    "title": "Multi-tissue interactions in an integrated three-tissue organ-on-a-chip platform",
+    "authors": "Aleksander Skardal et al.",
+    "doi": "10.1038/s41598-017-08879-x",
+    "pmcid": "PMC5562747",
+    "article_url": "https://www.nature.com/articles/s41598-017-08879-x",
+    "full_pdf_source_url": "https://www.nature.com/articles/s41598-017-08879-x.pdf",
+    "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+    "full_pdf_sha256": "77e716a43879dc324896844b4473dda0984e82554466526bee15833241f903a0",
+    "extractor": "pypdf 6.16.2 plain text, then project _normalise_lines (NFKC, line-end dehyphenation, whitespace)",
+    "selection": "Title and complete abstract on publisher PDF page 1, fixed in 2026-10-01 protocol before PDF text inspection; both retained despite observed errors.",
+    "page1_unit_anchors": {
+      "title_start": "Multi-tissue interactions",
+      "title_end": " Aleksander Skardal",
+      "abstract_start": "Many drugs have progressed",
+      "abstract_end": " The total cost"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "PMC5562747-title",
+      "source_locator": "Publisher PDF article page 1 full title",
+      "condition": "native_extraction_error",
+      "reference_paragraphs": ["Multi-tissue interactions in an integrated three-tissue organ-on-a-chip platform"],
+      "observed_paragraphs": ["Multi-tissue interactions in an integrated three-tissue organ-on-achip platform"]
+    },
+    {
+      "case_id": "PMC5562747-abstract",
+      "source_locator": "Publisher PDF article page 1 full abstract",
+      "condition": "native_extraction_error",
+      "reference_paragraphs": ["Many drugs have progressed through preclinical and clinical trials and have been available – for years in some cases – before being recalled by the FDA for unanticipated toxicity in humans. One reason for such poor translation from drug candidate to successful use is a lack of model systems that accurately recapitulate normal tissue function of human organs and their response to drug compounds. Moreover, tissues in the body do not exist in isolation, but reside in a highly integrated and dynamically interactive environment, in which actions in one tissue can affect other downstream tissues. Few engineered model systems, including the growing variety of organoid and organ-on-a-chip platforms, have so far reflected the interactive nature of the human body. To address this challenge, we have developed an assortment of bioengineered tissue organoids and tissue constructs that are integrated in a closed circulatory perfusion system, facilitating inter-organ responses. We describe a three-tissue organ-on-a-chip system, comprised of liver, heart, and lung, and highlight examples of inter-organ responses to drug administration. We observe drug responses that depend on inter-tissue interaction, illustrating the value of multiple tissue integration for in vitro study of both the efficacy of and side effects associated with candidate drugs."],
+      "observed_paragraphs": ["Many drugs have progressed through preclinical and clinical trials and have been available – for years in some cases – before being recalled by the FDA for unanticipated toxicity in humans. One reason for such poor translation from drug candidate to successful use is a lack of model systems that accurately recapitulate normal tissue function of human organs and their response to drug compounds. Moreover, tissues in the body do not exist in isolation, but reside in a highly integrated and dynamically interactive environment, in which actions in one tissue can affect other downstream tissues. Few engineered model systems, including the growing variety of organoid and organ-on-a-chip platforms, have so far reflected the interactive nature of the human body. To address this challenge, we have developed an assortment of bioengineered tissue organoids and tissue constructs that are integrated in a closed circulatory perfusion system, facilitating inter-organ responses. We describe a three-tissue organ-ona-chip system, comprised of liver, heart, and lung, and highlight examples of inter-organ responses to drug administration. We observe drug responses that depend on inter-tissue interaction, illustrating the value of multiple tissue integration for in vitro study of both the efficacy of and side effects associated with candidate drugs."]
+    }
+  ]
+}

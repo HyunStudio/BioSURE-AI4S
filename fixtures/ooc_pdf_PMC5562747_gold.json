@@ -1,0 +1,17 @@
+{
+  "schema_version": "biosure.native-pilot-gold/1.0",
+  "input_sha256": "f0994c3068f5a8b7721c8ef3557e29612d72b6cefa8952604a5767481b334de5",
+  "adjudication": "One development agent compared publisher HTML title/abstract against rendered publisher PDF page 1 on 2026-10-01. Gold is the article's own declared text, not independent scientific truth or expert adjudication.",
+  "cases": [
+    {
+      "case_id": "PMC5562747-title",
+      "gold_paragraphs": ["Multi-tissue interactions in an integrated three-tissue organ-on-a-chip platform"],
+      "defect_note": "The extracted title joins the line-wrapped organ-on-a-chip as organ-on-achip."
+    },
+    {
+      "case_id": "PMC5562747-abstract",
+      "gold_paragraphs": ["Many drugs have progressed through preclinical and clinical trials and have been available – for years in some cases – before being recalled by the FDA for unanticipated toxicity in humans. One reason for such poor translation from drug candidate to successful use is a lack of model systems that accurately recapitulate normal tissue function of human organs and their response to drug compounds. Moreover, tissues in the body do not exist in isolation, but reside in a highly integrated and dynamically interactive environment, in which actions in one tissue can affect other downstream tissues. Few engineered model systems, including the growing variety of organoid and organ-on-a-chip platforms, have so far reflected the interactive nature of the human body. To address this challenge, we have developed an assortment of bioengineered tissue organoids and tissue constructs that are integrated in a closed circulatory perfusion system, facilitating inter-organ responses. We describe a three-tissue organ-on-a-chip system, comprised of liver, heart, and lung, and highlight examples of inter-organ responses to drug administration. We observe drug responses that depend on inter-tissue interaction, illustrating the value of multiple tissue integration for in vitro study of both the efficacy of and side effects associated with candidate drugs."],
+      "defect_note": "The extracted abstract joins line-wrapped organ-on-a-chip as organ-ona-chip."
+    }
+  ]
+}

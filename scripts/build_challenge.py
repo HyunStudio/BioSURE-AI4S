@@ -147,6 +147,10 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/native_pilot_inputs.json" else
                            "Single-agent visually checked short transcription of Tward et al., DOI 10.1038/s41467-025-65317-7; CC BY 4.0 attribution and change notice in report/public-rights.md"
                            if pattern == "fixtures/native_pilot_gold.json" else
+                           "Short modified first-page title/abstract text-layer excerpts from Skardal et al. DOI 10.1038/s41598-017-08879-x and Rogal et al. DOI 10.1038/s41598-020-63710-4; CC BY 4.0 attribution and change notice in report/public-rights.md"
+                           if pattern == "fixtures/ooc_pdf_*_inputs.json" else
+                           "Single-agent visually checked publisher HTML/rendered-PDF title/abstract transcription of the two credited OoC articles; see report/public-rights.md"
+                           if pattern == "fixtures/ooc_pdf_*_gold.json" else
                            "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md"
                            if pattern == "fixtures/ml_model.json" else
                            "project-authored synthetic or project-owned source; see RIGHTS.md"),
@@ -158,6 +162,10 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/native_pilot_inputs.json" else
                            "CC BY 4.0 attributed short excerpts; not independent expert adjudication"
                            if pattern == "fixtures/native_pilot_gold.json" else
+                           "CC BY 4.0 attributed short excerpts; no publisher PDF, figures or full article packaged"
+                           if pattern == "fixtures/ooc_pdf_*_inputs.json" else
+                           "CC BY 4.0 attributed short excerpts; not independent expert adjudication"
+                           if pattern == "fixtures/ooc_pdf_*_gold.json" else
                            "MIT project-generated model artifact, distributed with CC BY 4.0 training-source attribution and change notice"
                            if pattern == "fixtures/ml_model.json" else
                            "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"),
@@ -171,7 +179,8 @@ def emit(root: Path) -> None:
                 "scripts/*.py", "tests/*.py", "fixtures/provenance.json",
                 "fixtures/challenge/*.json", "fixtures/gold/*.json", "results/*.json",
                 "fixtures/article_challenge/*.json", "fixtures/article_gold/*.json", "fixtures/article_provenance.json",
-                "fixtures/ml_corpus.json", "fixtures/native_pilot_inputs.json", "fixtures/native_pilot_gold.json", "fixtures/ml_model.json",
+                "fixtures/ml_corpus.json", "fixtures/native_pilot_inputs.json", "fixtures/native_pilot_gold.json",
+                "fixtures/ooc_pdf_*_inputs.json", "fixtures/ooc_pdf_*_gold.json", "fixtures/ml_model.json",
                 "report/*.md", "video/*.md",
             )
         ],
