@@ -34,3 +34,17 @@ structural probe; no source was replaced based on its PDF quality.
 The exact input/gold files and result JSON are in `fixtures/ooc_pdf_*` and
 `results/ooc_pdf_*`. Reproduction and optional source-byte verification
 commands are in the public README and evidence scorecard.
+
+## Corrective reanalysis (v0.3.4)
+
+Step 3 above records the original protocol and is left intact as history.
+Post-release review found that its line-end dehyphenation removed genuine
+hyphens in `organ-on-a-chip`, creating both 2017 differences. The importer now
+preserves every line-end hyphen and warns the user to resolve optional hyphens
+against the page. The same two publisher PDF hashes, pages, title/abstract
+selection, anchors and visual gold were retained. Only observed import text,
+condition labels, input digests and derived results were recalculated. Under
+this corrected pipeline the 2017 title and abstract are controls; the 2020
+title and abstract remain pypdf text-layer errors. This is a correction of
+measurement provenance, not an independent new sample or a favorable
+post-hoc selection. The v0.3.3 tag preserves the erroneous original release.

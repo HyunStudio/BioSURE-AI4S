@@ -7,6 +7,7 @@ import pytest
 from biosure.native_pilot import decide_inputs, score_decisions
 from biosure.ooc_pdf_audit import extract_frozen_units, verify_frozen_pdf
 from biosure.schema import loads_json
+from scripts.verify_reproduction import verify
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,7 +24,12 @@ def test_frozen_ooc_decisions_replay_without_pdf_or_gold(pmcid):
     ]
     decisions = decide_inputs(inputs, model)
     assert score_decisions(decisions, gold) == frozen
-    assert frozen["cases"] == frozen["native_error_cases"] == 2
+    assert frozen["cases"] == 2
+    assert frozen["native_error_cases"] == {"PMC5562747": 0, "PMC7170869": 2}[pmcid]
+    assert [case["condition"] for case in inputs["cases"]] == (
+        ["control", "control"] if pmcid == "PMC5562747" else
+        ["native_extraction_error", "native_extraction_error"]
+    )
     assert frozen["biosure"]["incorrect_auto"] == 0
 
 
@@ -43,3 +49,13 @@ def test_pdf_verification_rejects_wrong_bytes():
     inputs = loads_json((ROOT / "fixtures/ooc_pdf_PMC5562747_inputs.json").read_text(encoding="utf-8"))
     with pytest.raises(ValueError, match="SHA-256"):
         verify_frozen_pdf(b"%PDF-fake", inputs)
+
+
+def test_offline_reproduction_separates_controls_from_pdf_errors():
+    measured = verify(ROOT)["ooc_pdf_audit"]
+    assert measured == {
+        "sources": 2, "attempted_units": 4, "native_error_units": 2,
+        "biosure_exact_auto": 0, "biosure_incorrect_auto": 0,
+        "biosure_abstentions": 4, "copy_exact_auto": 4,
+        "diff_review_records": 2, "learned_lexical_alert_records": 0,
+    }

@@ -79,7 +79,9 @@ async function importPdf() {
       ? ' A page had no text layer; OCR/manual transcription is required.' : '';
     const spacing = data.warnings.includes('TEXT_SPACING_ARTIFACTS')
       ? ' Broken letter spacing was detected; manual retranscription may be needed.' : '';
-    status.textContent = `Extracted ${data.paragraphs.length} unverified page-text chunk(s) from ${data.pages} page(s) into ${target}. These are NOT paragraph boundaries. Compare reading order against each page, then split/correct text manually before checking.${warning}${noText}${spacing}`;
+    const hyphen = data.warnings.includes('LINE_END_HYPHEN_REQUIRES_REVIEW')
+      ? ' Line-end hyphens were preserved; review each hyphen against the original page before checking.' : '';
+    status.textContent = `Extracted ${data.paragraphs.length} unverified page-text chunk(s) from ${data.pages} page(s) into ${target}. These are NOT paragraph boundaries. Compare reading order against each page, then split/correct text manually before checking.${warning}${noText}${spacing}${hyphen}`;
   } catch (error) {
     if (version === workflowVersion) status.textContent = error.message;
   } finally {

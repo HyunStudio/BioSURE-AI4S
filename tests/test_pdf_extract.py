@@ -33,8 +33,9 @@ def test_pdf_import_preserves_text_and_page_provenance_without_claiming_layout()
     assert result['paragraphs'][0]['column'] == 'unverified'
     text = ' '.join(item['text'] for item in result['paragraphs'])
     assert 'Scientific document example' in text
-    assert 'We examined quantification in microfluidic channels.' in text
+    assert 'We examined quantifi-cation in microfluidic channels.' in text
     assert 'Results from the other column.' in text
+    assert 'LINE_END_HYPHEN_REQUIRES_REVIEW' in result['warnings']
     assert 'READING_ORDER_REQUIRES_REVIEW' in result['warnings']
     assert 'PARAGRAPH_BOUNDARIES_REQUIRE_REVIEW' in result['warnings']
     assert result['review_required'] is True
@@ -50,6 +51,12 @@ def test_embedded_image_text_is_not_misrepresented_as_extracted():
 def test_scientific_pdf_ligatures_normalise_to_searchable_words():
     text, _ = _normalise_lines('Existing workﬂows need quantiﬁcation.')
     assert text == 'Existing workflows need quantification.'
+
+
+def test_pdf_line_end_hyphen_preserves_original_glyph_for_manual_review():
+    text, review = _normalise_lines('organ-on-a-\nchip and quantifi-\ncation')
+    assert text == 'organ-on-a-chip and quantifi-cation'
+    assert review is True
 
 
 def test_spacing_artifacts_are_flagged_instead_of_claiming_clean_extraction():

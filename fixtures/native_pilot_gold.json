@@ -1,21 +1,27 @@
 {
   "schema_version": "biosure.native-pilot-gold/1.0",
-  "input_sha256": "f30b6a5f0774a0cba3a3e644b4ad7134baae19d48a8de7f557d26292b777d23a",
+  "input_sha256": "d3feeca5f62a91492c2c207201182409a8d297bb742a73238ea3738c208cc413",
   "adjudication": "Single-agent transcription checked against rendered PDF pages and official JATS on 2026-10-01. Not blinded human or domain-expert adjudication; reference and gold come from the same article.",
   "cases": [
     {
       "case_id": "jhu-title-control",
-      "gold_paragraphs": ["Solving the where problem and quantifying geometric variation in neuroanatomy using generative diffeomorphic mapping"],
+      "gold_paragraphs": [
+        "Solving the where problem and quantifying geometric variation in neuroanatomy using generative diffeomorphic mapping"
+      ],
       "defect_note": "No visible text-layer defect in the selected title after whitespace normalization."
     },
     {
       "case_id": "jhu-abstract-extraction",
-      "gold_paragraphs": ["A current focus in neuroscience is to map neuronal cell types in whole vertebrate brains using different imaging modalities. Mapping modern molecular and anatomical datasets into a common atlas includes challenges that existing workflows do not adequately address: multimodal signals, missing data or non reference signals, and quantification of individual variation. Our solution implements a generative model describing the likelihood of data given a sequence of transforms of an atlas, and a maximum a posteriori estimation framework. Our approach allows composition of mappings across chains of datasets rather than only pairs, and computes metrics for geometric quantification. We study a range of datasets (in/ex-vivo MRI, STP and fMOST, 2D serial histology, snRNAseq prepared tissue), quantifying cell density and geometric fluctuations across covariates, and reveal that individual variation is often greater than differences due to tissue processing techniques. We provide open source code, dataset standards, and a web interface. This establishes a quantitative workflow for unifying multi-modal whole-brain images in an atlas framework, validated using mouse datasets, enabling large scale integration of datasets essential to modern neuroscience."],
+      "gold_paragraphs": [
+        "A current focus in neuroscience is to map neuronal cell types in whole vertebrate brains using different imaging modalities. Mapping modern molecular and anatomical datasets into a common atlas includes challenges that existing workflows do not adequately address: multimodal signals, missing data or non reference signals, and quantification of individual variation. Our solution implements a generative model describing the likelihood of data given a sequence of transforms of an atlas, and a maximum a posteriori estimation framework. Our approach allows composition of mappings across chains of datasets rather than only pairs, and computes metrics for geometric quantification. We study a range of datasets (in/ex-vivo MRI, STP and fMOST, 2D serial histology, snRNAseq prepared tissue), quantifying cell density and geometric fluctuations across covariates, and reveal that individual variation is often greater than differences due to tissue processing techniques. We provide open source code, dataset standards, and a web interface. This establishes a quantitative workflow for unifying multi-modal whole-brain images in an atlas framework, validated using mouse datasets, enabling large scale integration of datasets essential to modern neuroscience."
+      ],
       "defect_note": "The PDF text layer joins prepared tissue and geometric fluctuations into two words without spaces."
     },
     {
       "case_id": "jhu-body-extraction",
-      "gold_paragraphs": ["A current focus of research in neuroscience is to enumerate, map and annotate neuronal cell types in entire vertebrate brains, particularly mouse. To facilitate this, neuroanatomical atlases have been developed to establish predefined coordinate systems and corresponding images1–4. Mapping data from experimental observations to these reference coordinates enables statistical ensembles to be built from multiple samples and multiple laboratories, as illustrated in Fig. 1a–e. This mapping problem is generally approached through image registration, which is well established for the case of high quality samples and images acquired from the same modality5. In modern neuroscience heterogeneous images are produced leading to four main challenges to registration as shown in Fig. 1f–i. Images may be 2D or 3D, and tissue may have dramatically different shapes associated to different preparations."],
+      "gold_paragraphs": [
+        "A current focus of research in neuroscience is to enumerate, map and annotate neuronal cell types in entire vertebrate brains, particularly mouse. To facilitate this, neuroanatomical atlases have been developed to establish predefined coordinate systems and corresponding images1–4. Mapping data from experimental observations to these reference coordinates enables statistical ensembles to be built from multiple samples and multiple laboratories, as illustrated in Fig. 1a–e. This mapping problem is generally approached through image registration, which is well established for the case of high quality samples and images acquired from the same modality5. In modern neuroscience heterogeneous images are produced leading to four main challenges to registration as shown in Fig. 1f–i. Images may be 2D or 3D, and tissue may have dramatically different shapes associated to different preparations."
+      ],
       "defect_note": "The PDF text layer breaks whole words into separately positioned letters and alters citation spacing; the rendered page remains readable."
     }
   ]

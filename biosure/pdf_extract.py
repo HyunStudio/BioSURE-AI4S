@@ -31,7 +31,9 @@ def _normalise_lines(value: str) -> tuple[str, bool]:
     lines = [part.strip() for part in value.splitlines() if part.strip()]
     joined = any(line.endswith('-') for line in lines[:-1])
     text = '\n'.join(lines)
-    text = re.sub(r'(?<=\w)-\n(?=\w)', '', text)
+    # The hyphen may be part of a scientific compound (organ-on-a-chip).
+    # Preserve its glyph; a reviewer must resolve optional line-wrap hyphens.
+    text = re.sub(r'(?<=\w)-\n(?=\w)', '-', text)
     text = re.sub(r'\s*\n\s*', ' ', text)
     return re.sub(r'\s+', ' ', text).strip(), joined
 
@@ -87,9 +89,9 @@ def extract_pdf(data: bytes) -> dict:
             if split:
                 warnings.add('PAGE_CHUNK_BOUNDARY_REQUIRES_REVIEW')
             for group in groups:
-                text, dehyphenated = _normalise_lines(group)
-                if dehyphenated:
-                    warnings.add('DEHYPHENATION_REQUIRES_REVIEW')
+                text, line_end_hyphen = _normalise_lines(group)
+                if line_end_hyphen:
+                    warnings.add('LINE_END_HYPHEN_REQUIRES_REVIEW')
                 paragraphs.append({'page': number, 'bbox': None,
                                    'column': 'unverified', 'text': text})
         if len(paragraphs) > 128:

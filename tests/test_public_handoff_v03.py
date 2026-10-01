@@ -6,28 +6,29 @@ import tomllib
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_v033_watch_page_links_new_code_and_retained_honest_video():
+def test_v034_watch_page_links_new_code_and_corrected_video():
     page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
-    assert "/releases/tag/v0.3.3" in page
-    assert "/releases/download/v0.3.0/biosure-demo.mp4" in page
+    assert "/releases/tag/v0.3.4" in page
+    assert "/releases/download/v0.3.4/biosure-demo-v034.mp4" in page
+    assert "two controls and two genuine text-layer errors" in page
     assert "public-scorecard.md" in page
     assert "python -m pip install -e ." in page
     assert "Learned correspondence" in page
     assert "PDF text-layer" in page
     assert "two-source OoC PDF audit" in page
-    assert tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"] == "0.3.3"
+    assert tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"] == "0.3.4"
 
 
-def test_v033_handoff_discloses_video_scope_and_article_credit():
+def test_v034_handoff_discloses_video_scope_and_article_credit():
     report = (ROOT / "report/public-submission.md").read_text(encoding="utf-8")
     readme = (ROOT / "report/public-readme.md").read_text(encoding="utf-8")
     rights = (ROOT / "report/public-rights.md").read_text(encoding="utf-8")
     storyboard = (ROOT / "video/storyboard.md").read_text(encoding="utf-8")
-    assert "v0.3.3 release" in report
+    assert "v0.3.4 release" in report
     assert "former 2/2 review count inherited the diff flag" in report
     assert "verify_native_source.py" in readme
-    assert "4 minutes 48 seconds" in report
-    assert "learned review and PDF warning" in readme
+    assert "under five minutes" in report
+    assert "learned review and the PDF warning" in readme
     assert "10.1038/s41467-025-65317-7" in rights
     assert "CC BY 4.0" in rights
-    assert "4 minutes 48 seconds" in storyboard
+    assert "under five minutes" in storyboard

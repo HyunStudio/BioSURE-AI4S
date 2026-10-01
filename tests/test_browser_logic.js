@@ -82,7 +82,7 @@ test('PDF import populates only the chosen side and preserves image omission war
   h.context.fetch = async (url, options) => {
     endpoint = url; assert.equal(options.body, file);
     return {ok: true, json: async () => ({paragraphs: [{text:'A'},{text:'B'}],
-      pages: 2, image_count: 3, warnings:['IMAGE_TEXT_NOT_EXTRACTED','TEXT_SPACING_ARTIFACTS'], review_required:true})};
+      pages: 2, image_count: 3, warnings:['IMAGE_TEXT_NOT_EXTRACTED','TEXT_SPACING_ARTIFACTS','LINE_END_HYPHEN_REQUIRES_REVIEW'], review_required:true})};
   };
   await h.call('importPdf');
   assert.equal(endpoint, '/api/pdf-extract');
@@ -92,6 +92,7 @@ test('PDF import populates only the chosen side and preserves image omission war
   assert.match(h.get('pdf-status').textContent, /3 image/);
   assert.match(h.get('pdf-status').textContent, /not extracted/);
   assert.match(h.get('pdf-status').textContent, /Broken letter spacing/);
+  assert.match(h.get('pdf-status').textContent, /hyphen.*review/i);
   h.get('reference-ack').checked = true;
   h.context.fetch = async () => {throw new Error('workflow must not submit before PDF review');};
   await h.call('runParagraphCheck');
