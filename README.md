@@ -33,10 +33,12 @@ The batch example has six fictional records: two automatically corrected, one un
 python -m biosure.cli blind-evaluate --cases fixtures/challenge --gold fixtures/gold --out synthetic-results
 python -m biosure.cli blind-evaluate --cases fixtures/article_challenge --gold fixtures/article_gold --out article-results
 python -m biosure.cli blind-evaluate --cases fixtures/stress_challenge --gold fixtures/stress_gold --out stress-results
+python scripts/evaluate_native_pilot.py decide fixtures/native_pilot_inputs.json fixtures/ml_model.json pilot-decisions.json
+python scripts/evaluate_native_pilot.py score pilot-decisions.json fixtures/native_pilot_gold.json pilot-results.json
 python scripts/verify_reproduction.py .
 ```
 
-The verifier checks the frozen expected counts for all three sets and the complete stress summary; it fails on drift rather than silently changing expectations. All supplied evaluations are offline. Optional article regeneration requires the official PMC API; runtime and replay do not.
+The verifier checks the three frozen structural sets, complete stress summary, learned experiment and separate native PDF pilot; it fails on drift rather than silently changing expectations. All supplied evaluations are offline. Optional article regeneration requires the official PMC API; runtime and replay do not. Choose fresh pilot output names because the CLI refuses to overwrite results.
 
 | Evaluation | Constructed cases / sources | Exact automatic | Incorrect automatic | Abstained |
 |---|---:|---:|---:|---:|
@@ -49,6 +51,10 @@ Whole-graph reconstruction receiving the same evidence ties the first two sets, 
 The learned correspondence component uses regularized logistic regression fitted on 4,584 constructed paragraph pairs from 12 of 24 CC BY 4.0 PMC articles. Six development articles select a frozen threshold; six unseen articles form the held-out test. On 284 constructed held-out queries, learned logistic, `difflib`, token Dice and a lexical blend each select all 284 intended references; exact matching accepts 96 and abstains on 188. The learned-minus-best-lexical top-1 accuracy difference is **0.000** (article-bootstrap 95% interval **[0.000, 0.000]**). Eight held-out unit-change controls exercise the lexical unit alert. This shows no learned advantage over simple string methods and says nothing about real conversion-error prevalence. The model still provides candidate rankings and lexical critical-token alerts for triage; the deterministic gate is unchanged. `fixtures/ml_corpus.json` contains attributed excerpts, `fixtures/ml_model.json` frozen weights, and `results/ml_evaluation.json` the split/metrics. The offline verifier refits and compares these artifacts.
 
 On the separate public [JHU neuroanatomy article](https://pmc.ncbi.nlm.nih.gov/articles/PMC12645051/) (DOI 10.1038/s41467-025-65317-7), a two-page PDF excerpt exposed the practical boundary: the import recovers searchable `workflows` and `quantification` after ligature normalization, but three embedded images contain labels absent from the text layer. It emits two unverified page chunks and image/reading-order/letter-spacing warnings. Against eight JATS reference paragraphs, learned scores were low (0.363 and 0.325) and the gate abstained. This is an out-of-domain diagnostic, not a benchmark or assertion that the PDF is safely converted.
+
+A separate [one-source native extraction pilot](report/public-scorecard.md) freezes the same PDF's title control and two real page-1 text-layer errors as short attributed excerpts. BioSURE automatically restores **0/2 error records** and sends both to review; direct copying of the correct declared reference restores **2/2**. The title control is separate. Normal diff and learned review also send both errors to manual review; no human review time was measured. The input, gold, decision code and result are published separately. A single agent checked the transcription; this is not independent expert validation or a natural-error rate. The [official-criteria scorecard](report/public-scorecard.md) therefore gives a **Go** only for transparent Tool & Platform prototype submission, not a first-place or superiority claim.
+
+Before any automatic use, an operator must independently verify the declared reference's source, version and document scope. The API cannot authenticate it: in the authored stress suite, 12 of 36 applied repairs are wrong when the reference is forged. If reference provenance is uncertain, use manual review rather than unattended correction. Neither UI acknowledgement nor a receipt establishes source truth.
 
 ## Development tests and interfaces
 

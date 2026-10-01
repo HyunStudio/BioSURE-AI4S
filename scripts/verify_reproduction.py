@@ -9,6 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from biosure.batch import run_batch
 from biosure.evaluate import decide_case, score_case, summarize
+from biosure.native_pilot import decide_inputs, score_decisions
 from biosure.schema import loads_json
 from scripts.evaluate_ml import evaluate
 
@@ -62,8 +63,22 @@ def verify(root: Path) -> dict:
           'learned_correct': correspondence['learned_logistic']['correct'],
           'best_lexical_correct': correspondence[best]['correct'],
           'scope': 'Constructed alterations on unseen CC BY 4.0 article sources; no natural-error superiority claim.'}
+    pilot_inputs = loads_json((root / 'fixtures/native_pilot_inputs.json').read_text(encoding='utf-8'))
+    # The first phase has no path or argument for gold. Only its sealed output
+    # reaches the scorer, which opens the separately frozen adjudication.
+    pilot_decisions = decide_inputs(pilot_inputs, replay['model'])
+    pilot_gold = loads_json((root / 'fixtures/native_pilot_gold.json').read_text(encoding='utf-8'))
+    pilot_result = score_decisions(pilot_decisions, pilot_gold)
+    if pilot_result != loads_json((root / 'results/native_pilot.json').read_text(encoding='utf-8')):
+        raise ValueError('native pilot frozen result mismatch')
+    pilot = {'sources': pilot_result['sources'], 'cases': pilot_result['cases'],
+             'native_error_cases': pilot_result['native_error_cases'],
+             'biosure_exact_auto': pilot_result['biosure']['exact_auto'],
+             'biosure_incorrect_auto': pilot_result['biosure']['incorrect_auto'],
+             'copy_exact_auto': pilot_result['direct_copy']['exact_auto'],
+             'copy_incorrect_auto': pilot_result['direct_copy']['incorrect_auto']}
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
-            'ml': ml,
+            'ml': ml, 'native_pilot': pilot,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 

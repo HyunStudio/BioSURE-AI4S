@@ -17,7 +17,7 @@ MANIFEST = "results/release_manifest.json"
 EXCLUDED = {"biosure/legacy.py", "biosure/legacy_benchmark.py", "results/source_manifest.json",
             "results/dke_prior_aggregate.json", MANIFEST}
 PUBLIC_DOCS = {"public-submission.md", "workflow-scenario.md", "practical-validation.md",
-               "public-readme.md", "public-rights.md"}
+               "public-readme.md", "public-rights.md", "public-scorecard.md"}
 GENERATED_ROOTS = {".git", "biosure_ai4s.egg-info"}
 
 

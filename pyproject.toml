@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biosure-ai4s"
-version = "0.3.0"
+version = "0.3.1"
 description = "Offline candidate-dependent structural integrity checks"
 requires-python = ">=3.12"
 dependencies = ["pypdf>=6.16,<7"]

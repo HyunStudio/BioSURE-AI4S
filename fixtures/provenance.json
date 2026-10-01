@@ -163,6 +163,18 @@
       "rights": "CC BY 4.0 attributed paragraph excerpts and constructed-variant source material; no source XML, PDF, images or patient data packaged"
     },
     {
+      "origin": "Short modified text-layer excerpts from Tward et al., DOI 10.1038/s41467-025-65317-7, PMCID PMC12645051; CC BY 4.0 attribution and change notice in report/public-rights.md",
+      "pattern": "fixtures/native_pilot_inputs.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed short excerpts; no publisher PDF, figures or full article packaged"
+    },
+    {
+      "origin": "Single-agent visually checked short transcription of Tward et al., DOI 10.1038/s41467-025-65317-7; CC BY 4.0 attribution and change notice in report/public-rights.md",
+      "pattern": "fixtures/native_pilot_gold.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed short excerpts; not independent expert adjudication"
+    },
+    {
       "origin": "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md",
       "pattern": "fixtures/ml_model.json",
       "review_status": "approved_for_public_release",
