@@ -12,7 +12,7 @@ Code: [BioSURE-AI4S](https://github.com/HyunStudio/BioSURE-AI4S), a standalone n
 
 Life-science research-support pipelines often depend on text extracted from research documents. A structurally valid repair can still replace the wrong paragraph or change an unsupported payload. BioSURE provides an offline workbench for inspecting a proposed structural edit against separately declared reference evidence. It supports one internal missing paragraph or one extra exact duplicate, otherwise deferring to manual review. A receipt binds the supplied request, candidate, evidence, rule version and selected graph.
 
-The tool processes actual paragraph input, shows difference locations, returns normalized text when applied and exports JSON. Batch triage distinguishes corrected, unchanged and review-required records without overwriting source files. A provider-independent path checks actual pasted upstream proposals against locked reference and observation inputs, accepting a bounded supported edit or rejecting invented wording and unrelated changes. A bundled logistic model ranks paragraph correspondence for review only; it does not change deterministic gate decisions. A local BSD-licensed PDF reader imports unverified page-text chunks and warns about image/text spacing losses. Runtime requires Python plus `pypdf`, but no GPU, paid service or external inference. These are integration and constructed-task demonstrations, not a measured benefit to research outcomes.
+The tool processes actual paragraph input, shows difference locations, returns normalized text when applied and exports JSON. Batch triage distinguishes corrected, unchanged and review-required records without overwriting source files. A provider-independent path checks actual pasted upstream proposals against locked reference and observation inputs, accepting a bounded supported edit or rejecting invented wording and unrelated changes. A bundled logistic model ranks paragraph correspondence for review only; it does not change deterministic gate decisions. A local BSD-licensed PDF reader imports unverified page-text chunks and warns about image/text spacing losses. Runtime requires Python plus `pypdf[fonts]` (including MIT-licensed `fontTools`), but no GPU, paid service or external inference. These are integration and constructed-task demonstrations, not a measured benefit to research outcomes.
 
 Eight synthetic cases from two graphs yield two exact corrections and six abstentions. Nine article-derived cases from three CC BY 4.0 OoC articles yield three exact corrections and six abstentions. An independent whole-graph comparator using the same evidence ties both sets. A 168-case authored stress suite exposes twelve incorrectly applied outputs when reference evidence is forged. No deployment error rate or algorithmic superiority is inferred.
 
@@ -105,7 +105,7 @@ The tool can flag lexical differences in numbers, units and negation but cannot 
 
 ### 7. Reproduction and release
 
-Python 3.12 plus BSD-licensed `pypdf` are required for the current local demo and replay. Pytest and BSD-licensed ReportLab are development/test dependencies. From the standalone root:
+Python 3.12 plus BSD-licensed `pypdf` and its MIT-licensed `fontTools` extra are required for the current local demo and replay. Pytest and BSD-licensed ReportLab are development/test dependencies. From the standalone root:
 
 ```powershell
 $env:PYTHONDONTWRITEBYTECODE='1'
