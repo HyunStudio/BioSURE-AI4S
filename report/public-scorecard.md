@@ -1,6 +1,6 @@
 # BioSURE AI4S evidence scorecard — reviewed 2026-10-04
 
-This maps v0.3.11's unchanged evaluation evidence to the [official AI4S evaluation dimensions](https://www.kaggle.com/competitions/ai-4-s-open-innovation-artificial-intelligence-for-life-scien/overview/url). Percentages are judging weights, **not** self-awarded scores. Category recommendation remains **Tool & Platform**: the tested contribution is an offline review workbench and bounded decision interface, not a demonstrated superior model or laboratory outcome. The review-only PDF spacing suggestions are post-hoc usability aids; they do not change any restoration count below or establish held-out performance.
+This maps v0.3.12's unchanged evaluation evidence to the [official AI4S evaluation dimensions](https://www.kaggle.com/competitions/ai-4-s-open-innovation-artificial-intelligence-for-life-scien/overview/url). Percentages are judging weights, **not** self-awarded scores. Category recommendation remains **Tool & Platform**: the tested contribution is an offline review workbench and bounded decision interface, not a demonstrated superior model or laboratory outcome. The review-only PDF spacing suggestions are post-hoc usability aids; they do not change any restoration count below or establish held-out performance.
 
 | Official dimension | Weight | Evidence available | Material gap |
 |---|---:|---|---|

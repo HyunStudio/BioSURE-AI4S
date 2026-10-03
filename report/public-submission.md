@@ -2,7 +2,11 @@ Category: Tool & Platform
 
 # BioSURE: Reference-Conditioned Structural Integrity for Life-Science Research Documents
 
-Project: BioSURE. Public maintainer/account: HyunStudio (Hyun_Studio). Category: Tool & Platform. Team and leader identities must be confirmed in the official competition account; a public code release is not itself a competition submission.
+Project: BioSURE. Team: HyunStudio. Category: Tool & Platform. A public code release is not itself a competition submission.
+
+## Team
+
+HyunStudio is a one-person team. HyunGi Hwang is the sole member and team leader. The public repository account is HyunStudio. The team does not claim a cross-disciplinary membership bonus; implementation assistance from OpenAI Codex is disclosed under Sources and attribution, not counted as a team member.
 
 ## Demo video and code
 
