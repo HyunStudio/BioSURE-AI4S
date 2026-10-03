@@ -54,7 +54,7 @@ def test_launch_port_collision_is_actionable_error_without_traceback():
     try:
         result = subprocess.run([sys.executable, "-m", "biosure.web_demo", "--fixtures", str(ROOT / "fixtures"),
                                  "--port", str(server.server_address[1])], cwd=ROOT,
-                                capture_output=True, text=True, timeout=30)
+                                capture_output=True, text=True, errors="replace", timeout=30)
         assert result.returncode == 2
         assert "--port" in result.stderr
         assert "Traceback" not in result.stderr

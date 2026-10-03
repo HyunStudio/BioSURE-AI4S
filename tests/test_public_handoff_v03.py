@@ -15,8 +15,10 @@ def test_watch_page_links_latest_code_and_existing_corrected_video():
     assert "python -m pip install -e ." in page
     assert "Learned correspondence" in page
     assert "PDF text-layer" in page
-    assert "two-source OoC PDF audit" in page
-    assert tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"] == "0.3.5"
+    assert "two-source ooc pdf audit" in page.lower()
+    assert "Three-source cross-publisher PDF audit" in page
+    assert "page-specific review hints" in page
+    assert tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"] == "0.3.6"
 
 
 def test_handoff_discloses_video_scope_and_article_credit():

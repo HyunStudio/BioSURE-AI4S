@@ -76,6 +76,24 @@ def test_pdf_review_hints_locate_spaced_glyphs():
                and 'd i s c o v e r y' in hint['excerpt'] for hint in result['review_hints'])
 
 
+def test_pdf_review_hint_cap_preserves_later_page_coverage():
+    stream = BytesIO()
+    doc = canvas.Canvas(stream)
+    for index in range(70):
+        doc.drawString(50, 800 - index * 9, f'First-page scientific term {index} pre-')
+        doc.drawString(50, 796 - index * 9, f'fix{index} continues the sentence.')
+    doc.showPage()
+    doc.drawString(50, 700, 'Later-page scientific term quantifi-')
+    doc.drawString(50, 680, 'cation matters here.')
+    doc.save()
+
+    result = extract_pdf(stream.getvalue())
+    assert len(result['review_hints']) == 64
+    assert 'REVIEW_HINTS_TRUNCATED' in result['warnings']
+    assert any(hint['page'] == 2 and 'quantifi-' in hint['excerpt']
+               for hint in result['review_hints'])
+
+
 def test_hyphen_hint_excerpt_does_not_start_or_end_with_a_clipped_word():
     from biosure.pdf_extract import _line_break_excerpt
     left = 'An unusually long intro with cells that mirror human organs and faith-'

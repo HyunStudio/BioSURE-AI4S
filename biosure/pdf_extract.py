@@ -92,9 +92,11 @@ def extract_pdf(data: bytes) -> dict:
             raise ValueError('PDF must contain 1 to 32 pages')
         paragraphs = []
         warnings = {'READING_ORDER_REQUIRES_REVIEW', 'PARAGRAPH_BOUNDARIES_REQUIRE_REVIEW'}
-        review_hints = []
+        review_hints_by_page = []
         image_count = 0
         for number, page in enumerate(reader.pages, start=1):
+            page_hints = []
+            review_hints_by_page.append(page_hints)
             images = len(page.images)
             image_count += images
             if images:
@@ -103,9 +105,9 @@ def extract_pdf(data: bytes) -> dict:
             spaced = _SPACED_GLYPHS.search(raw)
             if spaced:
                 warnings.add('TEXT_SPACING_ARTIFACTS')
-                if len(review_hints) < MAX_REVIEW_HINTS:
-                    review_hints.append({'page': number, 'kind': 'TEXT_SPACING_ARTIFACTS',
-                                         'excerpt': _review_excerpt(raw, spaced.start(), spaced.end())})
+                if len(page_hints) < MAX_REVIEW_HINTS:
+                    page_hints.append({'page': number, 'kind': 'TEXT_SPACING_ARTIFACTS',
+                                       'excerpt': _review_excerpt(raw, spaced.start(), spaced.end())})
                 else:
                     warnings.add('REVIEW_HINTS_TRUNCATED')
             groups, split = _chunks(raw)
@@ -120,13 +122,29 @@ def extract_pdf(data: bytes) -> dict:
                     lines = [line.strip() for line in group.splitlines() if line.strip()]
                     for index, line in enumerate(lines[:-1]):
                         if line.endswith('-'):
-                            if len(review_hints) < MAX_REVIEW_HINTS:
-                                review_hints.append({'page': number, 'kind': 'LINE_END_HYPHEN_REQUIRES_REVIEW',
-                                                     'excerpt': _line_break_excerpt(line, lines[index + 1])})
+                            if len(page_hints) < MAX_REVIEW_HINTS:
+                                page_hints.append({'page': number, 'kind': 'LINE_END_HYPHEN_REQUIRES_REVIEW',
+                                                   'excerpt': _line_break_excerpt(line, lines[index + 1])})
                             else:
                                 warnings.add('REVIEW_HINTS_TRUNCATED')
                 paragraphs.append({'page': number, 'bbox': None,
                                    'column': 'unverified', 'text': text})
+        # Share the bounded hint budget across pages before restoring page order.
+        # Otherwise a hyphen-heavy first page can conceal later-page warnings.
+        review_hints = []
+        for offset in range(MAX_REVIEW_HINTS):
+            added = False
+            for page_hints in review_hints_by_page:
+                if offset < len(page_hints):
+                    review_hints.append(page_hints[offset])
+                    added = True
+                    if len(review_hints) == MAX_REVIEW_HINTS:
+                        break
+            if len(review_hints) == MAX_REVIEW_HINTS or not added:
+                break
+        if sum(len(page_hints) for page_hints in review_hints_by_page) > MAX_REVIEW_HINTS:
+            warnings.add('REVIEW_HINTS_TRUNCATED')
+        review_hints.sort(key=lambda hint: hint['page'])
         if len(paragraphs) > 128:
             raise ValueError('PDF produced more than 128 text chunks; select fewer pages')
         text = '\n\n'.join(item['text'] for item in paragraphs)
