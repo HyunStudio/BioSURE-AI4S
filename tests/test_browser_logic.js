@@ -99,6 +99,19 @@ test('PDF import populates only the chosen side and preserves image omission war
   assert.match(h.get('workflow-reason').textContent, /acknowledge PDF review/);
 });
 
+test('PDF review hints show the page and literal suspicious excerpt', async () => {
+  const h = harness('workflow.js');
+  h.get('pdf-file').files = [{size: 100, type: 'application/pdf'}];
+  h.get('pdf-target').value = 'observed';
+  h.context.fetch = async () => ({ok: true, json: async () => ({
+    paragraphs: [{text: 'f o r d r u g'}], pages: 1, image_count: 0,
+    warnings: ['TEXT_SPACING_ARTIFACTS'],
+    review_hints: [{page: 1, kind: 'TEXT_SPACING_ARTIFACTS', excerpt: 'f o r <script>'}]
+  })});
+  await h.call('importPdf');
+  assert.match(h.get('pdf-review-hints').children[0].textContent, /Page 1 · Check broken letter spacing.*f o r <script>/);
+});
+
 test('learned review displays lexical alerts without claiming automatic approval', async () => {
   const h = harness('workflow.js'); let endpoint;
   h.get('reference-input').value = 'Dose 5 mg.\n\nNo increase.';

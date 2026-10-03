@@ -102,8 +102,38 @@ def verify(root: Path) -> dict:
                          'biosure_abstentions': 4, 'copy_exact_auto': 4,
                          'diff_review_records': 2, 'learned_lexical_alert_records': 0}:
         raise ValueError('OoC PDF audit expected counts mismatch')
+    three_source_pdf_audit = {
+        'schema_version': 'biosure.three-source-pdf-audit/1.0', 'sources': 0,
+        'attempted_units': 6, 'scorable_units': 0, 'observed_reference_discrepancy_units': 0,
+        'biosure_exact_auto': 0, 'biosure_incorrect_auto': 0, 'biosure_abstentions': 0,
+        'copy_exact_auto': 0, 'copy_incorrect_auto': 0, 'diff_review_records': 0,
+        'learned_lexical_alert_records': 0,
+        'unscorable_units': [{'case_id': 'PMC12158725-abstract',
+                              'reason': 'complete abstract extends beyond article page 1'}],
+        'scope': 'Three internally preselected CC BY sources; JATS/rendered-page one-agent gold, '
+                 'no independent adjudication or timed user comparison.'}
+    for pmcid in ('PMC12078732', 'PMC12300027', 'PMC12158725'):
+        inputs = loads_json((root / f'fixtures/ooc_pdf_{pmcid}_inputs.json').read_text(encoding='utf-8'))
+        decisions = decide_inputs(inputs, replay['model'])
+        gold = loads_json((root / f'fixtures/ooc_pdf_{pmcid}_gold.json').read_text(encoding='utf-8'))
+        result = score_decisions(decisions, gold)
+        if result != loads_json((root / f'results/ooc_pdf_{pmcid}.json').read_text(encoding='utf-8')):
+            raise ValueError(pmcid + ' three-source PDF audit frozen result mismatch')
+        three_source_pdf_audit['sources'] += result['sources']
+        three_source_pdf_audit['scorable_units'] += result['cases']
+        three_source_pdf_audit['observed_reference_discrepancy_units'] += result['native_error_cases']
+        three_source_pdf_audit['biosure_exact_auto'] += result['biosure']['exact_auto']
+        three_source_pdf_audit['biosure_incorrect_auto'] += result['biosure']['incorrect_auto']
+        three_source_pdf_audit['biosure_abstentions'] += result['biosure']['abstentions']
+        three_source_pdf_audit['copy_exact_auto'] += result['direct_copy']['exact_auto']
+        three_source_pdf_audit['copy_incorrect_auto'] += result['direct_copy']['incorrect_auto']
+        three_source_pdf_audit['diff_review_records'] += result['diff_review']['manual_review_records']
+        three_source_pdf_audit['learned_lexical_alert_records'] += result['learned_review']['native_error_cases_with_lexical_alerts']
+    if three_source_pdf_audit != loads_json((root / 'results/three_source_pdf_audit.json').read_text(encoding='utf-8')):
+        raise ValueError('three-source PDF audit aggregate mismatch')
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
             'ml': ml, 'native_pilot': pilot, 'ooc_pdf_audit': ooc_pdf_audit,
+            'three_source_pdf_audit': three_source_pdf_audit,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 

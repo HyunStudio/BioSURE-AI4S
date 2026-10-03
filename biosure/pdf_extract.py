@@ -18,12 +18,30 @@ MAX_PDF_BYTES = 16 * 1024 * 1024
 MAX_PAGES = 32
 MAX_TEXT_CHARS = 262_144
 MAX_CHUNK_CHARS = 4000
+MAX_REVIEW_HINTS = 64
+_SPACED_GLYPHS = re.compile(r'(?:\b[A-Za-z]\s+){6,}')
 
 
 def _spacing_artifacts(text: str) -> bool:
     # PDFs with individually positioned glyphs can look readable while whole
     # scientific words are fractured into one-character tokens.
-    return bool(re.search(r'(?:\b[A-Za-z]\s+){6,}', text))
+    return bool(_SPACED_GLYPHS.search(text))
+
+
+def _review_excerpt(text: str, start: int, end: int) -> str:
+    return re.sub(r'\s+', ' ', text[max(0, start - 35):min(len(text), end + 35)]).strip()[:140]
+
+
+def _line_break_excerpt(left: str, right: str) -> str:
+    """Show a line-end hyphen with whole surrounding words, not a fake fix."""
+    left, right = left.strip(), right.strip()
+    before = left[-60:]
+    if len(left) > 60 and not left[-61].isspace() and ' ' in before:
+        before = before.split(' ', 1)[1]
+    after = right[:60]
+    if len(right) > 60 and not right[60].isspace() and ' ' in after:
+        after = after.rsplit(' ', 1)[0]
+    return before + ' / ' + after
 
 
 def _normalise_lines(value: str) -> tuple[str, bool]:
@@ -74,6 +92,7 @@ def extract_pdf(data: bytes) -> dict:
             raise ValueError('PDF must contain 1 to 32 pages')
         paragraphs = []
         warnings = {'READING_ORDER_REQUIRES_REVIEW', 'PARAGRAPH_BOUNDARIES_REQUIRE_REVIEW'}
+        review_hints = []
         image_count = 0
         for number, page in enumerate(reader.pages, start=1):
             images = len(page.images)
@@ -81,8 +100,14 @@ def extract_pdf(data: bytes) -> dict:
             if images:
                 warnings.add('IMAGE_TEXT_NOT_EXTRACTED')
             raw = page.extract_text(extraction_mode='plain') or ''
-            if _spacing_artifacts(raw):
+            spaced = _SPACED_GLYPHS.search(raw)
+            if spaced:
                 warnings.add('TEXT_SPACING_ARTIFACTS')
+                if len(review_hints) < MAX_REVIEW_HINTS:
+                    review_hints.append({'page': number, 'kind': 'TEXT_SPACING_ARTIFACTS',
+                                         'excerpt': _review_excerpt(raw, spaced.start(), spaced.end())})
+                else:
+                    warnings.add('REVIEW_HINTS_TRUNCATED')
             groups, split = _chunks(raw)
             if not groups:
                 warnings.add('NO_TEXT_LAYER')
@@ -92,6 +117,14 @@ def extract_pdf(data: bytes) -> dict:
                 text, line_end_hyphen = _normalise_lines(group)
                 if line_end_hyphen:
                     warnings.add('LINE_END_HYPHEN_REQUIRES_REVIEW')
+                    lines = [line.strip() for line in group.splitlines() if line.strip()]
+                    for index, line in enumerate(lines[:-1]):
+                        if line.endswith('-'):
+                            if len(review_hints) < MAX_REVIEW_HINTS:
+                                review_hints.append({'page': number, 'kind': 'LINE_END_HYPHEN_REQUIRES_REVIEW',
+                                                     'excerpt': _line_break_excerpt(line, lines[index + 1])})
+                            else:
+                                warnings.add('REVIEW_HINTS_TRUNCATED')
                 paragraphs.append({'page': number, 'bbox': None,
                                    'column': 'unverified', 'text': text})
         if len(paragraphs) > 128:
@@ -100,7 +133,7 @@ def extract_pdf(data: bytes) -> dict:
         if len(text) > MAX_TEXT_CHARS:
             raise ValueError('Extracted text is too long; select a shorter PDF')
         return {'pages': count, 'image_count': image_count,
-                'paragraphs': paragraphs, 'warnings': sorted(warnings),
+                'paragraphs': paragraphs, 'warnings': sorted(warnings), 'review_hints': review_hints,
                 'review_required': True,
                 'segmentation': 'page_text_chunks_unverified',
                 'source_pdf_sha256': hashlib.sha256(data).hexdigest(),

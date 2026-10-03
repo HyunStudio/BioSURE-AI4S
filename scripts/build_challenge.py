@@ -147,9 +147,9 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/native_pilot_inputs.json" else
                            "Single-agent visually checked short transcription of Tward et al., DOI 10.1038/s41467-025-65317-7; CC BY 4.0 attribution and change notice in report/public-rights.md"
                            if pattern == "fixtures/native_pilot_gold.json" else
-                           "Short modified first-page title/abstract text-layer excerpts from Skardal et al. DOI 10.1038/s41598-017-08879-x and Rogal et al. DOI 10.1038/s41598-020-63710-4; CC BY 4.0 attribution and change notice in report/public-rights.md"
+                           "Short modified first-page title/abstract text-layer excerpts from Skardal et al. DOI 10.1038/s41598-017-08879-x; Rogal et al. DOI 10.1038/s41598-020-63710-4; Wang et al. DOI 10.1038/s41378-025-00933-3; Kanioura et al. DOI 10.3390/mi16070740; Liu et al. DOI 10.3389/fonc.2025.1602225. CC BY 4.0 attribution and change notice in report/public-rights.md"
                            if pattern == "fixtures/ooc_pdf_*_inputs.json" else
-                           "Single-agent visually checked publisher HTML/rendered-PDF title/abstract transcription of the two credited OoC articles; see report/public-rights.md"
+                           "Single-agent JATS/rendered-PDF title/abstract adjudication of the five credited OoC articles; the Frontiers abstract is unscorable and excluded. See report/public-rights.md"
                            if pattern == "fixtures/ooc_pdf_*_gold.json" else
                            "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md"
                            if pattern == "fixtures/ml_model.json" else

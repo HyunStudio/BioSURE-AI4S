@@ -12,7 +12,7 @@ from reportlab.pdfgen import canvas
 
 from biosure import native_pilot
 from biosure.native_pilot import decide_inputs, score_decisions
-from biosure.schema import canonical_bytes
+from biosure.schema import canonical_bytes, sha256
 from scripts.audit_release import _rights_metadata
 from scripts.prepare_release import prepare
 from scripts.verify_reproduction import verify
@@ -39,7 +39,7 @@ def _gold(digest):
     return {"schema_version": "biosure.native-pilot-gold/1.0", "input_sha256": digest,
             "cases": [{"case_id": "unchanged", "gold_paragraphs": ["A heading."]},
                       {"case_id": "spacing", "gold_paragraphs": ["A reference sentence."]},
-                      {"case_id": "false-reference", "gold_paragraphs": ["A true claim."]}]}
+                      {"case_id": "false-reference", "gold_paragraphs": ["A verified claim."]}]}
 
 
 def test_decision_phase_needs_no_gold_and_compares_identical_records():
@@ -132,6 +132,24 @@ def test_scorer_rejects_switched_input_or_gold_identity():
     gold["cases"][1]["case_id"] = "switched"
     with pytest.raises(ValueError, match="case IDs"):
         score_decisions(decisions, gold)
+
+
+@pytest.mark.parametrize("case_index,wrong_condition", [(0, "native_extraction_error"), (1, "control")])
+def test_scorer_rejects_condition_that_disagrees_with_observed_and_gold(case_index, wrong_condition):
+    inputs = _inputs()
+    inputs["cases"][case_index]["condition"] = wrong_condition
+    decisions = decide_inputs(inputs, MODEL)
+    with pytest.raises(ValueError, match="condition disagrees"):
+        score_decisions(decisions, _gold(decisions["input_sha256"]))
+
+
+def test_scorer_rejects_unknown_condition_even_with_recomputed_digest():
+    decisions = decide_inputs(_inputs(), MODEL)
+    decisions["cases"][1]["condition"] = "unclassified"
+    decisions["decision_sha256"] = sha256({key: value for key, value in decisions.items()
+                                           if key != "decision_sha256"})
+    with pytest.raises(ValueError, match="invalid pilot condition"):
+        score_decisions(decisions, _gold(decisions["input_sha256"]))
 
 
 def test_scorer_rejects_tampered_decision_output():

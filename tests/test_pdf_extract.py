@@ -59,6 +59,34 @@ def test_pdf_line_end_hyphen_preserves_original_glyph_for_manual_review():
     assert review is True
 
 
+def test_pdf_review_hints_locate_a_preserved_line_end_hyphen_without_claiming_a_fix():
+    result = extract_pdf(made_pdf())
+    assert any(hint['page'] == 1 and hint['kind'] == 'LINE_END_HYPHEN_REQUIRES_REVIEW'
+               and 'quantifi-' in hint['excerpt'] for hint in result['review_hints'])
+    assert result['review_required'] is True
+
+
+def test_pdf_review_hints_locate_spaced_glyphs():
+    stream = BytesIO()
+    doc = canvas.Canvas(stream)
+    doc.drawString(72, 700, 'f o r d r u g d i s c o v e r y')
+    doc.save()
+    result = extract_pdf(stream.getvalue())
+    assert any(hint['page'] == 1 and hint['kind'] == 'TEXT_SPACING_ARTIFACTS'
+               and 'd i s c o v e r y' in hint['excerpt'] for hint in result['review_hints'])
+
+
+def test_hyphen_hint_excerpt_does_not_start_or_end_with_a_clipped_word():
+    from biosure.pdf_extract import _line_break_excerpt
+    left = 'An unusually long intro with cells that mirror human organs and faith-'
+    right = 'fully simulate their microfluidic environment with a long tail'
+    excerpt = _line_break_excerpt(left, right)
+    before, after = excerpt.split(' / ')
+    assert before.split()[0] in left.split()
+    assert after.split()[-1] in right.split()
+    assert 'faith- / fully' in excerpt
+
+
 def test_spacing_artifacts_are_flagged_instead_of_claiming_clean_extraction():
     from biosure.pdf_extract import _spacing_artifacts
     assert _spacing_artifacts('B r y s o n D . P . G r a y') is True

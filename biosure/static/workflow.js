@@ -22,6 +22,7 @@ function resetWorkflowResult() {
 
 function clearWorkflow() {
   resetWorkflowResult();
+  workflowElement("pdf-review-hints").replaceChildren();
   for (const id of ["reference-input", "observed-input", "candidate-input", "proposal-input"]) workflowElement(id).value = "";
   workflowElement("reference-ack").checked = false;
   workflowElement("pdf-ack").checked = false;
@@ -59,6 +60,8 @@ async function importPdf() {
   resetWorkflowResult();
   const version = workflowVersion;
   const button = workflowElement("import-pdf");
+  const hintList = workflowElement("pdf-review-hints");
+  hintList.replaceChildren();
   button.disabled = true;
   status.textContent = "Extracting local PDF text layer…";
   try {
@@ -81,7 +84,16 @@ async function importPdf() {
       ? ' Broken letter spacing was detected; manual retranscription may be needed.' : '';
     const hyphen = data.warnings.includes('LINE_END_HYPHEN_REQUIRES_REVIEW')
       ? ' Line-end hyphens were preserved; review each hyphen against the original page before checking.' : '';
-    status.textContent = `Extracted ${data.paragraphs.length} unverified page-text chunk(s) from ${data.pages} page(s) into ${target}. These are NOT paragraph boundaries. Compare reading order against each page, then split/correct text manually before checking.${warning}${noText}${spacing}${hyphen}`;
+    for (const hint of (data.review_hints || [])) {
+      const item = document.createElement('li');
+      const label = hint.kind === 'TEXT_SPACING_ARTIFACTS' ? 'Check broken letter spacing'
+        : hint.kind === 'LINE_END_HYPHEN_REQUIRES_REVIEW' ? 'Check line-break hyphen' : 'Review text layer';
+      item.textContent = `Page ${hint.page} · ${label}: ${hint.excerpt}`;
+      hintList.append(item);
+    }
+    const truncated = data.warnings.includes('REVIEW_HINTS_TRUNCATED')
+      ? ' The location list is capped; inspect every page, not just the listed examples.' : '';
+    status.textContent = `Extracted ${data.paragraphs.length} unverified page-text chunk(s) from ${data.pages} page(s) into ${target}. These are NOT paragraph boundaries. Compare reading order against each page, then split/correct text manually before checking.${warning}${noText}${spacing}${hyphen}${truncated}`;
   } catch (error) {
     if (version === workflowVersion) status.textContent = error.message;
   } finally {

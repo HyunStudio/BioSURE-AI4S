@@ -89,6 +89,10 @@ def score_decisions(decisions: dict, gold: dict) -> dict:
         expected = answer.get("gold_paragraphs")
         if not isinstance(expected, list) or not expected or any(not isinstance(text, str) or not text for text in expected):
             raise ValueError("invalid pilot gold paragraphs")
+        if item.get("condition") not in {"control", "native_extraction_error"}:
+            raise ValueError("invalid pilot condition")
+        if (item["condition"] == "control") != (item["observed_paragraphs"] == expected):
+            raise ValueError("pilot condition disagrees with observed and gold paragraphs: " + item["case_id"])
         bio = item["biosure"]
         if bio["action"] == "AUTO_REPAIR":
             key = "exact_auto" if bio["selected_paragraphs"] == expected else "incorrect_auto"

@@ -175,13 +175,13 @@
       "rights": "CC BY 4.0 attributed short excerpts; not independent expert adjudication"
     },
     {
-      "origin": "Short modified first-page title/abstract text-layer excerpts from Skardal et al. DOI 10.1038/s41598-017-08879-x and Rogal et al. DOI 10.1038/s41598-020-63710-4; CC BY 4.0 attribution and change notice in report/public-rights.md",
+      "origin": "Short modified first-page title/abstract text-layer excerpts from Skardal et al. DOI 10.1038/s41598-017-08879-x; Rogal et al. DOI 10.1038/s41598-020-63710-4; Wang et al. DOI 10.1038/s41378-025-00933-3; Kanioura et al. DOI 10.3390/mi16070740; Liu et al. DOI 10.3389/fonc.2025.1602225. CC BY 4.0 attribution and change notice in report/public-rights.md",
       "pattern": "fixtures/ooc_pdf_*_inputs.json",
       "review_status": "approved_for_public_release",
       "rights": "CC BY 4.0 attributed short excerpts; no publisher PDF, figures or full article packaged"
     },
     {
-      "origin": "Single-agent visually checked publisher HTML/rendered-PDF title/abstract transcription of the two credited OoC articles; see report/public-rights.md",
+      "origin": "Single-agent JATS/rendered-PDF title/abstract adjudication of the five credited OoC articles; the Frontiers abstract is unscorable and excluded. See report/public-rights.md",
       "pattern": "fixtures/ooc_pdf_*_gold.json",
       "review_status": "approved_for_public_release",
       "rights": "CC BY 4.0 attributed short excerpts; not independent expert adjudication"

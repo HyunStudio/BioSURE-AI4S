@@ -243,7 +243,8 @@ def test_workflow_browser_discards_stale_response_after_clear() -> None:
         pytest.skip("Node.js is optional for the browser-script test")
     script = r"""
 const fs = require('fs'); const vm = require('vm'); const elements = new Map();
-const make = () => ({value:'', textContent:'', disabled:false, checked:true, addEventListener(){}});
+const make = () => ({value:'', textContent:'', disabled:false, checked:true,
+  addEventListener(){}, replaceChildren(){}});
 const document = {getElementById(id){if(!elements.has(id)) elements.set(id,make()); return elements.get(id);}};
 let resolveFetch; const fetch = () => new Promise(resolve => {resolveFetch = resolve;});
 const context = vm.createContext({document,fetch,JSON,console});
