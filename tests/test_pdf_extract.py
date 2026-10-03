@@ -1,12 +1,13 @@
 """PDF import must expose losses; generated test PDFs contain no private work."""
 from io import BytesIO
+import sys
 
 import pytest
 from PIL import Image
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
-from biosure.pdf_extract import _normalise_lines, extract_pdf
+from biosure.pdf_extract import _crosscheck_spacing, _needs_spacing_crosscheck, _normalise_lines, extract_pdf
 
 
 def made_pdf(with_image=False, with_text=True):
@@ -76,6 +77,18 @@ def test_pdf_review_hints_locate_spaced_glyphs():
                and 'd i s c o v e r y' in hint['excerpt'] for hint in result['review_hints'])
 
 
+def test_failed_second_parser_leaves_primary_pdf_text_available(monkeypatch):
+    stream = BytesIO()
+    doc = canvas.Canvas(stream)
+    doc.drawString(72, 700, 'f o r d r u g d i s c o v e r y')
+    doc.save()
+    monkeypatch.setitem(sys.modules, 'pdfplumber', None)
+    result = extract_pdf(stream.getvalue())
+    assert 'SECOND_EXTRACTOR_UNAVAILABLE' in result['warnings']
+    assert 'f o r d r u g d i s c o v e r y' in result['paragraphs'][0]['text']
+    assert result['review_required'] is True
+
+
 def test_pdf_review_hint_cap_preserves_later_page_coverage():
     stream = BytesIO()
     doc = canvas.Canvas(stream)
@@ -109,6 +122,47 @@ def test_spacing_artifacts_are_flagged_instead_of_claiming_clean_extraction():
     from biosure.pdf_extract import _spacing_artifacts
     assert _spacing_artifacts('B r y s o n D . P . G r a y') is True
     assert _spacing_artifacts('Normal scientific prose with proper spaces.') is False
+
+
+def test_second_extractor_locates_broken_word_spacing_without_changing_primary_text():
+    primary = 'The excretory system ensures elimination ef ficiency akin to in vivo conditions.'
+    alternate = 'The excretory system ensures elimination efficiency akin to in vivo conditions.'
+    assert _crosscheck_spacing(primary, alternate) == [
+        {'observed': 'ef ficiency', 'suggestion': 'efficiency'}]
+
+
+def test_second_extractor_does_not_suggest_semantic_or_hyphen_changes():
+    assert _crosscheck_spacing('The result was faith-fully reproduced.',
+                               'The result was faithfully reproduced.') == []
+    assert _crosscheck_spacing('The dose was 10 mg.', 'The dose was 100 mg.') == []
+    assert _crosscheck_spacing('Cells were cultured in vitro.',
+                               'Cells were cultured invitro.') == []
+    assert _crosscheck_spacing('The design and fabrication of the system',
+                               'Thedesignandfabricationofthesystem') == []
+    assert _crosscheck_spacing('Organ-on-chip s', 'Organ-on-chips') == []
+    assert _crosscheck_spacing('Li et al described it.', 'Lietal described it.') == []
+    assert _crosscheck_spacing('e ta l cited it.', 'etal cited it.') == []
+    assert _crosscheck_spacing('the method s three stages', 'the method sthree stages') == []
+    assert _crosscheck_spacing('xt is a marker', 'xtisa marker') == []
+    assert _crosscheck_spacing('D convolutions were used', 'Dconvolutions were used') == []
+
+
+def test_second_extractor_catches_multiple_fractured_title_words():
+    primary = 'An eighteen-organ system f o rd r u gd i s c o v e r y'
+    alternate = 'An eighteen-organ system for drug discovery'
+    assert _crosscheck_spacing(primary, alternate) == [
+        {'observed': 'f o r', 'suggestion': 'for'},
+        {'observed': 'd r u g', 'suggestion': 'drug'},
+        {'observed': 'd i s c o v e r y', 'suggestion': 'discovery'}]
+
+
+def test_second_extractor_does_not_emit_unbounded_word_candidates():
+    assert _crosscheck_spacing(' '.join('x' * 80), 'x' * 80) == []
+
+
+def test_second_extractor_runs_for_short_prefix_fractures_not_ordinary_small_words():
+    assert _needs_spacing_crosscheck('Elimination ef ficiency increased.') is True
+    assert _needs_spacing_crosscheck('Cells grown in vitro in a study.') is False
 
 
 def test_image_only_page_requires_review_with_no_invented_text():

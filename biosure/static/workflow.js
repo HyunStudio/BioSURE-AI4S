@@ -82,18 +82,23 @@ async function importPdf() {
       ? ' A page had no text layer; OCR/manual transcription is required.' : '';
     const spacing = data.warnings.includes('TEXT_SPACING_ARTIFACTS')
       ? ' Broken letter spacing was detected; manual retranscription may be needed.' : '';
+    const crosscheck = data.warnings.includes('CROSS_EXTRACTOR_SPACING_REQUIRES_REVIEW')
+      ? ' A second PDF parser found possible spacing corrections; verify each against the visible page before editing.' : '';
+    const crosscheckMissing = data.warnings.includes('SECOND_EXTRACTOR_UNAVAILABLE')
+      ? ' The second-parser crosscheck was unavailable; review spacing manually.' : '';
     const hyphen = data.warnings.includes('LINE_END_HYPHEN_REQUIRES_REVIEW')
       ? ' Line-end hyphens were preserved; review each hyphen against the original page before checking.' : '';
     for (const hint of (data.review_hints || [])) {
       const item = document.createElement('li');
-      const label = hint.kind === 'TEXT_SPACING_ARTIFACTS' ? 'Check broken letter spacing'
+      const label = hint.kind === 'CROSS_EXTRACTOR_SPACING_SUGGESTION' ? 'Possible word spacing (not applied)'
+        : hint.kind === 'TEXT_SPACING_ARTIFACTS' ? 'Check broken letter spacing'
         : hint.kind === 'LINE_END_HYPHEN_REQUIRES_REVIEW' ? 'Check line-break hyphen' : 'Review text layer';
-      item.textContent = `Page ${hint.page} · ${label}: ${hint.excerpt}`;
+      item.textContent = `Page ${hint.page} · ${label}: ${hint.excerpt}${hint.suggestion ? ' → ' + hint.suggestion : ''}`;
       hintList.append(item);
     }
     const truncated = data.warnings.includes('REVIEW_HINTS_TRUNCATED')
       ? ' The location list is capped; inspect every page, not just the listed examples.' : '';
-    status.textContent = `Extracted ${data.paragraphs.length} unverified page-text chunk(s) from ${data.pages} page(s) into ${target}. These are NOT paragraph boundaries. Compare reading order against each page, then split/correct text manually before checking.${warning}${noText}${spacing}${hyphen}${truncated}`;
+    status.textContent = `Extracted ${data.paragraphs.length} unverified page-text chunk(s) from ${data.pages} page(s) into ${target}. These are NOT paragraph boundaries. Compare reading order against each page, then split/correct text manually before checking.${warning}${noText}${spacing}${crosscheck}${crosscheckMissing}${hyphen}${truncated}`;
   } catch (error) {
     if (version === workflowVersion) status.textContent = error.message;
   } finally {

@@ -20,6 +20,64 @@ MAX_TEXT_CHARS = 262_144
 MAX_CHUNK_CHARS = 4000
 MAX_REVIEW_HINTS = 64
 _SPACED_GLYPHS = re.compile(r'(?:\b[A-Za-z]\s+){6,}')
+_ALT_WORD = re.compile(r'(?<![A-Za-z])[A-Za-z]{3,}(?![A-Za-z])')
+_SHORT_PREFIX = re.compile(r'\b([A-Za-z]{1,2})\s+[A-Za-z]{5,}\b')
+_SHORT_WORDS = frozenset({'a', 'i', 'an', 'as', 'at', 'be', 'by', 'do', 'go',
+                          'he', 'if', 'in', 'is', 'it', 'me', 'my', 'no', 'of',
+                          'on', 'or', 's', 'so', 'to', 'up', 'us', 'we'})
+
+
+def _crosscheck_spacing(primary: str, alternate: str) -> list[dict[str, str]]:
+    """Locate only character-identical word-join disagreements for human review.
+
+    This is not a truth vote: two PDF parsers can both be wrong. The original
+    pypdf text is not rewritten, and no hyphen, letter, digit or case changes
+    are suggested here.
+    """
+    primary = unicodedata.normalize('NFKC', primary)
+    alternate = unicodedata.normalize('NFKC', alternate)
+    glyphs = [(match.group(), match.start(), match.end())
+              for match in re.finditer(r'[^\s]', primary)]
+    compact = ''.join(glyph for glyph, _, _ in glyphs)
+    suggestions = []
+    seen = set()
+    for word_match in _ALT_WORD.finditer(alternate):
+        word = word_match.group()
+        if len(word) > 64:
+            continue
+        if word != word.lower() or word == 'etal':
+            continue
+        start = 0
+        while (position := compact.find(word, start)) >= 0:
+            start = position + 1
+            observed = primary[glyphs[position][1]:glyphs[position + len(word) - 1][2]]
+            parts = observed.split()
+            if len(parts) < 2 or ''.join(parts) != word:
+                continue
+            # pdfplumber also merges many *real* adjacent words. Require a
+            # distinctive short-prefix fracture or an all-glyph fracture.
+            # A split after a full word ("chip s") is not enough evidence.
+            if len(parts) == 2:
+                if (len(parts[0]) > 2 or len(parts[1]) < 5
+                        or parts[0].lower() in _SHORT_WORDS):
+                    continue
+            elif not (len(word) >= 3 and all(len(part) <= 2 for part in parts)
+                      and sum(len(part) == 1 for part in parts) * 2 >= len(parts)):
+                continue
+            key = (observed, word)
+            if key not in seen:
+                seen.add(key)
+                suggestions.append({'observed': observed, 'suggestion': word})
+                if len(suggestions) >= MAX_REVIEW_HINTS:
+                    return suggestions
+    return suggestions
+
+
+def _needs_spacing_crosscheck(text: str) -> bool:
+    if _spacing_artifacts(text):
+        return True
+    return any(match.group(1).lower() not in _SHORT_WORDS
+               for match in _SHORT_PREFIX.finditer(text))
 
 
 def _spacing_artifacts(text: str) -> bool:
@@ -83,6 +141,7 @@ def extract_pdf(data: bytes) -> dict:
         raise ValueError('PDF must be non-empty and at most 16 MiB')
     if not data.startswith(b'%PDF-'):
         raise ValueError('Not a PDF file')
+    alternate_pdf = None
     try:
         reader = PdfReader(io.BytesIO(data), strict=True)
         if reader.is_encrypted:
@@ -94,6 +153,8 @@ def extract_pdf(data: bytes) -> dict:
         warnings = {'READING_ORDER_REQUIRES_REVIEW', 'PARAGRAPH_BOUNDARIES_REQUIRE_REVIEW'}
         review_hints_by_page = []
         image_count = 0
+        # An independent character-position parser is used only to locate
+        # possible word-spacing defects; its full text never replaces pypdf.
         for number, page in enumerate(reader.pages, start=1):
             page_hints = []
             review_hints_by_page.append(page_hints)
@@ -102,6 +163,26 @@ def extract_pdf(data: bytes) -> dict:
             if images:
                 warnings.add('IMAGE_TEXT_NOT_EXTRACTED')
             raw = page.extract_text(extraction_mode='plain') or ''
+            if _needs_spacing_crosscheck(raw):
+                try:
+                    if alternate_pdf is None:
+                        import pdfplumber
+                        alternate_pdf = pdfplumber.open(io.BytesIO(data))
+                    alternate_text = alternate_pdf.pages[number - 1].extract_text() or ''
+                    for suggestion in _crosscheck_spacing(raw, alternate_text):
+                        if len(page_hints) < MAX_REVIEW_HINTS:
+                            page_hints.append({'page': number,
+                                               'kind': 'CROSS_EXTRACTOR_SPACING_SUGGESTION',
+                                               'excerpt': suggestion['observed'],
+                                               'suggestion': suggestion['suggestion']})
+                        else:
+                            warnings.add('REVIEW_HINTS_TRUNCATED')
+                    if any(hint['kind'] == 'CROSS_EXTRACTOR_SPACING_SUGGESTION' for hint in page_hints):
+                        warnings.add('CROSS_EXTRACTOR_SPACING_REQUIRES_REVIEW')
+                except Exception:
+                    # A second parser must never turn a readable pypdf import
+                    # into a failed upload or silently change the primary text.
+                    warnings.add('SECOND_EXTRACTOR_UNAVAILABLE')
             spaced = _SPACED_GLYPHS.search(raw)
             if spaced:
                 warnings.add('TEXT_SPACING_ARTIFACTS')
@@ -158,3 +239,6 @@ def extract_pdf(data: bytes) -> dict:
                 'extracted_text_sha256': hashlib.sha256(text.encode('utf-8')).hexdigest()}
     except (PdfReadError, KeyError, TypeError, RecursionError) as error:
         raise ValueError('Could not read PDF') from error
+    finally:
+        if alternate_pdf is not None:
+            alternate_pdf.close()

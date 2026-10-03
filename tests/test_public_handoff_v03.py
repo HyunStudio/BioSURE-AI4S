@@ -20,7 +20,7 @@ def test_watch_page_links_latest_code_and_live_app_video():
     assert "Three-source cross-publisher PDF audit" in page
     assert "page-specific review hints" in page
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    assert project["version"] == "0.3.8"
+    assert project["version"] == "0.3.9"
     assert "pypdf[fonts]==6.19.0" in project["dependencies"]
     assert "fonttools==4.66.1" in project["dependencies"]
 

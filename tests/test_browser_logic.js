@@ -112,6 +112,23 @@ test('PDF review hints show the page and literal suspicious excerpt', async () =
   assert.match(h.get('pdf-review-hints').children[0].textContent, /Page 1 · Check broken letter spacing.*f o r <script>/);
 });
 
+test('independent spacing suggestion is visible but never auto-applied', async () => {
+  const h = harness('workflow.js');
+  h.get('pdf-file').files = [{size: 100, type: 'application/pdf'}];
+  h.get('pdf-target').value = 'observed';
+  h.context.fetch = async () => ({ok: true, json: async () => ({
+    paragraphs: [{text: 'elimination ef ficiency'}], pages: 1, image_count: 0,
+    warnings: ['CROSS_EXTRACTOR_SPACING_REQUIRES_REVIEW'],
+    review_hints: [{page: 1, kind: 'CROSS_EXTRACTOR_SPACING_SUGGESTION',
+      excerpt: 'ef ficiency', suggestion: 'efficiency'}]
+  })});
+  await h.call('importPdf');
+  assert.equal(h.get('observed-input').value, 'elimination ef ficiency');
+  assert.match(h.get('pdf-review-hints').children[0].textContent,
+    /Possible word spacing \(not applied\).*ef ficiency → efficiency/);
+  assert.match(h.get('pdf-status').textContent, /verify each against the visible page/);
+});
+
 test('learned review displays lexical alerts without claiming automatic approval', async () => {
   const h = harness('workflow.js'); let endpoint;
   h.get('reference-input').value = 'Dose 5 mg.\n\nNo increase.';
