@@ -131,6 +131,30 @@ def test_second_extractor_locates_broken_word_spacing_without_changing_primary_t
         {'observed': 'ef ficiency', 'suggestion': 'efficiency'}]
 
 
+def test_second_extractor_does_not_borrow_matching_word_from_unrelated_context():
+    primary = 'The ef ficiency improved cellular transport. An unrelated section follows.'
+    alternate = 'The efficacy improved cellular transport. An unrelated efficiency result follows.'
+    assert _crosscheck_spacing(primary, alternate) == []
+
+
+def test_second_extractor_does_not_join_fragments_across_lines():
+    assert _crosscheck_spacing('The h a\ns value was reported.',
+                               'The has value was reported.') == []
+
+
+def test_second_extractor_does_not_join_scientific_units_to_nouns():
+    assert _crosscheck_spacing('The amount was mg tissue in the sample.',
+                               'The amount was mgtissue in the sample.') == []
+    assert _crosscheck_spacing('A mm thick layer was prepared.',
+                               'A mmthick layer was prepared.') == []
+
+
+def test_second_extractor_ignores_low_quality_glued_text_line():
+    primary = 'observedlongcontextbefore d r u ge n g a g e rt o followedlongcontextafter'
+    alternate = 'observedlongcontextbefore drugengagerto followedlongcontextafter'
+    assert _crosscheck_spacing(primary, alternate) == []
+
+
 def test_second_extractor_does_not_suggest_semantic_or_hyphen_changes():
     assert _crosscheck_spacing('The result was faith-fully reproduced.',
                                'The result was faithfully reproduced.') == []
@@ -156,6 +180,15 @@ def test_second_extractor_catches_multiple_fractured_title_words():
         {'observed': 'd i s c o v e r y', 'suggestion': 'discovery'}]
 
 
+def test_second_extractor_keeps_title_words_when_following_line_differs():
+    primary = 'An eighteen-organ system f o rd r u gd i s c o v e r y\nJing Wang'
+    alternate = 'An eighteen-organ system for drug discovery\n✉\nJing Wang'
+    assert _crosscheck_spacing(primary, alternate) == [
+        {'observed': 'f o r', 'suggestion': 'for'},
+        {'observed': 'd r u g', 'suggestion': 'drug'},
+        {'observed': 'd i s c o v e r y', 'suggestion': 'discovery'}]
+
+
 def test_second_extractor_does_not_emit_unbounded_word_candidates():
     assert _crosscheck_spacing(' '.join('x' * 80), 'x' * 80) == []
 
@@ -163,6 +196,8 @@ def test_second_extractor_does_not_emit_unbounded_word_candidates():
 def test_second_extractor_runs_for_short_prefix_fractures_not_ordinary_small_words():
     assert _needs_spacing_crosscheck('Elimination ef ficiency increased.') is True
     assert _needs_spacing_crosscheck('Cells grown in vitro in a study.') is False
+    assert _needs_spacing_crosscheck('A mm thick layer was prepared.') is False
+    assert _needs_spacing_crosscheck('The mg tissue ratio was recorded.') is False
 
 
 def test_image_only_page_requires_review_with_no_invented_text():

@@ -25,6 +25,8 @@ _SHORT_PREFIX = re.compile(r'\b([A-Za-z]{1,2})\s+[A-Za-z]{5,}\b')
 _SHORT_WORDS = frozenset({'a', 'i', 'an', 'as', 'at', 'be', 'by', 'do', 'go',
                           'he', 'if', 'in', 'is', 'it', 'me', 'my', 'no', 'of',
                           'on', 'or', 's', 'so', 'to', 'up', 'us', 'we'})
+_SHORT_UNITS = frozenset({'cm', 'kg', 'km', 'mg', 'ml', 'mm', 'ms', 'ng',
+                          'nm', 'ns', 'pm', 'ug', 'um'})
 
 
 def _crosscheck_spacing(primary: str, alternate: str) -> list[dict[str, str]]:
@@ -39,6 +41,10 @@ def _crosscheck_spacing(primary: str, alternate: str) -> list[dict[str, str]]:
     glyphs = [(match.group(), match.start(), match.end())
               for match in re.finditer(r'[^\s]', primary)]
     compact = ''.join(glyph for glyph, _, _ in glyphs)
+    alternate_glyphs = [(match.group(), match.start())
+                        for match in re.finditer(r'[^\s]', alternate)]
+    alternate_compact = ''.join(glyph for glyph, _ in alternate_glyphs)
+    alternate_offsets = {offset: index for index, (_, offset) in enumerate(alternate_glyphs)}
     suggestions = []
     seen = set()
     for word_match in _ALT_WORD.finditer(alternate):
@@ -47,19 +53,29 @@ def _crosscheck_spacing(primary: str, alternate: str) -> list[dict[str, str]]:
             continue
         if word != word.lower() or word == 'etal':
             continue
+        line_start = alternate.rfind('\n', 0, word_match.start()) + 1
+        line_end = alternate.find('\n', word_match.end())
+        line = alternate[line_start:line_end if line_end >= 0 else len(alternate)]
+        # A long line with almost no spaces is usually a collapsed column,
+        # caption or reference. Its word boundaries are not a reliable vote.
+        if len(line) >= 50 and line.count(' ') / len(line) < 0.09:
+            continue
+        alternate_position = alternate_offsets[word_match.start()]
         start = 0
         while (position := compact.find(word, start)) >= 0:
             start = position + 1
             observed = primary[glyphs[position][1]:glyphs[position + len(word) - 1][2]]
             parts = observed.split()
-            if len(parts) < 2 or ''.join(parts) != word:
+            if (len(parts) < 2 or ''.join(parts) != word or '\n' in observed
+                    or not _matching_context(compact, position, alternate_compact,
+                                             alternate_position, len(word))):
                 continue
             # pdfplumber also merges many *real* adjacent words. Require a
             # distinctive short-prefix fracture or an all-glyph fracture.
             # A split after a full word ("chip s") is not enough evidence.
             if len(parts) == 2:
                 if (len(parts[0]) > 2 or len(parts[1]) < 5
-                        or parts[0].lower() in _SHORT_WORDS):
+                        or parts[0].lower() in _SHORT_WORDS | _SHORT_UNITS):
                     continue
             elif not (len(word) >= 3 and all(len(part) <= 2 for part in parts)
                       and sum(len(part) == 1 for part in parts) * 2 >= len(parts)):
@@ -73,10 +89,29 @@ def _crosscheck_spacing(primary: str, alternate: str) -> list[dict[str, str]]:
     return suggestions
 
 
+def _matching_context(primary: str, primary_start: int, alternate: str,
+                      alternate_start: int, length: int) -> bool:
+    """Reject a same-spelled word borrowed from a different page location."""
+    left_limit = min(12, primary_start, alternate_start)
+    right_limit = min(12, len(primary) - primary_start - length,
+                      len(alternate) - alternate_start - length)
+    left = 0
+    while (left < left_limit and primary[primary_start - left - 1]
+           == alternate[alternate_start - left - 1]):
+        left += 1
+    right = 0
+    while (right < right_limit and primary[primary_start + length + right]
+           == alternate[alternate_start + length + right]):
+        right += 1
+    # Parser order can diverge after a title or column boundary. One strong
+    # side, or two shorter matching sides, is enough to locate the same word.
+    return max(left, right) >= 8 or (left >= 4 and right >= 4)
+
+
 def _needs_spacing_crosscheck(text: str) -> bool:
     if _spacing_artifacts(text):
         return True
-    return any(match.group(1).lower() not in _SHORT_WORDS
+    return any(match.group(1).lower() not in _SHORT_WORDS | _SHORT_UNITS
                for match in _SHORT_PREFIX.finditer(text))
 
 
