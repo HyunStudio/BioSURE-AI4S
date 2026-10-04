@@ -19,7 +19,7 @@ EXCLUDED = {"biosure/legacy.py", "biosure/legacy_benchmark.py", "results/source_
 PUBLIC_DOCS = {"public-submission.md", "workflow-scenario.md", "practical-validation.md",
                "public-readme.md", "public-rights.md", "public-scorecard.md",
                "ooc-pdf-audit-protocol.md", "three-source-ooc-pdf-audit-protocol.md",
-               "pdf-spacing-crosscheck.md"}
+               "prospective-ooc-audit-protocol.md", "pdf-spacing-crosscheck.md"}
 GENERATED_ROOTS = {".git", "biosure_ai4s.egg-info"}
 
 

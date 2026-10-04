@@ -22,6 +22,6 @@ jobs:
       - run: python -m pytest tests -q -p no:cacheprovider
       - run: node --test tests/test_browser_logic.js
       - run: python scripts/verify_reproduction.py .
-      - run: python -c "from pathlib import Path; from scripts.prepare_release import verify_manifest; verify_manifest(Path('.')); print('MANIFEST VERIFIED')"
       - run: python scripts/prepare_release.py . "$RUNNER_TEMP/biosure-release"
+      - run: python -c "from pathlib import Path; from scripts.prepare_release import verify_manifest; verify_manifest(Path('$RUNNER_TEMP/biosure-release')); print('MANIFEST VERIFIED')"
       - run: python scripts/audit_release.py "$RUNNER_TEMP/biosure-release"

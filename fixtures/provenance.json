@@ -187,6 +187,30 @@
       "rights": "CC BY 4.0 attributed short excerpts; not independent expert adjudication"
     },
     {
+      "origin": "Eight separately credited CC BY 4.0 organ-on-a-chip/microphysiological-system PMC Cloud PDF/XML deposits; per-file authors, DOI, source URL, hashes and modification notice are embedded in each input fixture and credited in RIGHTS.md",
+      "pattern": "fixtures/prospective_ooc_PMC*_inputs.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed title/abstract excerpts; no source PDF, XML, figure or page image packaged"
+    },
+    {
+      "origin": "Continuous JATS title/abstract excerpts from the same eight credited CC BY 4.0 articles; developer-agent boundary check, not independent expert gold",
+      "pattern": "fixtures/prospective_ooc_PMC*_gold.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed modified short excerpts; same-article canonical reference, not independent source truth"
+    },
+    {
+      "origin": "Project-authored prelocked source/split/unit manifest of eight attributed CC BY 4.0 articles",
+      "pattern": "fixtures/prospective_ooc_manifest.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored metadata, distributed alongside attributed CC BY 4.0 source excerpts"
+    },
+    {
+      "origin": "Decision records include attributed CC BY 4.0 article-derived title/abstract excerpts from the eight credited prospective-audit sources",
+      "pattern": "results/prospective_ooc_decisions.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed modified excerpts; no PDF/XML/figures packaged"
+    },
+    {
       "origin": "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md",
       "pattern": "fixtures/ml_model.json",
       "review_status": "approved_for_public_release",

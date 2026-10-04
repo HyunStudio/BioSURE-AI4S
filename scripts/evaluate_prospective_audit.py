@@ -14,6 +14,7 @@ from biosure.schema import canonical_bytes, loads_json
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", required=True, type=Path)
+    parser.add_argument("--root", type=Path, help="root for paths in the locked manifest (default: manifest directory)")
     parser.add_argument("--model", required=True, type=Path)
     parser.add_argument("--out-dir", required=True, type=Path)
     args = parser.parse_args()
@@ -22,7 +23,7 @@ def main() -> int:
             raise ValueError("output directory already exists")
         manifest = loads_json(args.manifest.read_text(encoding="utf-8"))
         model = loads_json(args.model.read_text(encoding="utf-8"))
-        result = evaluate_manifest(manifest, args.manifest.parent, model)
+        result = evaluate_manifest(manifest, args.root or args.manifest.parent, model)
         args.out_dir.mkdir(parents=False, exist_ok=False)
         (args.out_dir / "decisions.json").write_bytes(canonical_bytes(result["decisions"]))
         (args.out_dir / "summary.json").write_bytes(canonical_bytes(result["summary"]))

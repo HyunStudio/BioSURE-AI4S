@@ -151,6 +151,14 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/ooc_pdf_*_inputs.json" else
                            "Single-agent JATS/rendered-PDF title/abstract adjudication of the five credited OoC articles; the Frontiers abstract is unscorable and excluded. See report/public-rights.md"
                            if pattern == "fixtures/ooc_pdf_*_gold.json" else
+                           "Eight separately credited CC BY 4.0 organ-on-a-chip/microphysiological-system PMC Cloud PDF/XML deposits; per-file authors, DOI, source URL, hashes and modification notice are embedded in each input fixture and credited in RIGHTS.md"
+                           if pattern == "fixtures/prospective_ooc_PMC*_inputs.json" else
+                           "Continuous JATS title/abstract excerpts from the same eight credited CC BY 4.0 articles; developer-agent boundary check, not independent expert gold"
+                           if pattern == "fixtures/prospective_ooc_PMC*_gold.json" else
+                           "Project-authored prelocked source/split/unit manifest of eight attributed CC BY 4.0 articles"
+                           if pattern == "fixtures/prospective_ooc_manifest.json" else
+                           "Decision records include attributed CC BY 4.0 article-derived title/abstract excerpts from the eight credited prospective-audit sources"
+                           if pattern == "results/prospective_ooc_decisions.json" else
                            "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md"
                            if pattern == "fixtures/ml_model.json" else
                            "project-authored synthetic or project-owned source; see RIGHTS.md"),
@@ -166,6 +174,14 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/ooc_pdf_*_inputs.json" else
                            "CC BY 4.0 attributed short excerpts; not independent expert adjudication"
                            if pattern == "fixtures/ooc_pdf_*_gold.json" else
+                           "CC BY 4.0 attributed title/abstract excerpts; no source PDF, XML, figure or page image packaged"
+                           if pattern == "fixtures/prospective_ooc_PMC*_inputs.json" else
+                           "CC BY 4.0 attributed modified short excerpts; same-article canonical reference, not independent source truth"
+                           if pattern == "fixtures/prospective_ooc_PMC*_gold.json" else
+                           "MIT project-authored metadata, distributed alongside attributed CC BY 4.0 source excerpts"
+                           if pattern == "fixtures/prospective_ooc_manifest.json" else
+                           "CC BY 4.0 attributed modified excerpts; no PDF/XML/figures packaged"
+                           if pattern == "results/prospective_ooc_decisions.json" else
                            "MIT project-generated model artifact, distributed with CC BY 4.0 training-source attribution and change notice"
                            if pattern == "fixtures/ml_model.json" else
                            "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"),
@@ -180,7 +196,10 @@ def emit(root: Path) -> None:
                 "fixtures/challenge/*.json", "fixtures/gold/*.json", "results/*.json",
                 "fixtures/article_challenge/*.json", "fixtures/article_gold/*.json", "fixtures/article_provenance.json",
                 "fixtures/ml_corpus.json", "fixtures/native_pilot_inputs.json", "fixtures/native_pilot_gold.json",
-                "fixtures/ooc_pdf_*_inputs.json", "fixtures/ooc_pdf_*_gold.json", "fixtures/ml_model.json",
+                "fixtures/ooc_pdf_*_inputs.json", "fixtures/ooc_pdf_*_gold.json",
+                "fixtures/prospective_ooc_PMC*_inputs.json", "fixtures/prospective_ooc_PMC*_gold.json",
+                "fixtures/prospective_ooc_manifest.json", "results/prospective_ooc_decisions.json",
+                "fixtures/ml_model.json",
                 "report/*.md", "video/*.md",
             )
         ],

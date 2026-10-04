@@ -10,7 +10,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from biosure.batch import run_batch
 from biosure.evaluate import decide_case, score_case, summarize
 from biosure.native_pilot import decide_inputs, score_decisions
-from biosure.schema import loads_json
+from biosure.prospective_audit import evaluate_manifest
+from biosure.schema import canonical_bytes, loads_json
 from scripts.evaluate_ml import evaluate
 
 
@@ -131,9 +132,29 @@ def verify(root: Path) -> dict:
         three_source_pdf_audit['learned_lexical_alert_records'] += result['learned_review']['native_error_cases_with_lexical_alerts']
     if three_source_pdf_audit != loads_json((root / 'results/three_source_pdf_audit.json').read_text(encoding='utf-8')):
         raise ValueError('three-source PDF audit aggregate mismatch')
+    prospective_manifest = loads_json((root / 'fixtures/prospective_ooc_manifest.json').read_text(encoding='utf-8'))
+    prospective_replay = evaluate_manifest(prospective_manifest, root, replay['model'])
+    if canonical_bytes(prospective_replay['summary']) != (root / 'results/prospective_ooc_audit.json').read_bytes():
+        raise ValueError('prospective OoC PDF audit aggregate mismatch')
+    if canonical_bytes(prospective_replay['decisions']) != (root / 'results/prospective_ooc_decisions.json').read_bytes():
+        raise ValueError('prospective OoC PDF audit decisions mismatch')
+    prospective = prospective_replay['summary']['overall']
+    prospective_ooc_audit = {
+        'attempted_sources': prospective['attempted_sources'],
+        'attempted_units': prospective['attempted_units'],
+        'scorable_units': prospective['scorable_units'],
+        'observed_reference_discrepancy_units': prospective['native_error_cases'],
+        'biosure_exact_auto': prospective['biosure']['exact_auto'],
+        'biosure_incorrect_auto': prospective['biosure']['incorrect_auto'],
+        'biosure_abstentions': prospective['biosure']['abstentions'],
+        'copy_exact_auto': prospective['direct_copy']['exact_auto'],
+        'diff_review_records': prospective['diff_review']['manual_review_records'],
+        'learned_lexical_alert_records': prospective['learned_review']['native_error_cases_with_lexical_alerts'],
+    }
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
             'ml': ml, 'native_pilot': pilot, 'ooc_pdf_audit': ooc_pdf_audit,
             'three_source_pdf_audit': three_source_pdf_audit,
+            'prospective_ooc_audit': prospective_ooc_audit,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 

@@ -4,11 +4,16 @@ import hashlib
 import json
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
 
 from biosure.prospective_audit import evaluate_manifest, preflight_manifest
+from biosure.schema import canonical_bytes
+from scripts.build_prospective_ooc_fixture import _gold, slice_unit
+from scripts.prepare_release import prepare
+from scripts.verify_reproduction import verify
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -213,3 +218,100 @@ def test_cli_does_not_create_output_when_gold_is_invalid(tmp_path):
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     assert result.returncode != 0
     assert not output.exists()
+
+
+def test_cli_accepts_manifest_nested_below_explicit_package_root(tmp_path):
+    manifest = _good_fixture(tmp_path)
+    (tmp_path / "fixtures").mkdir()
+    nested_manifest = tmp_path / "fixtures" / "manifest.json"
+    nested_manifest.write_text(json.dumps(manifest), encoding="utf-8")
+    output = tmp_path / "nested-output"
+    command = [sys.executable, str(ROOT / "scripts/evaluate_prospective_audit.py"),
+               "--manifest", str(nested_manifest), "--root", str(tmp_path),
+               "--model", str(ROOT / "fixtures/ml_model.json"), "--out-dir", str(output)]
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert result.returncode == 0, result.stderr
+    assert (output / "summary.json").exists()
+
+
+def test_locked_eight_source_audit_reproduces_complete_summary():
+    manifest = json.loads((ROOT / "fixtures/prospective_ooc_manifest.json").read_text(encoding="utf-8"))
+    sources = preflight_manifest(manifest, ROOT)
+    assert [source["source_id"] for source in sources] == [
+        "PMC12624441", "PMC12864593", "PMC12850162", "PMC12838518",
+        "PMC12838946", "PMC12789962", "PMC12755145", "PMC12732092"]
+    assert [source["split"] for source in sources] == ["development"] * 4 + ["held_out"] * 4
+    assert sum(len(source["units"]) for source in sources) == 16
+    replay = evaluate_manifest(manifest, ROOT, MODEL)
+    measured = replay["summary"]
+    assert measured["overall"]["attempted_sources"] == 8
+    assert measured["overall"]["attempted_units"] == 16
+    assert canonical_bytes(measured) == (ROOT / "results/prospective_ooc_audit.json").read_bytes()
+    assert canonical_bytes(replay["decisions"]) == (ROOT / "results/prospective_ooc_decisions.json").read_bytes()
+
+
+def test_offline_verifier_includes_locked_prospective_audit():
+    result = verify(ROOT)
+    assert result["prospective_ooc_audit"] == {
+        "attempted_sources": 8,
+        "attempted_units": 16,
+        "scorable_units": 16,
+        "observed_reference_discrepancy_units": 11,
+        "biosure_exact_auto": 0,
+        "biosure_incorrect_auto": 0,
+        "biosure_abstentions": 16,
+        "copy_exact_auto": 16,
+        "diff_review_records": 11,
+        "learned_lexical_alert_records": 2,
+    }
+
+
+def test_public_export_includes_replay_and_rights(tmp_path):
+    destination = tmp_path / "biosure-public"
+    manifest = prepare(ROOT, destination)
+    assert manifest["cleared_for_public_release"] is True
+    assert (destination / "report/prospective-ooc-audit-protocol.md").is_file()
+    assert (destination / "fixtures/prospective_ooc_manifest.json").is_file()
+    assert len(list((destination / "fixtures").glob("prospective_ooc_PMC*_inputs.json"))) == 8
+    assert len(list((destination / "fixtures").glob("prospective_ooc_PMC*_gold.json"))) == 8
+    assert (destination / "results/prospective_ooc_audit.json").is_file()
+    assert (destination / "results/prospective_ooc_decisions.json").is_file()
+    assert "prospective_ooc_audit" in verify(destination)
+
+
+def test_ci_verifies_generated_release_not_source_checkout():
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    export = workflow.index("python scripts/prepare_release.py")
+    verify_package = workflow.index("from scripts.prepare_release import verify_manifest")
+    assert export < verify_package
+    assert "verify_manifest(Path('$RUNNER_TEMP/biosure-release'))" in workflow
+
+
+def test_public_excerpts_keep_article_title_and_author_attribution():
+    ids = ["PMC12624441", "PMC12864593", "PMC12850162", "PMC12838518",
+           "PMC12838946", "PMC12789962", "PMC12755145", "PMC12732092"]
+    for source_id in ids:
+        fixture = json.loads((ROOT / "fixtures" / f"prospective_ooc_{source_id}_inputs.json").read_text(encoding="utf-8"))
+        source = fixture["source"]
+        assert source["title"] and source["authors"]
+        assert source["doi"] and source["license_uri"]
+        assert source["pdf_sha256"] and source["xml_sha256"]
+    first = json.loads((ROOT / "fixtures/prospective_ooc_PMC12624441_inputs.json").read_text(encoding="utf-8"))
+    assert first["source"]["authors"][0] == "Chander K. Negi"
+
+
+def test_source_slice_preserves_observed_spacing_and_rejects_ambiguous_anchors():
+    assert slice_unit("prefixA  collapsedB suffix", "prefix", " suffix") == "A  collapsedB"
+    with pytest.raises(ValueError, match="unique"):
+        slice_unit("prefixA prefixB suffix", "prefix", " suffix")
+    with pytest.raises(ValueError, match="unique"):
+        slice_unit("prefixA suffix suffix", "prefix", " suffix")
+
+
+def test_abstract_gold_excludes_label_and_supplementary_section():
+    abstract = ET.fromstring("<abstract><title>Abstract</title><p>A text.</p>"
+                             "<sec><title>Supplementary Information</title><p>Not abstract.</p></sec></abstract>")
+    assert _gold(abstract, "abstract") == "A text."
+    abstract.find("sec/title").text = "Results"
+    with pytest.raises(ValueError, match="unhandled abstract"):
+        _gold(abstract, "abstract")
