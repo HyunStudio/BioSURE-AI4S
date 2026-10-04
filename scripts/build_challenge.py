@@ -159,10 +159,20 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/prospective_ooc_manifest.json" else
                            "Decision records include attributed CC BY 4.0 article-derived title/abstract excerpts from the eight credited prospective-audit sources"
                            if pattern == "results/prospective_ooc_decisions.json" else
+                           "Two separately credited CC BY 4.0 PMC Cloud deposits selected by metadata-only follow-up lock; author, DOI, URLs, hashes and modification notice are in each input fixture and RIGHTS.md"
+                           if pattern == "fixtures/followup_ooc_PMC*_inputs.json" else
+                           "Same-article continuous JATS title/abstract excerpts from the two credited follow-up sources; one-agent page-boundary check is not independent truth"
+                           if pattern == "fixtures/followup_ooc_PMC*_gold.json" else
+                           "Project-authored prelocked metadata manifest for two attributed CC BY 4.0 articles"
+                           if pattern == "fixtures/followup_ooc_manifest.json" else
+                           "Decision records include modified PDF-text/JATS title/abstract excerpts from the two credited follow-up articles"
+                           if pattern == "results/followup_ooc_decisions.json" else
                            "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md"
                            if pattern == "fixtures/ml_model.json" else
                            "project-generated per-source metrics from eight attributed CC BY 4.0 title/abstract inputs; see report/public-rights.md"
                            if pattern == "results/learned_upstream_audit.json" else
+                           "project-generated results; article-derived excerpts in decision files retain the separately documented CC BY 4.0 rights in RIGHTS.md"
+                           if pattern == "results/*.json" else
                            "project-authored synthetic or project-owned source; see RIGHTS.md"),
                 "rights": ("CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
                            if pattern.startswith("fixtures/article_") else
@@ -184,10 +194,20 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/prospective_ooc_manifest.json" else
                            "CC BY 4.0 attributed modified excerpts; no PDF/XML/figures packaged"
                            if pattern == "results/prospective_ooc_decisions.json" else
+                           "CC BY 4.0 attributed modified title/abstract excerpts; no PDF/XML/figure/page image packaged"
+                           if pattern == "fixtures/followup_ooc_PMC*_inputs.json" else
+                           "CC BY 4.0 attributed modified short excerpts; not independent expert adjudication"
+                           if pattern == "fixtures/followup_ooc_PMC*_gold.json" else
+                           "MIT project-authored metadata distributed with separately attributed CC BY 4.0 excerpts"
+                           if pattern == "fixtures/followup_ooc_manifest.json" else
+                           "CC BY 4.0 attributed modified excerpts; no source PDF/XML/figures packaged"
+                           if pattern == "results/followup_ooc_decisions.json" else
                            "MIT project-generated model artifact, distributed with CC BY 4.0 training-source attribution and change notice"
                            if pattern == "fixtures/ml_model.json" else
                            "MIT project-generated measurements distributed with the eight sources' CC BY 4.0 attribution and change notices"
                            if pattern == "results/learned_upstream_audit.json" else
+                           "MIT applies to original project-generated portions only; any embedded article-derived text retains attributed CC BY 4.0 status"
+                           if pattern == "results/*.json" else
                            "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"),
                 "review_status": "approved_for_public_release",
             }
@@ -203,6 +223,8 @@ def emit(root: Path) -> None:
                 "fixtures/ooc_pdf_*_inputs.json", "fixtures/ooc_pdf_*_gold.json",
                 "fixtures/prospective_ooc_PMC*_inputs.json", "fixtures/prospective_ooc_PMC*_gold.json",
                 "fixtures/prospective_ooc_manifest.json", "results/prospective_ooc_decisions.json",
+                "fixtures/followup_ooc_PMC*_inputs.json", "fixtures/followup_ooc_PMC*_gold.json",
+                "fixtures/followup_ooc_manifest.json", "results/followup_ooc_decisions.json",
                 "fixtures/ml_model.json", "results/learned_upstream_audit.json",
                 "report/*.md", "video/*.md",
             )

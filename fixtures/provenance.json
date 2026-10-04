@@ -133,10 +133,10 @@
       "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
     },
     {
-      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "origin": "project-generated results; article-derived excerpts in decision files retain the separately documented CC BY 4.0 rights in RIGHTS.md",
       "pattern": "results/*.json",
       "review_status": "approved_for_public_release",
-      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+      "rights": "MIT applies to original project-generated portions only; any embedded article-derived text retains attributed CC BY 4.0 status"
     },
     {
       "origin": "CC BY 4.0 PMC JATS article-derived hashes; see fixtures/article_provenance.json and RIGHTS.md",
@@ -209,6 +209,30 @@
       "pattern": "results/prospective_ooc_decisions.json",
       "review_status": "approved_for_public_release",
       "rights": "CC BY 4.0 attributed modified excerpts; no PDF/XML/figures packaged"
+    },
+    {
+      "origin": "Two separately credited CC BY 4.0 PMC Cloud deposits selected by metadata-only follow-up lock; author, DOI, URLs, hashes and modification notice are in each input fixture and RIGHTS.md",
+      "pattern": "fixtures/followup_ooc_PMC*_inputs.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed modified title/abstract excerpts; no PDF/XML/figure/page image packaged"
+    },
+    {
+      "origin": "Same-article continuous JATS title/abstract excerpts from the two credited follow-up sources; one-agent page-boundary check is not independent truth",
+      "pattern": "fixtures/followup_ooc_PMC*_gold.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed modified short excerpts; not independent expert adjudication"
+    },
+    {
+      "origin": "Project-authored prelocked metadata manifest for two attributed CC BY 4.0 articles",
+      "pattern": "fixtures/followup_ooc_manifest.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored metadata distributed with separately attributed CC BY 4.0 excerpts"
+    },
+    {
+      "origin": "Decision records include modified PDF-text/JATS title/abstract excerpts from the two credited follow-up articles",
+      "pattern": "results/followup_ooc_decisions.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed modified excerpts; no source PDF/XML/figures packaged"
     },
     {
       "origin": "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md",

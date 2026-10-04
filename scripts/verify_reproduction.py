@@ -11,7 +11,7 @@ from biosure.batch import run_batch
 from biosure.evaluate import decide_case, score_case, summarize
 from biosure.native_pilot import decide_inputs, score_decisions
 from biosure.prospective_audit import evaluate_manifest
-from biosure.learned_upstream_audit import evaluate_upstream_manifest
+from biosure.learned_upstream_audit import FOLLOWUP_LOCKED_SOURCES, evaluate_upstream_manifest
 from biosure.schema import canonical_bytes, loads_json
 from scripts.evaluate_ml import evaluate
 
@@ -168,11 +168,39 @@ def verify(root: Path) -> dict:
         'proposal_exact': compared['learned']['proposal_exact_units'],
         'proposal_abstained': compared['learned']['proposal_abstained_units'],
     }
+    followup_manifest = loads_json((root / 'fixtures/followup_ooc_manifest.json').read_text(encoding='utf-8'))
+    followup_replay = evaluate_manifest(followup_manifest, root, replay['model'])
+    if canonical_bytes(followup_replay['summary']) != (root / 'results/followup_ooc_audit.json').read_bytes():
+        raise ValueError('follow-up OoC PDF audit aggregate mismatch')
+    if canonical_bytes(followup_replay['decisions']) != (root / 'results/followup_ooc_decisions.json').read_bytes():
+        raise ValueError('follow-up OoC PDF audit decisions mismatch')
+    followup_upstream = evaluate_upstream_manifest(followup_manifest, root, replay['model'],
+                                                   locked_sources=FOLLOWUP_LOCKED_SOURCES)
+    if canonical_bytes(followup_upstream) != (root / 'results/followup_learned_upstream_audit.json').read_bytes():
+        raise ValueError('follow-up learned upstream audit mismatch')
+    followup = followup_replay['summary']['overall']
+    followup_compared = followup_upstream['summary']['overall']
+    followup_ooc_audit = {
+        'attempted_sources': followup['attempted_sources'],
+        'attempted_units': followup['attempted_units'],
+        'scorable_units': followup['scorable_units'],
+        'observed_reference_discrepancy_units': followup['native_error_cases'],
+        'biosure_exact_auto': followup['biosure']['exact_auto'],
+        'biosure_incorrect_auto': followup['biosure']['incorrect_auto'],
+        'biosure_abstentions': followup['biosure']['abstentions'],
+        'copy_exact_auto': followup['direct_copy']['exact_auto'],
+        'diff_review_records': followup['diff_review']['manual_review_records'],
+        'learned_rank_correct': followup_compared['learned']['ranking_correct_units'],
+        'difflib_rank_correct': followup_compared['difflib']['ranking_correct_units'],
+        'token_dice_rank_correct': followup_compared['token_dice']['ranking_correct_units'],
+        'proposal_exact': followup_compared['learned']['proposal_exact_units'],
+    }
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
             'ml': ml, 'native_pilot': pilot, 'ooc_pdf_audit': ooc_pdf_audit,
             'three_source_pdf_audit': three_source_pdf_audit,
             'prospective_ooc_audit': prospective_ooc_audit,
             'learned_upstream_audit': learned_upstream_audit,
+            'followup_ooc_audit': followup_ooc_audit,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 

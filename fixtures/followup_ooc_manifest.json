@@ -1,0 +1,37 @@
+{
+  "schema_version": "biosure.prospective-audit/1.0",
+  "protocol_path": "report/followup-ooc-audit-protocol.md",
+  "protocol_sha256": "b933bee517a1c07e5cfe6f2182e09b729b2f35617930704d3ab889a4c54e1446",
+  "sources": [
+    {
+      "source_id": "PMC12715219",
+      "split": "held_out",
+      "doi": "10.1038/s41598-025-30612-2",
+      "pmcid": "PMC12715219",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "inputs_path": "fixtures/followup_ooc_PMC12715219_inputs.json",
+      "inputs_sha256": "523085d46a5930efd87017d1c048cb07ce331d0081a81552e0ed03258278c995",
+      "gold_path": "fixtures/followup_ooc_PMC12715219_gold.json",
+      "gold_sha256": "e09acfca3f2e192444f406277e32e0928544c16981e1f024a6968991009d6b59",
+      "units": [
+        {"unit_id": "PMC12715219-title", "status": "scorable", "case_id": "PMC12715219-title"},
+        {"unit_id": "PMC12715219-abstract", "status": "scorable", "case_id": "PMC12715219-abstract"}
+      ]
+    },
+    {
+      "source_id": "PMC12707140",
+      "split": "held_out",
+      "doi": "10.1128/iai.00346-25",
+      "pmcid": "PMC12707140",
+      "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+      "inputs_path": "fixtures/followup_ooc_PMC12707140_inputs.json",
+      "inputs_sha256": "dfe0b555206958cd956fb83c50e2a2ad6d5f167f129e6f3b7b65f23bf0a55679",
+      "gold_path": "fixtures/followup_ooc_PMC12707140_gold.json",
+      "gold_sha256": "73d803396f1ca47ec2d9d9069cedc65c137d1ac9c7e52e7702f07212f24f33a1",
+      "units": [
+        {"unit_id": "PMC12707140-title", "status": "scorable", "case_id": "PMC12707140-title"},
+        {"unit_id": "PMC12707140-abstract", "status": "scorable", "case_id": "PMC12707140-abstract"}
+      ]
+    }
+  ]
+}

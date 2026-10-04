@@ -27,19 +27,25 @@ LOCKED_SOURCES = (
     ("PMC12755145", "held_out"),
     ("PMC12732092", "held_out"),
 )
+FOLLOWUP_LOCKED_SOURCES = (
+    ("PMC12715219", "held_out"),
+    ("PMC12707140", "held_out"),
+)
 
 
-def _locked_sources(manifest: dict, root: Path, model: dict) -> list[dict]:
+def _locked_sources(manifest: dict, root: Path, model: dict, locked_sources: tuple) -> list[dict]:
+    if locked_sources not in (LOCKED_SOURCES, FOLLOWUP_LOCKED_SOURCES):
+        raise ValueError("unrecognized source-order lock")
     validate_model(model)
     sources = preflight_manifest(manifest, root)
-    if tuple((item["source_id"], item["split"]) for item in sources) != LOCKED_SOURCES:
+    if tuple((item["source_id"], item["split"]) for item in sources) != locked_sources:
         raise ValueError("locked source order or split changed")
     experiment = loads_json((root / "results/ml_evaluation.json").read_text(encoding="utf-8"))
     if experiment.get("model") != model:
         raise ValueError("model differs from frozen training evaluation")
     trained = {source_id for group in ("train_sources", "dev_sources", "test_sources")
                for source_id in experiment["split"][group]}
-    if trained & {source_id for source_id, _ in LOCKED_SOURCES}:
+    if trained & {source_id for source_id, _ in locked_sources}:
         raise ValueError("audit source overlaps learned training/evaluation corpus")
     for source in sources:
         if source["license_uri"] != "https://creativecommons.org/licenses/by/4.0/":
@@ -64,10 +70,11 @@ def _rank(method: str, reference: list[str], observed: list[str]) -> list[int]:
     return winners
 
 
-def decide_upstream_manifest(manifest: dict, root: Path, model: dict) -> list[dict]:
+def decide_upstream_manifest(manifest: dict, root: Path, model: dict, *,
+                             locked_sources: tuple = LOCKED_SOURCES) -> list[dict]:
     """Run all alignments and gate checks without opening any gold bytes."""
     root = root.resolve()
-    sources = _locked_sources(manifest, root, model)
+    sources = _locked_sources(manifest, root, model, locked_sources)
     decisions = []
     for source in sources:
         complete = all(unit["status"] == "scorable" for unit in source["units"])
@@ -142,10 +149,11 @@ def _load_gold(source: dict, root: Path, inputs: dict | None) -> list[str] | Non
     return gold_texts
 
 
-def evaluate_upstream_manifest(manifest: dict, root: Path, model: dict) -> dict:
+def evaluate_upstream_manifest(manifest: dict, root: Path, model: dict, *,
+                               locked_sources: tuple = LOCKED_SOURCES) -> dict:
     """Score only after every source decision has been computed."""
     root = root.resolve()
-    decisions = decide_upstream_manifest(manifest, root, model)
+    decisions = decide_upstream_manifest(manifest, root, model, locked_sources=locked_sources)
     buckets = {split: _bucket() for split in ("overall", "development", "held_out")}
     source_results = []
     public_decisions = []
@@ -218,7 +226,9 @@ def evaluate_upstream_manifest(manifest: dict, root: Path, model: dict) -> dict:
             "decisions_sha256": sha256(public_decisions), "decisions": public_decisions,
             "summary": {**buckets, "sources": source_results},
             "limitations": ["Reference text and JATS gold come from the same article; direct-copy perfection is expected by construction.",
-                            "Eight selected sources and four held-out sources are too few for a superiority or significance claim.",
+                            ("Eight selected sources and four held-out sources are too few for a superiority or significance claim."
+                             if locked_sources == LOCKED_SOURCES else
+                             "Two additional selected sources are too few for a superiority or significance claim."),
                             "A fitted correspondence score cannot authenticate reference truth or biological meaning; proposed text is copied from declared references.",
                             "A single development agent checked source boundaries; there is no independent expert or timed human-use study.",
                             "The reversed-reference control is deliberately invalid and is not a deployable comparator."]}
