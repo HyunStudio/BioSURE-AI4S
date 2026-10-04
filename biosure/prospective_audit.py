@@ -4,6 +4,7 @@ import hashlib
 import re
 from pathlib import Path
 
+from .native_pilot import decide_inputs, score_decisions
 from .schema import loads_json
 
 
@@ -101,3 +102,62 @@ def preflight_manifest(manifest: dict, root: Path) -> list[dict]:
             if observed_ids != scorable_ids:
                 raise ValueError("unit case IDs disagree with input cases")
     return sources
+
+
+def evaluate_manifest(manifest: dict, root: Path, model: dict) -> dict:
+    """Decide every scorable source before opening any gold, then aggregate."""
+    root = root.resolve()
+    sources = preflight_manifest(manifest, root)
+    decided = []
+    for source in sources:
+        if any(unit["status"] == "scorable" for unit in source["units"]):
+            inputs = loads_json(_file(root, source["inputs_path"]).read_text(encoding="utf-8"))
+            decided.append({"source_id": source["source_id"], "split": source["split"],
+                            "decisions": decide_inputs(inputs, model)})
+    by_id = {item["source_id"]: item["decisions"] for item in decided}
+    buckets = {key: _empty_bucket() for key in ("overall", "development", "held_out")}
+    source_results = []
+    for source in sources:
+        result = None
+        if source["source_id"] in by_id:
+            gold_path = _file(root, source["gold_path"])
+            gold_bytes = gold_path.read_bytes()
+            _digest_matches(gold_bytes, source["gold_sha256"], "gold")
+            result = score_decisions(by_id[source["source_id"]],
+                                     loads_json(gold_bytes.decode("utf-8")))
+        source_results.append({"source_id": source["source_id"], "split": source["split"],
+                               "result": result})
+        for bucket_name in ("overall", source["split"]):
+            bucket = buckets[bucket_name]
+            bucket["attempted_sources"] += 1
+            bucket["attempted_units"] += len(source["units"])
+            for unit in source["units"]:
+                if unit["status"] == "unscorable":
+                    bucket["unscorable"].append({"source_id": source["source_id"],
+                                                   "unit_id": unit["unit_id"],
+                                                   "reason": unit["reason"]})
+            if result is None:
+                continue
+            bucket["scorable_sources"] += 1
+            bucket["scorable_units"] += result["cases"]
+            bucket["native_error_cases"] += result["native_error_cases"]
+            for method in ("biosure", "direct_copy", "diff_review", "learned_review"):
+                for metric, value in result[method].items():
+                    bucket[method][metric] += value
+    return {"schema_version": "biosure.prospective-audit-results/1.0",
+            "protocol_sha256": manifest["protocol_sha256"],
+            "decisions": decided,
+            "summary": {**buckets, "source_results": source_results}}
+
+
+def _empty_bucket() -> dict:
+    return {"attempted_sources": 0, "scorable_sources": 0,
+            "attempted_units": 0, "scorable_units": 0, "unscorable": [],
+            "native_error_cases": 0,
+            "biosure": {"exact_auto": 0, "incorrect_auto": 0, "abstentions": 0,
+                        "manual_review_records": 0},
+            "direct_copy": {"exact_auto": 0, "incorrect_auto": 0, "abstentions": 0},
+            "diff_review": {"manual_review_records": 0},
+            "learned_review": {"native_error_cases_with_lexical_alerts": 0,
+                               "native_error_cases_below_match_threshold": 0,
+                               "automatic_repairs": 0}}
