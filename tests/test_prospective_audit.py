@@ -284,7 +284,7 @@ def test_ci_verifies_generated_release_not_source_checkout():
     export = workflow.index("python scripts/prepare_release.py")
     verify_package = workflow.index("from scripts.prepare_release import verify_manifest")
     assert export < verify_package
-    assert "verify_manifest(Path('$RUNNER_TEMP/biosure-release'))" in workflow
+    assert "verify_manifest(Path(os.environ['RUNNER_TEMP']) / 'biosure-release')" in workflow
 
 
 def test_public_excerpts_keep_article_title_and_author_attribution():
