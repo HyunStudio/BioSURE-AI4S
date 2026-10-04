@@ -13,6 +13,12 @@
       "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
     },
     {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "tests/test_study_runner.js",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
       "origin": "project-authored fictional paragraph inputs; no experimental observations or article quotations",
       "pattern": "fixtures/workflow_examples.json",
       "review_status": "approved_for_public_release",
@@ -107,6 +113,30 @@
       "pattern": "docs/judge/data.json",
       "review_status": "approved_for_public_release",
       "rights": "CC BY 4.0 attributed short modified excerpt for the public sample; original project-generated decisions and fictional controls under MIT, no full PDF/XML/figures"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "docs/study/*.html",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "docs/study/*.css",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "docs/study/*.js",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "Frozen study instrument with six project-authored fictional controls and three attributed CC BY 4.0 modified page-one titles (PMC12864593, PMC12789962, PMC12707140); no participant results or independent natural-source truth; see RIGHTS.md",
+      "pattern": "docs/study/manifest.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed modified titles for three public tasks; original project-generated instrument, decisions and six fictional controls under MIT, no PDF/XML/figures or participant results"
     },
     {
       "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",

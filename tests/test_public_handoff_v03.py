@@ -21,7 +21,7 @@ def test_watch_page_links_latest_code_and_live_app_video():
     assert "Three-source cross-publisher PDF audit" in page
     assert "page-specific review hints" in page
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    assert project["version"] == "0.3.16"
+    assert project["version"] == "0.3.17"
     assert "pypdf[fonts]==6.19.0" in project["dependencies"]
     assert "fonttools==4.66.1" in project["dependencies"]
 
@@ -59,7 +59,7 @@ def test_current_demo_is_primary_and_old_capture_is_historical():
 def test_latest_package_explains_older_demo_and_new_followup():
     page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
     report = (ROOT / "report/public-submission.md").read_text(encoding="utf-8")
-    assert "v0.3.16" in page and "v0.3.16" in report
+    assert "v0.3.17" in page and "v0.3.17" in report
     assert "v0.3.15" in report
     assert "v0.3.14 video" in page
     assert "followup-ooc-audit-protocol.md" in report
@@ -72,3 +72,18 @@ def test_judge_mode_is_publicly_linked_and_release_allowlisted():
     for filename in ("docs/judge/index.html", "docs/judge/app.js", "docs/judge/style.css",
                      "docs/judge/data.json", "tests/test_judge_mode.js"):
         assert _allowed(filename), filename
+
+
+def test_study_instrument_is_linked_but_not_called_a_completed_study():
+    url = "https://hyunstudio.github.io/BioSURE-AI4S/study/"
+    for filename in ("docs/index.html", "README.md", "report/public-readme.md", "report/public-submission.md"):
+        assert url in (ROOT / filename).read_text(encoding="utf-8")
+    for filename in ("docs/study/index.html", "docs/study/app.js", "docs/study/style.css",
+                     "docs/study/manifest.json", "tests/test_study_runner.js"):
+        assert _allowed(filename), filename
+    assert not _allowed("results/biosure-study-session.json")
+    assert not _allowed("results/participant-01.json")
+    report = (ROOT / "report/public-submission.md").read_text(encoding="utf-8")
+    assert "no participants" in report.lower()
+    summary = report.split("## Project summary\n", 1)[1].split("## Technical report", 1)[0]
+    assert 200 <= len(summary.split()) <= 300

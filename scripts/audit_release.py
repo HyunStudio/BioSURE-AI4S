@@ -34,9 +34,9 @@ HEX64 = re.compile(r"[0-9a-f]{64}")
 
 def _allowed(relative: str) -> bool:
     parts = Path(relative).parts
-    if relative in {"README.md", "RIGHTS.md", "LICENSE", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html", "tests/test_browser_logic.js", "tests/test_judge_mode.js"}:
+    if relative in {"README.md", "RIGHTS.md", "LICENSE", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html", "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js"}:
         return True
-    if len(parts) == 3 and parts[:2] == ("docs", "judge") and Path(parts[2]).suffix in {".html", ".css", ".js", ".json"}:
+    if len(parts) == 3 and parts[:2] in {("docs", "judge"), ("docs", "study")} and Path(parts[2]).suffix in {".html", ".css", ".js", ".json"}:
         return True
     if len(parts) == 2 and parts[0] in {"biosure", "scripts", "tests"} and parts[1].endswith(".py"):
         return True
@@ -46,6 +46,10 @@ def _allowed(relative: str) -> bool:
                                         ("fixtures", "article_challenge"), ("fixtures", "article_gold"),
                                         ("fixtures", "stress_challenge"), ("fixtures", "stress_gold")} and parts[2].endswith(".json"):
         return True
+    if len(parts) == 2 and parts[0] == "results" and any(
+        marker in parts[1].lower() for marker in ("study", "participant", "session")
+    ):
+        return False
     if len(parts) == 2 and parts[0] in {"fixtures", "results"} and parts[1].endswith(".json"):
         return True
     if len(parts) == 2 and parts[0] in {"report", "video"} and parts[1].endswith(".md"):

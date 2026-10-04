@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="BioSURE local-first comparison instrument; no human result is claimed.">
+  <title>BioSURE practical-study instrument</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header><a href="../">BioSURE</a><span>Practical-study instrument</span></header>
+  <main>
+    <section id="intro" class="card">
+      <p class="eyebrow">Protocol tool · not a study result</p>
+      <h1>Compare review workflows, without inventing a finding.</h1>
+      <p>Review nine frozen tasks in three views: plain side-by-side, ordinary paragraph diff and BioSURE. The same case appears only once in a session. Across six assignment slots, each case rotates evenly among views. This instrument has <strong>no participants or measured benefit yet</strong>.</p>
+      <p>Six cases are project-authored fiction; three are attributed CC BY 4.0 article titles. The declared reference is <strong>not authenticated</strong>, and natural-source answers cannot be scored from it alone. Independent adjudication, participant recruitment, consent and ethics decisions remain separate work.</p>
+      <p>Nothing is sent to us. Answers, elapsed wall time and active-tab time stay in this browser's memory until you download a JSON file. Wall time includes off-page verification and idle time; active-tab time excludes both. Neither alone proves working time or a benefit. Closing or reloading before export loses data. Do not enter names, private records or patient information. Automated rehearsals must never be reported as human data.</p>
+      <label for="slot">Assignment slot (rotate 0–5 across reviewers)</label>
+      <select id="slot">
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+      </select>
+      <button id="start" type="button" disabled>Start a local session</button>
+      <p id="status" role="status" aria-live="polite">Loading frozen tasks…</p>
+      <p class="small"><a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/report/practical-validation.md">Read the validation protocol and limits</a></p>
+    </section>
+
+    <section id="task-panel" class="card" hidden aria-label="Review task">
+      <p id="progress" class="eyebrow"></p>
+      <h1 id="task-label"></h1>
+      <p id="source-kind" class="source-kind"></p>
+      <p>Current view: <strong id="mode-name"></strong>. Compare the same observed text and declared reference shown in every view.</p>
+      <a id="article-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Open the original article and inspect its PDF</a>
+      <p id="source-credit" class="small" hidden></p>
+      <div class="comparison">
+        <div><h2>Observed conversion</h2><div id="observed"></div></div>
+        <div><h2>Declared reference</h2><div id="reference"></div></div>
+      </div>
+      <div id="mode-detail" class="mode-detail" aria-label="Current view's review aids"></div>
+      <form id="answer-form">
+        <h2>Your review answer</h2>
+        <label for="difference">Do the supplied texts differ?</label>
+        <select id="difference" name="difference" required>
+          <option value="">Choose…</option><option value="yes">Yes</option>
+          <option value="no">No</option><option value="unsure">Unsure</option>
+        </select>
+        <label for="position">First changed reference position (0 = before paragraph 1; leave blank unless “Yes”)</label>
+        <input id="position" name="position" type="number" min="0" step="1" disabled>
+        <label for="disposition">What would you do next?</label>
+        <select id="disposition" name="disposition" required>
+          <option value="">Choose…</option>
+          <option value="keep">Keep observed text</option>
+          <option value="copy">Copy declared reference</option>
+          <option value="escalate">Escalate / verify original source</option>
+        </select>
+        <p id="task-error" class="error" role="alert"></p>
+        <button type="submit">Record answer and continue</button>
+      </form>
+    </section>
+
+    <section id="end-panel" class="card" hidden>
+      <p class="eyebrow">Session complete</p>
+      <h1>Export your local record</h1>
+      <p><span id="completed-count"></span> answers are in memory. Download before closing. This file is raw instrument data, not a human study result, validated answer key or effectiveness claim.</p>
+      <button id="download" type="button">Download JSON</button>
+    </section>
+  </main>
+  <footer>HyunStudio · No automatic upload, names, cookies or stored identifiers. Public excerpts retain <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> attribution in each case and in <a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/RIGHTS.md">RIGHTS.md</a>. No clinical use or source authentication.</footer>
+</body>
+</html>

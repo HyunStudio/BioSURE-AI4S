@@ -173,6 +173,8 @@ def emit(root: Path) -> None:
                            if pattern == "results/learned_upstream_audit.json" else
                            "Static judge replay with attributed CC BY 4.0 modified page-one title excerpts from Kim et al., DOI 10.1002/adhm.202502711, plus project-authored fictional controls; see RIGHTS.md"
                            if pattern == "docs/judge/data.json" else
+                           "Frozen study instrument with six project-authored fictional controls and three attributed CC BY 4.0 modified page-one titles (PMC12864593, PMC12789962, PMC12707140); no participant results or independent natural-source truth; see RIGHTS.md"
+                           if pattern == "docs/study/manifest.json" else
                            "project-generated results; article-derived excerpts in decision files retain the separately documented CC BY 4.0 rights in RIGHTS.md"
                            if pattern == "results/*.json" else
                            "project-authored synthetic or project-owned source; see RIGHTS.md"),
@@ -210,16 +212,19 @@ def emit(root: Path) -> None:
                            if pattern == "results/learned_upstream_audit.json" else
                            "CC BY 4.0 attributed short modified excerpt for the public sample; original project-generated decisions and fictional controls under MIT, no full PDF/XML/figures"
                            if pattern == "docs/judge/data.json" else
+                           "CC BY 4.0 attributed modified titles for three public tasks; original project-generated instrument, decisions and six fictional controls under MIT, no PDF/XML/figures or participant results"
+                           if pattern == "docs/study/manifest.json" else
                            "MIT applies to original project-generated portions only; any embedded article-derived text retains attributed CC BY 4.0 status"
                            if pattern == "results/*.json" else
                            "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"),
                 "review_status": "approved_for_public_release",
             }
             for pattern in (
-                "tests/test_browser_logic.js", "tests/test_judge_mode.js", "fixtures/workflow_examples.json",
+                "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js", "fixtures/workflow_examples.json",
                 "fixtures/stress_challenge/*.json", "fixtures/stress_gold/*.json", "fixtures/stress_provenance.json",
                 "README.md", "RIGHTS.md", "LICENSE", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html",
                 "docs/judge/*.html", "docs/judge/*.css", "docs/judge/*.js", "docs/judge/data.json",
+                "docs/study/*.html", "docs/study/*.css", "docs/study/*.js", "docs/study/manifest.json",
                 "biosure/*.py", "biosure/static/*.html", "biosure/static/*.css", "biosure/static/*.js",
                 "scripts/*.py", "tests/*.py", "fixtures/provenance.json",
                 "fixtures/challenge/*.json", "fixtures/gold/*.json", "results/*.json",
