@@ -4,6 +4,8 @@ Category: Tool & Platform
 
 Project: BioSURE. Team: HyunStudio. Category: Tool & Platform. A public code release is not itself a competition submission.
 
+Version notice: The public video captures v0.3.8. It does not demonstrate the v0.3.10 review-only PDF spacing cross-check or later report updates; the current code version is v0.3.12. Do not treat those later changes as shown in the video.
+
 ## Team
 
 HyunStudio is a one-person team. HyunGi Hwang is the sole member and team leader. The public repository account is HyunStudio. The team does not claim a cross-disciplinary membership bonus; implementation assistance from OpenAI Codex is disclosed under Sources and attribution, not counted as a team member.

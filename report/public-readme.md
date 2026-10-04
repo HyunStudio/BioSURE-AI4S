@@ -8,6 +8,8 @@ Project: [HyunStudio/BioSURE-AI4S](https://github.com/HyunStudio/BioSURE-AI4S). 
 
 [Watch the under-five-minute captioned demonstration](https://hyunstudio.github.io/BioSURE-AI4S/). The v0.3.8 video records real local app interactions, including learned review and the PDF warning on a separately credited CC BY 4.0 Nature paper. Explanatory captions are overlays; the closing three-source audit card is a report summary, not app output. Browser automation is not a human-use or speed test. The watch page hosts video, not a public paragraph-upload server.
 
+Version notice: The public video captures v0.3.8. It does not demonstrate the v0.3.10 review-only PDF spacing cross-check or later report updates; the current code version is v0.3.12. Do not treat those later changes as shown in the video.
+
 ## Quick start — Python 3.12
 
 From this standalone package's root:
