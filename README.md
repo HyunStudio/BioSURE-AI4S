@@ -10,6 +10,8 @@ Project: [HyunStudio/BioSURE-AI4S](https://github.com/HyunStudio/BioSURE-AI4S). 
 
 Version notice: The public video captures v0.3.8. It does not demonstrate the v0.3.10 review-only PDF spacing cross-check or later report updates; the current code version is v0.3.12. Do not treat those later changes as shown in the video.
 
+The current `main` workbench also lets reviewers expand each changed paragraph to see both supplied texts and marks a selected result **SOURCE UNVERIFIED**. This post-release interface change is not shown in the video or v0.3.12 archive; it does not authenticate the reference, improve measured restoration accuracy, or establish faster human review.
+
 ## Quick start — Python 3.12
 
 From this standalone package's root:

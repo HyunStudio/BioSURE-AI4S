@@ -148,6 +148,44 @@ test('learned review displays lexical alerts without claiming automatic approval
   assert.match(h.get('workflow-status').textContent, /NO AUTOMATIC CHANGE/);
 });
 
+test('paragraph review shows the actual changed text and clears it after input changes', async () => {
+  const h = harness('workflow.js');
+  h.get('reference-input').value = 'A\n\nSource <script> text\n\nC';
+  h.get('observed-input').value = 'A\n\nC';
+  h.get('reference-ack').checked = true;
+  h.context.fetch = async () => ({ok: true, json: async () => ({
+    decision: {action: 'ABSTAIN', reason_codes: ['REVIEW']}, adapter_status: 'UNSUPPORTED_DIFFERENCE',
+    selected_paragraphs: null, selected_output: null, receipt: {receipt_sha256: 'abc'},
+    reference_paragraphs: ['A', 'Source <script> text', 'C'], observed_paragraphs: ['A', 'C'],
+    review_changes: [{kind: 'missing', reference_span: [1, 2], observed_span: [1, 1]}]
+  })});
+  await h.call('runParagraphCheck');
+  const panel = h.get('workflow-change-details');
+  const allText = node => [node.textContent, ...node.children.map(allText)].join('\n');
+  assert.equal(panel.children.length, 1);
+  assert.match(allText(panel), /Source <script> text/);
+  assert.match(allText(panel), /Converted text[\s\S]*\(no paragraph\)/);
+  h.get('observed-input').listeners.input();
+  assert.equal(panel.children.length, 0);
+});
+
+test('a selected output is visibly marked as conditional on unverified reference truth', async () => {
+  const h = harness('workflow.js');
+  h.get('reference-input').value = 'A\n\nB\n\nC';
+  h.get('observed-input').value = 'A\n\nC';
+  h.get('reference-ack').checked = true;
+  h.context.fetch = async () => ({ok: true, json: async () => ({
+    decision: {action: 'AUTO_REPAIR', reason_codes: []}, adapter_status: 'CANDIDATE_PROPOSED',
+    selected_paragraphs: ['A', 'B', 'C'], receipt: {receipt_sha256: 'abc'},
+    reference_paragraphs: ['A', 'B', 'C'], observed_paragraphs: ['A', 'C'],
+    review_changes: [{kind: 'missing', reference_span: [1, 2], observed_span: [1, 1]}]
+  })});
+  await h.call('runParagraphCheck');
+  assert.match(h.get('workflow-status').textContent, /SOURCE UNVERIFIED/);
+  assert.match(h.get('workflow-status').className, /provisional/);
+  assert.equal(h.get('workflow-output').textContent, 'A\n\nB\n\nC');
+});
+
 test('model evidence card reports the held-out lexical tie plainly', async () => {
   const h = harness('app.js');
   h.context.fetch = async url => {

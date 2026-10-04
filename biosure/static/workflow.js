@@ -13,6 +13,7 @@ function resetWorkflowResult() {
   workflowElement("run-proposal").disabled = false;
   workflowElement("workflow-output").textContent = "";
   workflowElement("workflow-changes").textContent = "";
+  workflowElement("workflow-change-details").replaceChildren();
   workflowElement("ml-rankings").textContent = "";
   workflowElement("workflow-receipt").textContent = "";
   workflowElement("workflow-status").textContent = "READY";
@@ -133,12 +134,33 @@ async function submitWorkflow(endpoint, body) {
     if (!response.ok) throw new Error(data.error || "Input check failed");
     workflowResult = data;
     const automatic = data.decision.action === "AUTO_REPAIR";
-    workflowElement("workflow-status").textContent = automatic ? "REFERENCE MATCH · APPLIED" : "NO AUTOMATIC CHANGE";
-    workflowElement("workflow-status").className = "decision " + (automatic ? "auto" : "abstain");
+    workflowElement("workflow-status").textContent = automatic ? "REFERENCE MATCH · SOURCE UNVERIFIED" : "NO AUTOMATIC CHANGE";
+    workflowElement("workflow-status").className = "decision " + (automatic ? "provisional" : "abstain");
     workflowElement("workflow-reason").textContent = (data.adapter_status || "DECLARED_CANDIDATE") + " · " + (data.decision.reason_codes.join(" · ") || "One uniquely supported bounded edit.") + " Reference authenticity and biological meaning are not verified.";
     workflowElement("workflow-output").textContent = data.selected_paragraphs ? data.selected_paragraphs.join("\n\n") : (data.selected_output ? JSON.stringify(data.selected_output, null, 2) : "No output applied. Review the input and reference manually.");
     const span = ([start, end]) => start === end ? "none (after position " + start + ")" : (start + 1) + (end === start + 1 ? "" : "–" + end);
     workflowElement("workflow-changes").textContent = data.review_changes ? (data.review_changes.map((change) => change.kind.toUpperCase() + " · reference " + span(change.reference_span) + " · converted " + span(change.observed_span)).join("\n") || "No normalized paragraph difference.") : "Graph request: inspect the candidate and evidence below.";
+    if (data.review_changes && data.reference_paragraphs && data.observed_paragraphs) {
+      const detailsPanel = workflowElement("workflow-change-details");
+      for (const change of data.review_changes) {
+        const detail = document.createElement("details");
+        detail.className = "change-detail";
+        const summary = document.createElement("summary");
+        summary.textContent = change.kind.toUpperCase() + " · reference " + span(change.reference_span) + " · converted " + span(change.observed_span);
+        detail.append(summary);
+        for (const [label, paragraphs, range] of [
+          ["Reference text", data.reference_paragraphs, change.reference_span],
+          ["Converted text", data.observed_paragraphs, change.observed_span]]) {
+          const heading = document.createElement("div");
+          heading.className = "change-detail-label";
+          heading.textContent = label;
+          const text = document.createElement("pre");
+          text.textContent = paragraphs.slice(range[0], range[1]).join("\n\n") || "(no paragraph)";
+          detail.append(heading, text);
+        }
+        detailsPanel.append(detail);
+      }
+    }
     workflowElement("ml-rankings").textContent = data.correspondences ? data.correspondences.map(item =>
       `Converted ${item.observed_index + 1} → reference ${item.reference_index + 1} · score ${item.probability.toFixed(3)} · ${item.flags.join(', ') || 'no lexical alert'}${item.ambiguous ? ' · AMBIGUOUS' : ''}`).join('\n') : 'Run learned review to inspect candidate matches.';
     workflowElement("workflow-receipt").textContent = data.receipt.receipt_sha256;

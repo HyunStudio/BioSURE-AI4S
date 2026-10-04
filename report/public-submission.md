@@ -6,6 +6,8 @@ Project: BioSURE. Team: HyunStudio. Category: Tool & Platform. A public code rel
 
 Version notice: The public video captures v0.3.8. It does not demonstrate the v0.3.10 review-only PDF spacing cross-check or later report updates; the current code version is v0.3.12. Do not treat those later changes as shown in the video.
 
+The current `main` workbench adds an expandable before/after view for each changed paragraph and visibly marks selected output **SOURCE UNVERIFIED**. These post-v0.3.12-release interface changes are not in the video or release archive. They do not change the gate, source authentication, restoration counts, or measured researcher time.
+
 ## Team
 
 HyunStudio is a one-person team. HyunGi Hwang is the sole member and team leader. The public repository account is HyunStudio. The team does not claim a cross-disciplinary membership bonus; implementation assistance from OpenAI Codex is disclosed under Sources and attribution, not counted as a team member.
