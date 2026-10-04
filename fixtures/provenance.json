@@ -217,6 +217,12 @@
       "rights": "MIT project-generated model artifact, distributed with CC BY 4.0 training-source attribution and change notice"
     },
     {
+      "origin": "project-generated per-source metrics from eight attributed CC BY 4.0 title/abstract inputs; see report/public-rights.md",
+      "pattern": "results/learned_upstream_audit.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-generated measurements distributed with the eight sources' CC BY 4.0 attribution and change notices"
+    },
+    {
       "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
       "pattern": "report/*.md",
       "review_status": "approved_for_public_release",

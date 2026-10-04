@@ -10,11 +10,14 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from .evaluate import decide_case, score_case, summarize
-from .schema import canonical_bytes, parse_request, loads_json
+from .schema import canonical_bytes, parse_request, loads_json, sha256
 from .workflow import decision_payload, run_workflow, run_proposal
 from .batch import run_batch
 from .pdf_extract import MAX_PDF_BYTES, extract_pdf
 from .ml_review import review_paragraphs, validate_model
+from .learned_upstream import propose_learned
+from .learned_upstream_audit import LOCKED_SOURCES
+from .prospective_audit import preflight_manifest
 
 
 STATIC = Path(__file__).resolve().parent / "static"
@@ -49,6 +52,29 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                       "accuracy_delta": comparison["accuracy_delta"],
                       "unit_control_positives": evaluation["held_out"]["critical_alerts"]["UNIT_CHANGED"]["tp"],
                       "scope": "Constructed article-source holdout, not natural PDF-error or clinical validation."}
+        upstream_path = fixtures.parent / "results" / "learned_upstream_audit.json"
+        if upstream_path.is_file() and model is not None:
+            upstream = loads_json(upstream_path.read_text(encoding="utf-8"))
+            if (upstream.get("schema_version") != "biosure.learned-upstream-audit/1.0"
+                    or upstream.get("model_sha256") != sha256(model)):
+                raise ValueError("learned upstream audit does not match the bundled model")
+            real = upstream["summary"]
+            held = real["held_out"]
+            ml_summary["real_source_audit"] = {
+                "development_sources": real["development"]["eligible_sources"],
+                "held_out_sources": held["eligible_sources"],
+                "held_out_units": held["compared_units"],
+                "learned_rank_correct": held["learned"]["ranking_correct_units"],
+                "difflib_rank_correct": held["difflib"]["ranking_correct_units"],
+                "token_dice_rank_correct": held["token_dice"]["ranking_correct_units"],
+                "direct_copy_exact": held["direct_copy"]["exact_units"],
+                "reversed_reference_exact": held["reversed_reference_failure_control"]["exact_units"],
+                "scope": "Gold is the same article JATS reference; not independent truth or a human-use result.",
+                "sources": [{"source_id": row["source_id"], "split": row["split"],
+                             "compared_units": row["metrics"]["compared_units"],
+                             "learned_rank_correct": row["metrics"]["learned"]["ranking_correct_units"],
+                             "proposal_status": row["decision"]["proposal_status"]}
+                            for row in real["sources"]]}
     datasets = {
         "synthetic": ("challenge", "gold", "Public synthetic challenge",
                       "Project-authored graphs with constructed faults. Two source graphs underlie eight paired cases."),
@@ -94,7 +120,7 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                 self.json({"error": "Local same-origin requests only"}, 403)
                 return
             endpoint = urlsplit(self.path).path
-            if endpoint not in {"/api/workflow", "/api/proposal", "/api/decide", "/api/batch", "/api/pdf-extract", "/api/ml-review"}:
+            if endpoint not in {"/api/workflow", "/api/proposal", "/api/decide", "/api/batch", "/api/pdf-extract", "/api/ml-review", "/api/learned-proposal"}:
                 self.json({"error": "not found"}, 404)
                 return
             pdf_upload = endpoint == "/api/pdf-extract"
@@ -142,6 +168,11 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                         self.json({"error": "Learned model unavailable in these fixtures"}, 503)
                         return
                     result = review_paragraphs(payload, model)
+                elif endpoint == "/api/learned-proposal":
+                    if model is None:
+                        self.json({"error": "Learned model unavailable in these fixtures"}, 503)
+                        return
+                    result = propose_learned(payload, model)
                 elif endpoint == "/api/proposal":
                     result = run_proposal(payload)
                 elif endpoint == "/api/batch":
@@ -166,6 +197,32 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
             url = urlsplit(self.path)
             path = unquote(url.path)
             try:
+                if path == "/api/examples/public-extraction":
+                    requested = parse_qs(url.query, keep_blank_values=True).get("source", ["PMC12864593"])
+                    if len(requested) != 1 or requested[0] not in {source_id for source_id, _ in LOCKED_SOURCES}:
+                        self.json({"error": "invalid public source"}, 400)
+                        return
+                    manifest = loads_json((fixtures / "prospective_ooc_manifest.json").read_text(encoding="utf-8"))
+                    sources = preflight_manifest(manifest, fixtures.parent)
+                    source = next(item for item in sources if item["source_id"] == requested[0])
+                    if any(unit["status"] != "scorable" for unit in source["units"]):
+                        self.json({"error": "selected public source is not fully scorable"}, 409)
+                        return
+                    inputs = loads_json((fixtures.parent / source["inputs_path"]).read_text(encoding="utf-8"))
+                    cases = inputs["cases"]
+                    if len(cases) != 2 or any(len(case["reference_paragraphs"]) != 1 or
+                                              len(case["observed_paragraphs"]) != 1 for case in cases):
+                        raise ValueError("invalid locked public example units")
+                    metadata = inputs["source"]
+                    self.json({"source_id": source["source_id"], "split": source["split"],
+                               "source": {key: metadata[key] for key in
+                                          ("pmcid", "doi", "title", "article_url", "license_uri",
+                                           "pdf_source_url", "pdf_sha256")},
+                               "reference_paragraphs": [case["reference_paragraphs"][0] for case in cases],
+                               "observed_paragraphs": [case["observed_paragraphs"][0] for case in cases],
+                               "input_sha256": source["inputs_sha256"],
+                               "note": "Actual public PDF text-layer excerpt; manually check deposited page and declared JATS reference. No gold or PDF binary is served."})
+                    return
                 selections = parse_qs(url.query, keep_blank_values=True).get("dataset", ["synthetic"])
                 if len(selections) != 1 or selections[0] not in datasets:
                     self.json({"error": "invalid dataset"}, 400)

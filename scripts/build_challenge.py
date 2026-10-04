@@ -161,6 +161,8 @@ def emit(root: Path) -> None:
                            if pattern == "results/prospective_ooc_decisions.json" else
                            "project-generated learned weights from attributed CC BY 4.0 PMC excerpt pairs; see fixtures/ml_corpus.json and RIGHTS.md"
                            if pattern == "fixtures/ml_model.json" else
+                           "project-generated per-source metrics from eight attributed CC BY 4.0 title/abstract inputs; see report/public-rights.md"
+                           if pattern == "results/learned_upstream_audit.json" else
                            "project-authored synthetic or project-owned source; see RIGHTS.md"),
                 "rights": ("CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
                            if pattern.startswith("fixtures/article_") else
@@ -184,6 +186,8 @@ def emit(root: Path) -> None:
                            if pattern == "results/prospective_ooc_decisions.json" else
                            "MIT project-generated model artifact, distributed with CC BY 4.0 training-source attribution and change notice"
                            if pattern == "fixtures/ml_model.json" else
+                           "MIT project-generated measurements distributed with the eight sources' CC BY 4.0 attribution and change notices"
+                           if pattern == "results/learned_upstream_audit.json" else
                            "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"),
                 "review_status": "approved_for_public_release",
             }
@@ -199,7 +203,7 @@ def emit(root: Path) -> None:
                 "fixtures/ooc_pdf_*_inputs.json", "fixtures/ooc_pdf_*_gold.json",
                 "fixtures/prospective_ooc_PMC*_inputs.json", "fixtures/prospective_ooc_PMC*_gold.json",
                 "fixtures/prospective_ooc_manifest.json", "results/prospective_ooc_decisions.json",
-                "fixtures/ml_model.json",
+                "fixtures/ml_model.json", "results/learned_upstream_audit.json",
                 "report/*.md", "video/*.md",
             )
         ],

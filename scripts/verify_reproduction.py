@@ -11,6 +11,7 @@ from biosure.batch import run_batch
 from biosure.evaluate import decide_case, score_case, summarize
 from biosure.native_pilot import decide_inputs, score_decisions
 from biosure.prospective_audit import evaluate_manifest
+from biosure.learned_upstream_audit import evaluate_upstream_manifest
 from biosure.schema import canonical_bytes, loads_json
 from scripts.evaluate_ml import evaluate
 
@@ -151,10 +152,27 @@ def verify(root: Path) -> dict:
         'diff_review_records': prospective['diff_review']['manual_review_records'],
         'learned_lexical_alert_records': prospective['learned_review']['native_error_cases_with_lexical_alerts'],
     }
+    upstream_replay = evaluate_upstream_manifest(prospective_manifest, root, replay['model'])
+    if canonical_bytes(upstream_replay) != (root / 'results/learned_upstream_audit.json').read_bytes():
+        raise ValueError('learned upstream source audit mismatch')
+    compared = upstream_replay['summary']['overall']
+    learned_upstream_audit = {
+        'sources': compared['attempted_sources'],
+        'held_out_sources': upstream_replay['summary']['held_out']['eligible_sources'],
+        'units': compared['compared_units'],
+        'learned_rank_correct': compared['learned']['ranking_correct_units'],
+        'difflib_rank_correct': compared['difflib']['ranking_correct_units'],
+        'token_dice_rank_correct': compared['token_dice']['ranking_correct_units'],
+        'direct_copy_exact': compared['direct_copy']['exact_units'],
+        'reversed_reference_exact': compared['reversed_reference_failure_control']['exact_units'],
+        'proposal_exact': compared['learned']['proposal_exact_units'],
+        'proposal_abstained': compared['learned']['proposal_abstained_units'],
+    }
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
             'ml': ml, 'native_pilot': pilot, 'ooc_pdf_audit': ooc_pdf_audit,
             'three_source_pdf_audit': three_source_pdf_audit,
             'prospective_ooc_audit': prospective_ooc_audit,
+            'learned_upstream_audit': learned_upstream_audit,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 

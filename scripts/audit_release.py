@@ -10,6 +10,10 @@ from fnmatch import fnmatchcase
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+# Running the standalone audit must not create bytecode in the very package it
+# is auditing. Release assembly still rejects pre-existing unexpected files.
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
 from biosure.schema import parse_document, parse_request, sha256
 from biosure.ml_review import validate_model
 

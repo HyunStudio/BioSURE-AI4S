@@ -128,9 +128,16 @@ async function loadDataset(dataset) {
 async function loadModelSummary() {
   try {
     const result = await getJSON('/api/ml-summary');
-    byId('ml-summary').textContent = `${result.learned_correct}/${result.queries} intended references found on ${result.sources.test} unseen articles. The learned model ties ${result.baseline} (${result.best_lexical_correct}/${result.queries}); accuracy difference ${result.accuracy_delta.toFixed(3)}. ${result.unit_control_positives} constructed unit-change alerts tested. This is not natural PDF errors or biological validation.`;
+    const constructed = `${result.learned_correct}/${result.queries} intended references found on ${result.sources.test} unseen articles. The learned model ties ${result.baseline} (${result.best_lexical_correct}/${result.queries}); accuracy difference ${result.accuracy_delta.toFixed(3)}. ${result.unit_control_positives} constructed unit-change alerts tested. This is not natural PDF errors or biological validation.`;
+    const real = result.real_source_audit;
+    const sourceAudit = real ? ` Separate real-source extraction audit: ${real.held_out_sources} held-out sources, learned rank ${real.learned_rank_correct}/${real.held_out_units}; difflib ${real.difflib_rank_correct}/${real.held_out_units}, token Dice ${real.token_dice_rank_correct}/${real.held_out_units}, correct-reference copy ${real.direct_copy_exact}/${real.held_out_units}, reversed-reference failure control ${real.reversed_reference_exact}/${real.held_out_units}. ${real.scope}` : '';
+    byId('ml-summary').textContent = constructed + sourceAudit;
+    byId('ml-source-rows').textContent = real && real.sources
+      ? real.sources.map(row => `${row.source_id} · ${row.split} · learned ${row.learned_rank_correct}/${row.compared_units} · ${row.proposal_status}`).join('\n')
+      : 'Source-level audit unavailable in these fixtures.';
   } catch (error) {
     byId('ml-summary').textContent = 'Model evaluation unavailable in these fixtures.';
+    byId('ml-source-rows').textContent = '';
   }
 }
 

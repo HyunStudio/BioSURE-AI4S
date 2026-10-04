@@ -20,12 +20,14 @@ PUBLIC_DOCS = {"public-submission.md", "workflow-scenario.md", "practical-valida
                "public-readme.md", "public-rights.md", "public-scorecard.md",
                "ooc-pdf-audit-protocol.md", "three-source-ooc-pdf-audit-protocol.md",
                "prospective-ooc-audit-protocol.md", "pdf-spacing-crosscheck.md"}
-GENERATED_ROOTS = {".git", "biosure_ai4s.egg-info"}
+GENERATED_ROOTS = {".git", "biosure_ai4s.egg-info", ".pytest_cache"}
+GENERATED_PARTS = {"__pycache__"}
 
 
 def _files(root: Path) -> dict[str, str]:
     return {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in sorted(root.rglob("*")) if p.is_file() and p.relative_to(root).parts[0] not in GENERATED_ROOTS
+            and not GENERATED_PARTS.intersection(p.relative_to(root).parts)
             and p.relative_to(root).as_posix() != MANIFEST}
 
 

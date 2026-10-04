@@ -1,7 +1,17 @@
 const workflowElement = (id) => document.getElementById(id);
 let workflowVersion = 0;
+let publicInputVersion = 0;
 let workflowResult = null;
 let pdfImported = false;
+
+function invalidatePublicExample(message) {
+  ++publicInputVersion;
+  workflowElement("load-public-extraction").disabled = false;
+  workflowElement("public-source-note").textContent = message;
+  workflowElement("public-article-link").removeAttribute("href");
+  workflowElement("public-article-link").textContent = "";
+  workflowElement("public-source-link-row").hidden = true;
+}
 
 function resetWorkflowResult() {
   ++workflowVersion;
@@ -9,12 +19,16 @@ function resetWorkflowResult() {
   workflowElement("download-result").disabled = true;
   workflowElement("run-workflow").disabled = false;
   workflowElement("run-ml").disabled = false;
+  workflowElement("run-learned-proposal").disabled = false;
   workflowElement("run-candidate").disabled = false;
   workflowElement("run-proposal").disabled = false;
   workflowElement("workflow-output").textContent = "";
   workflowElement("workflow-changes").textContent = "";
   workflowElement("workflow-change-details").replaceChildren();
   workflowElement("ml-rankings").textContent = "";
+  workflowElement("learned-proposal-status").textContent = "No learned proposal generated.";
+  workflowElement("learned-proposal-text").textContent = "";
+  workflowElement("learned-proposal-receipt").textContent = "";
   workflowElement("workflow-receipt").textContent = "";
   workflowElement("workflow-status").textContent = "READY";
   workflowElement("workflow-status").className = "decision";
@@ -23,11 +37,51 @@ function resetWorkflowResult() {
 
 function clearWorkflow() {
   resetWorkflowResult();
+  invalidatePublicExample("Public example cleared. Manually check original sources before acknowledging a reference.");
   workflowElement("pdf-review-hints").replaceChildren();
   for (const id of ["reference-input", "observed-input", "candidate-input", "proposal-input"]) workflowElement(id).value = "";
   workflowElement("reference-ack").checked = false;
   workflowElement("pdf-ack").checked = false;
   pdfImported = false;
+}
+
+async function loadPublicExtraction() {
+  resetWorkflowResult();
+  workflowElement("reference-ack").checked = false;
+  workflowElement("pdf-ack").checked = false;
+  const version = ++publicInputVersion;
+  const button = workflowElement("load-public-extraction");
+  const sourceId = workflowElement("public-source-select").value;
+  const note = workflowElement("public-source-note");
+  button.disabled = true;
+  workflowElement("public-article-link").removeAttribute("href");
+  workflowElement("public-article-link").textContent = "";
+  workflowElement("public-source-link-row").hidden = true;
+  note.textContent = `Loading ${sourceId} public excerpt…`;
+  try {
+    const response = await fetch(`/api/examples/public-extraction?source=${encodeURIComponent(sourceId)}`);
+    const data = await response.json();
+    if (version !== publicInputVersion) return;
+    if (!response.ok) throw new Error(data.error || "Public excerpt unavailable");
+    resetWorkflowResult();
+    workflowElement("reference-input").value = data.reference_paragraphs.join("\n\n");
+    workflowElement("observed-input").value = data.observed_paragraphs.join("\n\n");
+    workflowElement("reference-ack").checked = false;
+    workflowElement("pdf-ack").checked = false;
+    workflowElement("pdf-review-hints").replaceChildren();
+    workflowElement("pdf-status").textContent = "Pre-extracted public PDF text layer loaded; no PDF was imported in this session.";
+    pdfImported = false;
+    note.textContent = `${data.source_id} · CC BY 4.0 · ${data.note}`;
+    if (/^PMC[0-9]+$/.test(data.source_id)) {
+      workflowElement("public-article-link").href = `https://pmc.ncbi.nlm.nih.gov/articles/${data.source_id}/`;
+      workflowElement("public-article-link").textContent = `Open ${data.source_id} article (PDF available there)`;
+      workflowElement("public-source-link-row").hidden = false;
+    }
+  } catch (error) {
+    if (version === publicInputVersion) note.textContent = `Could not load ${sourceId}: ${error.message}`;
+  } finally {
+    if (version === publicInputVersion) button.disabled = false;
+  }
 }
 
 function loadWorkflowExample() {
@@ -58,6 +112,7 @@ async function importPdf() {
   if (!['reference', 'observed'].includes(target)) {
     status.textContent = "Choose the destination field."; return;
   }
+  invalidatePublicExample("PDF import started. Manually check the imported pages before acknowledging a reference.");
   resetWorkflowResult();
   const version = workflowVersion;
   const button = workflowElement("import-pdf");
@@ -124,6 +179,7 @@ async function submitWorkflow(endpoint, body) {
   }
   workflowElement("run-workflow").disabled = true;
   workflowElement("run-ml").disabled = true;
+  workflowElement("run-learned-proposal").disabled = true;
   workflowElement("run-candidate").disabled = true;
   workflowElement("run-proposal").disabled = true;
   workflowElement("workflow-status").textContent = "CHECKING…";
@@ -133,11 +189,20 @@ async function submitWorkflow(endpoint, body) {
     if (version !== workflowVersion) return;
     if (!response.ok) throw new Error(data.error || "Input check failed");
     workflowResult = data;
-    const automatic = data.decision.action === "AUTO_REPAIR";
-    workflowElement("workflow-status").textContent = automatic ? "REFERENCE MATCH · SOURCE UNVERIFIED" : "NO AUTOMATIC CHANGE";
+    const learnedProposal = data.mode === 'learned_upstream_proposal';
+    const checked = learnedProposal ? data.proposal_check : data;
+    const automatic = checked?.decision?.action === "AUTO_REPAIR";
+    workflowElement("workflow-status").textContent = learnedProposal && !checked
+      ? "NO LEARNED PROPOSAL" : automatic ? "REFERENCE MATCH · SOURCE UNVERIFIED" : "NO AUTOMATIC CHANGE";
     workflowElement("workflow-status").className = "decision " + (automatic ? "provisional" : "abstain");
-    workflowElement("workflow-reason").textContent = (data.adapter_status || "DECLARED_CANDIDATE") + " · " + (data.decision.reason_codes.join(" · ") || "One uniquely supported bounded edit.") + " Reference authenticity and biological meaning are not verified.";
-    workflowElement("workflow-output").textContent = data.selected_paragraphs ? data.selected_paragraphs.join("\n\n") : (data.selected_output ? JSON.stringify(data.selected_output, null, 2) : "No output applied. Review the input and reference manually.");
+    const reason = learnedProposal && !checked ? `${data.proposal_reason} · separate gate not run`
+      : (checked?.adapter_status || data.adapter_status || "DECLARED_CANDIDATE") + " · "
+        + (checked.decision.reason_codes.join(" · ") || "One uniquely supported bounded edit.");
+    workflowElement("workflow-reason").textContent = reason + " Reference authenticity and biological meaning are not verified.";
+    workflowElement("workflow-output").textContent = checked?.selected_paragraphs
+      ? checked.selected_paragraphs.join("\n\n")
+      : (!learnedProposal && data.selected_output ? JSON.stringify(data.selected_output, null, 2)
+        : "No output applied. Review the input and reference manually.");
     const span = ([start, end]) => start === end ? "none (after position " + start + ")" : (start + 1) + (end === start + 1 ? "" : "–" + end);
     workflowElement("workflow-changes").textContent = data.review_changes ? (data.review_changes.map((change) => change.kind.toUpperCase() + " · reference " + span(change.reference_span) + " · converted " + span(change.observed_span)).join("\n") || "No normalized paragraph difference.") : "Graph request: inspect the candidate and evidence below.";
     if (data.review_changes && data.reference_paragraphs && data.observed_paragraphs) {
@@ -163,7 +228,16 @@ async function submitWorkflow(endpoint, body) {
     }
     workflowElement("ml-rankings").textContent = data.correspondences ? data.correspondences.map(item =>
       `Converted ${item.observed_index + 1} → reference ${item.reference_index + 1} · score ${item.probability.toFixed(3)} · ${item.flags.join(', ') || 'no lexical alert'}${item.ambiguous ? ' · AMBIGUOUS' : ''}`).join('\n') : 'Run learned review to inspect candidate matches.';
-    workflowElement("workflow-receipt").textContent = data.receipt.receipt_sha256;
+    if (data.mode === 'learned_upstream_proposal') {
+      const gateAction = data.proposal_check ? data.proposal_check.decision.action : 'NOT_RUN';
+      workflowElement('learned-proposal-status').textContent = data.proposed_paragraphs
+        ? `SOURCE UNVERIFIED · model alignment ${data.proposal_status} · separate gate ${gateAction}. Review against the original source.`
+        : `No learned proposal · ${data.proposal_reason}. Separate gate not run.`;
+      workflowElement('learned-proposal-text').textContent = data.proposed_paragraphs
+        ? data.proposed_paragraphs.join('\n\n') : '';
+      workflowElement('learned-proposal-receipt').textContent = data.upstream_receipt.receipt_sha256;
+    }
+    workflowElement("workflow-receipt").textContent = checked?.receipt?.receipt_sha256 || "";
     workflowElement("download-result").disabled = false;
   } catch (error) {
     if (version !== workflowVersion) return;
@@ -174,6 +248,7 @@ async function submitWorkflow(endpoint, body) {
     if (version === workflowVersion) {
       workflowElement("run-workflow").disabled = false;
       workflowElement("run-ml").disabled = false;
+      workflowElement("run-learned-proposal").disabled = false;
       workflowElement("run-candidate").disabled = false;
       workflowElement("run-proposal").disabled = false;
     }
@@ -188,6 +263,12 @@ async function runParagraphCheck() {
 
 async function runLearnedReview() {
   return submitWorkflow('/api/ml-review', JSON.stringify({record_id:'local-learned-review',
+    reference_paragraphs:paragraphs(workflowElement('reference-input').value),
+    observed_paragraphs:paragraphs(workflowElement('observed-input').value)}));
+}
+
+async function runLearnedProposal() {
+  return submitWorkflow('/api/learned-proposal', JSON.stringify({record_id:'local-learned-proposal',
     reference_paragraphs:paragraphs(workflowElement('reference-input').value),
     observed_paragraphs:paragraphs(workflowElement('observed-input').value)}));
 }
@@ -211,13 +292,18 @@ function downloadWorkflowResult() {
 }
 
 workflowElement("load-example").addEventListener("click", loadWorkflowExample);
+workflowElement("load-public-extraction").addEventListener("click", loadPublicExtraction);
 workflowElement("import-pdf").addEventListener("click", importPdf);
 workflowElement("run-workflow").addEventListener("click", runParagraphCheck);
 workflowElement("run-ml").addEventListener("click", runLearnedReview);
+workflowElement("run-learned-proposal").addEventListener("click", runLearnedProposal);
 workflowElement("run-proposal").addEventListener("click", runProposalCheck);
 workflowElement("clear-workflow").addEventListener("click", clearWorkflow);
 workflowElement("download-result").addEventListener("click", downloadWorkflowResult);
 workflowElement("run-candidate").addEventListener("click", () => submitWorkflow("/api/decide", workflowElement("candidate-input").value));
-for (const id of ["reference-input", "observed-input", "candidate-input", "proposal-input"]) workflowElement(id).addEventListener("input", resetWorkflowResult);
+for (const id of ["reference-input", "observed-input", "candidate-input", "proposal-input"]) workflowElement(id).addEventListener("input", () => {
+  resetWorkflowResult();
+  invalidatePublicExample("Inputs changed. Manually check the original source before acknowledging a reference.");
+});
 workflowElement("reference-ack").addEventListener("change", resetWorkflowResult);
 workflowElement("pdf-ack").addEventListener("change", resetWorkflowResult);
