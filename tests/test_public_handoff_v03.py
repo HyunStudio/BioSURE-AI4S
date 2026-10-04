@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_watch_page_links_latest_code_and_live_app_video():
     page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
     assert "/releases/latest" in page
-    assert "/releases/download/v0.3.8/biosure-demo-v038.mp4" in page
-    assert "live app capture" in page.lower()
+    assert "/releases/download/v0.3.14/biosure-demo-v0314.mp4" in page
+    assert "automated capture of the actual v0.3.14 local app" in page.lower()
     assert "two controls and two genuine text-layer errors" in page
     assert "public-scorecard.md" in page
     assert "python -m pip install -e ." in page
@@ -33,10 +33,23 @@ def test_handoff_discloses_video_scope_and_article_credit():
     assert "releases/latest" in report
     assert "former 2/2 review count inherited the diff flag" in report
     assert "verify_native_source.py" in readme
-    assert "under five minutes" in report
-    assert "learned review and the PDF warning" in readme
+    assert "162-second silent captioned demonstration" in report
+    assert "expandable before/after review" in readme
     assert "10.1038/s41467-025-65317-7" in rights
     assert "CC BY 4.0" in rights
-    assert "under five minutes" in storyboard
-    assert "biosure-demo-v038.mp4" in storyboard
+    assert "162 seconds" in storyboard
+    assert "biosure-demo-v0314.mp4" in storyboard
     assert "three-source" in report[report.index("The verifier checks"):].lower()
+
+
+def test_current_demo_is_primary_and_old_capture_is_historical():
+    page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    report = (ROOT / "report/public-submission.md").read_text(encoding="utf-8")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    storyboard = (ROOT / "video/storyboard.md").read_text(encoding="utf-8")
+    current = "/releases/download/v0.3.14/biosure-demo-v0314.mp4"
+    assert f'<video controls preload="metadata" aria-label="BioSURE captioned demonstration" src="https://github.com/HyunStudio/BioSURE-AI4S{current}"' in page
+    assert current in report and current in readme
+    assert "v0.3.14" in storyboard and "PMC12864593" in storyboard
+    assert "14/16" in page and "16/16" in page
+    assert "v0.3.8" in page.lower() and "historical" in page.lower()

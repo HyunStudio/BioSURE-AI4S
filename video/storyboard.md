@@ -1,16 +1,13 @@
-# BioSURE v0.3.8 demonstration storyboard — no-prior profile
+# BioSURE v0.3.14 demonstration storyboard — no-prior profile
 
-The silent captioned `biosure-demo-v038.mp4` is under five minutes. Browser automation records genuine interactions with the local v0.3.8 app at 1440 × 900; it is not continuous human operation or a speed test. Captions are explanatory overlays, and the final three-source audit card is explicitly labeled editorial report content, not app output. There is no music, external font, stock media, patient data, source PDF binary or figure. The brief Nature paper text-layer view is modified, unverified source material credited in RIGHTS and on the watch page. The independent-study and researcher-time claims remain unproven.
+The silent captioned `biosure-demo-v0314.mp4` runs 162 seconds (1440 × 900, H.264) and records genuine interactions with the audited local v0.3.14 no-prior application. Browser automation is not continuous human operation, a speed test or a usability study. Project-authored captions are explanatory overlays. The app's own evidence card reports frozen results; the video does not replay every source. There is no music, stock media, external font, patient data, source PDF binary or figure. Short modified PDF-text/JATS excerpts from Kim et al., PMC12864593, DOI 10.1002/adhm.202502711, are credited under CC BY 4.0 in RIGHTS and on the watch page. Independent adjudication and researcher-time benefit remain unproven.
 
-| Sequence | Captured state | Evidence constraint |
+| Time | Captured state | Evidence constraint |
 |---|---|---|
-| 1 | Fictional omission loaded and one bounded edit applied, with changed position and receipt. | The supplied reference is not authenticated truth. |
-| 2 | Fictional substitution withheld. | The gate does not authorize semantic replacement. |
-| 3 | Invented pasted upstream proposal rejected. | Actual pasted content is checked; no producer is authenticated or called. |
-| 4 | Six fictional batch records checked. | Two corrections, one unchanged, three manual reviews; not a time-saving measurement. |
-| 5 | Learned correspondence review. | Review-only model ties the best lexical comparator on 284 constructed held-out queries. |
-| 6 | CC BY 4.0 Wang et al. PDF text layer imported: 14 pages, unverified chunks and page-specific hints including later pages. | Reading order, figure text and paragraph boundaries need manual source-page comparison. |
-| 7 | Forged-reference stress case produces an incorrect automatic decision. | Content receipts cannot establish source truth. |
-| 8 | Editorial card summarizes the fixed three-source audit. | Five scorable units, three discrepancies, zero BioSURE automatic restorations, correct-reference copy 5/5 exact; one-agent source-derived gold, no independent adjudication or timed user benefit. |
+| 0:00–0:18 | Workbench problem statement, then the public article example and credit. | JATS is the declared reference, not authenticated truth. The PDF text was pre-extracted; the video does not show PDF import. |
+| 0:18–1:13 | Real-source PDF-text/JATS inputs, ordinary difference locations and expanded literal before/after text. | This is one selected source from the eight-source audit. Visible differences do not establish scientific meaning. |
+| 1:13–1:34 | Fitted matcher returns LOW_CONFIDENCE and the proposal is withheld. | Locked ranking is 14/16 overall and 7/8 held-out, versus 16/16 and 8/8 for lexical comparators; no model superiority. |
+| 1:34–2:24 | Fictional missing-paragraph control allows a bounded edit with SOURCE UNVERIFIED and an exact decision receipt. | The app displays proposed output without writing a source file; the receipt does not authenticate the reference. |
+| 2:24–2:42 | In-app evidence card and caption with reproduction/test/CI results. | Eight-source gate abstention is 16/16 with 0/11 observed discrepancies automatically repaired. Tests and one-agent source checks are not independent human validation. |
 
-The [English narration](narration.md) is supporting text, not recorded audio. The watch page links the MP4 as a separate release asset; the audited source ZIP contains this storyboard, not the video bytes. Competition registration and Writeup submission remain separate owner actions.
+The [English caption transcript](narration.md) is supporting text, not recorded audio. The v0.3.8 recording remains a historical release asset with different scenes. The watch page links the v0.3.14 MP4 as a separate release asset; the audited source ZIP contains this storyboard, not the video bytes. Competition registration and Writeup submission remain separate owner actions.

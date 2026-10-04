@@ -1,13 +1,11 @@
-# English demonstration narration (not recorded audio)
+# English caption transcript (silent video; no recorded audio)
 
-1. BioSURE is an offline Tool and Platform prototype for reference-conditioned document integrity checks, not a biological prediction model or a faithful PDF converter.
-2. In the fictional omission example, one uniquely supported internal paragraph is inserted. The output position and content receipt are visible, but the declared reference is an assumption, not authenticated truth.
-3. A substituted paragraph receives no automatic edit. The gate handles narrow structural faults, not scientific or semantic equivalence.
-4. A pasted upstream proposal with invented wording is rejected. BioSURE validates actual proposed text without calling or authenticating its producer.
-5. Six fictional batch inputs produce two corrections, one unchanged record and three manual reviews. This is a functionality demonstration, not a measured researcher-time benefit.
-6. The learned matcher ranks correspondence for review only. It finds intended references in 284/284 constructed held-out queries, exactly tying the strongest lexical baseline. Neither model nor lexical alert approves a repair.
-7. A real, attributed CC BY 4.0 Nature paper PDF is imported locally. The text layer yields unverified page chunks, spacing and hyphen hints, and omitted figure text. Later-page hints appear, but their locations and interpretations require visual comparison with the original pages.
-8. A forged-reference stress case produces an incorrect automatic decision. A content hash or receipt does not establish source truth.
-9. The final labeled report card, which is not app output, summarizes the fixed three-source PDF audit: five of six predeclared units scorable, three discrepancies, zero automatic BioSURE restorations, and correct-reference copy exact on all five scored units. Source-derived gold was checked by one development agent; no independent adjudication, superiority or timed user benefit is shown.
+1. BioSURE v0.3.14 is an offline workbench for comparing organ-on-chip research PDF extractions with article text. It creates an evidence packet for human approval, not biological validation.
+2. The real public example is Kim et al., PMC12864593, DOI 10.1002/adhm.202502711, CC BY 4.0. The declared reference is JATS and the observed input is pre-extracted PDF text; neither is authenticated by the app.
+3. The ordinary difference and expandable before/after views expose changed locations and literal text. In the locked eight-source audit there were 11 observed/JATS discrepancies and zero automatic repairs.
+4. The fitted matcher abstains on the selected real source because of LOW_CONFIDENCE. Overall model ranking was 14/16; `difflib` and token Dice each ranked 16/16. Held-out ranking was 7/8 versus 8/8 for both lexical comparators.
+5. A fictional missing-paragraph control receives one bounded edit. The proposed output is marked SOURCE UNVERIFIED and displayed with a SHA-256 decision receipt; it is not written to a source file.
+6. A receipt is traceable, not an authenticator. A forged declared reference can still lead to a false result.
+7. The app's evidence card reports the fixed evaluation. The caption also states that the release ZIP reproduced, 296 Python and 22 Node tests passed, and both CI operating-system jobs passed as of recording. Those checks establish package behavior, not independent scientific validity.
 
-The published video is silent, with project-authored explanatory caption overlays. Browser automation is used solely to record actual app responses; it is not continuous human operation or speed evidence. Source credit, modifications and limitations appear in RIGHTS and the public scorecard.
+The published video is silent and uses project-authored explanatory overlays. Browser automation records actual app responses only; it is not a human-use or speed study. Source credit, modifications and limits appear in RIGHTS and the public scorecard.
