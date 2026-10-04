@@ -171,6 +171,8 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/ml_model.json" else
                            "project-generated per-source metrics from eight attributed CC BY 4.0 title/abstract inputs; see report/public-rights.md"
                            if pattern == "results/learned_upstream_audit.json" else
+                           "Static judge replay with attributed CC BY 4.0 modified page-one title excerpts from Kim et al., DOI 10.1002/adhm.202502711, plus project-authored fictional controls; see RIGHTS.md"
+                           if pattern == "docs/judge/data.json" else
                            "project-generated results; article-derived excerpts in decision files retain the separately documented CC BY 4.0 rights in RIGHTS.md"
                            if pattern == "results/*.json" else
                            "project-authored synthetic or project-owned source; see RIGHTS.md"),
@@ -206,15 +208,18 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/ml_model.json" else
                            "MIT project-generated measurements distributed with the eight sources' CC BY 4.0 attribution and change notices"
                            if pattern == "results/learned_upstream_audit.json" else
+                           "CC BY 4.0 attributed short modified excerpt for the public sample; original project-generated decisions and fictional controls under MIT, no full PDF/XML/figures"
+                           if pattern == "docs/judge/data.json" else
                            "MIT applies to original project-generated portions only; any embedded article-derived text retains attributed CC BY 4.0 status"
                            if pattern == "results/*.json" else
                            "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"),
                 "review_status": "approved_for_public_release",
             }
             for pattern in (
-                "tests/test_browser_logic.js", "fixtures/workflow_examples.json",
+                "tests/test_browser_logic.js", "tests/test_judge_mode.js", "fixtures/workflow_examples.json",
                 "fixtures/stress_challenge/*.json", "fixtures/stress_gold/*.json", "fixtures/stress_provenance.json",
                 "README.md", "RIGHTS.md", "LICENSE", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html",
+                "docs/judge/*.html", "docs/judge/*.css", "docs/judge/*.js", "docs/judge/data.json",
                 "biosure/*.py", "biosure/static/*.html", "biosure/static/*.css", "biosure/static/*.js",
                 "scripts/*.py", "tests/*.py", "fixtures/provenance.json",
                 "fixtures/challenge/*.json", "fixtures/gold/*.json", "results/*.json",

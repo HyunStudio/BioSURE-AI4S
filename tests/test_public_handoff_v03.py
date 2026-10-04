@@ -1,6 +1,7 @@
 """The release watch page and text must describe the video actually published."""
 from pathlib import Path
 import tomllib
+from scripts.audit_release import _allowed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,7 +21,7 @@ def test_watch_page_links_latest_code_and_live_app_video():
     assert "Three-source cross-publisher PDF audit" in page
     assert "page-specific review hints" in page
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    assert project["version"] == "0.3.15"
+    assert project["version"] == "0.3.16"
     assert "pypdf[fonts]==6.19.0" in project["dependencies"]
     assert "fonttools==4.66.1" in project["dependencies"]
 
@@ -58,6 +59,16 @@ def test_current_demo_is_primary_and_old_capture_is_historical():
 def test_latest_package_explains_older_demo_and_new_followup():
     page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
     report = (ROOT / "report/public-submission.md").read_text(encoding="utf-8")
-    assert "v0.3.15" in page and "v0.3.15" in report
+    assert "v0.3.16" in page and "v0.3.16" in report
+    assert "v0.3.15" in report
     assert "v0.3.14 video" in page
     assert "followup-ooc-audit-protocol.md" in report
+
+
+def test_judge_mode_is_publicly_linked_and_release_allowlisted():
+    url = "https://hyunstudio.github.io/BioSURE-AI4S/judge/"
+    for filename in ("docs/index.html", "README.md", "report/public-readme.md", "report/public-submission.md"):
+        assert url in (ROOT / filename).read_text(encoding="utf-8")
+    for filename in ("docs/judge/index.html", "docs/judge/app.js", "docs/judge/style.css",
+                     "docs/judge/data.json", "tests/test_judge_mode.js"):
+        assert _allowed(filename), filename

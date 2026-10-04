@@ -7,6 +7,12 @@
       "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
     },
     {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "tests/test_judge_mode.js",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
       "origin": "project-authored fictional paragraph inputs; no experimental observations or article quotations",
       "pattern": "fixtures/workflow_examples.json",
       "review_status": "approved_for_public_release",
@@ -77,6 +83,30 @@
       "pattern": "docs/index.html",
       "review_status": "approved_for_public_release",
       "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "docs/judge/*.html",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "docs/judge/*.css",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "docs/judge/*.js",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "Static judge replay with attributed CC BY 4.0 modified page-one title excerpts from Kim et al., DOI 10.1002/adhm.202502711, plus project-authored fictional controls; see RIGHTS.md",
+      "pattern": "docs/judge/data.json",
+      "review_status": "approved_for_public_release",
+      "rights": "CC BY 4.0 attributed short modified excerpt for the public sample; original project-generated decisions and fictional controls under MIT, no full PDF/XML/figures"
     },
     {
       "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",

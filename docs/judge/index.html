@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="BioSURE Judge Mode: inspect reproducible sample-only engine decisions without installation or login.">
+  <title>BioSURE Judge Mode — inspect the evidence boundary</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">BioSURE <span>Judge Mode</span></a>
+    <nav aria-label="Project links">
+      <a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/latest">Release</a>
+      <a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/report/public-scorecard.md">Evidence</a>
+      <a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/scripts/build_judge_mode.py">Replay generator</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">AI4S · Tool &amp; Platform · 90-second inspection</p>
+      <h1>Where does the AI suggestion stop?</h1>
+      <p class="lead">A declared source, a converted text layer and an AI-ranked proposal can disagree. BioSURE shows the difference, limits what may be applied, and binds the decision to a receipt. The declared source itself is <strong>not authenticated</strong>.</p>
+      <p class="disclosure">This is an interactive <strong>static replay</strong> of frozen Python-engine results using public or fictional samples—not a live document checker, benchmark win, human time study or upload service. The default public case uses one complete article-page-1 title, excludes the abstract, and abstains.</p>
+      <div class="controls">
+        <label for="scenario">Inspect a sample</label>
+        <select id="scenario" aria-describedby="load-status"></select>
+        <button id="run-audit" type="button" disabled>Run the sample audit <span aria-hidden="true">→</span></button>
+      </div>
+      <p id="load-status" class="status" role="status" aria-live="polite">Loading verified sample replay…</p>
+      <p class="small">No login, personal data, PDF upload or third-party model call. For arbitrary input, use the <a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/latest">offline release</a>.</p>
+    </section>
+
+    <section id="results" hidden aria-label="Audit result">
+      <div class="result-heading">
+        <p class="eyebrow" id="source-type"></p>
+        <h2 id="scenario-label"></h2>
+        <a id="article-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Open the public article and inspect its PDF</a>
+        <p id="result-status" class="source-unverified"></p>
+      </div>
+
+      <section class="step" aria-labelledby="compare-heading">
+        <div class="step-number">01</div>
+        <div class="step-body">
+          <h3 id="compare-heading">Compare the submitted text with the declared reference</h3>
+          <p>Ordinary diff can flag a changed position, but it cannot tell whether the reference is true or an edit is authorized.</p>
+          <div class="comparison">
+            <div><h4>Observed conversion</h4><div id="observed"></div></div>
+            <div><h4>Declared reference</h4><div id="reference"></div></div>
+          </div>
+          <div class="detail"><strong>Changed positions</strong><div id="changes"></div></div>
+        </div>
+      </section>
+
+      <section class="step" aria-labelledby="proposal-heading">
+        <div class="step-number">02</div>
+        <div class="step-body">
+          <h3 id="proposal-heading">Inspect correspondence and the proposed wording</h3>
+          <p>The fitted model ranks alignment only. Its proposed text, if any, is copied from the unauthenticated declared reference. A separate submitted proposal tests the content gate.</p>
+          <p id="learned-status" class="decision"></p>
+          <div class="comparison">
+            <div><h4>Model proposal</h4><div id="learned-proposal"></div></div>
+            <div><h4>Submitted proposal to gate</h4><div id="submitted-proposal"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="step" aria-labelledby="gate-heading">
+        <div class="step-number">03</div>
+        <div class="step-body">
+          <h3 id="gate-heading">See what the gate actually applies</h3>
+          <div class="decision-grid">
+            <div><span>Original conversion workflow</span><strong id="workflow-action"></strong></div>
+            <div><span>Submitted proposal check</span><strong id="proposal-action"></strong></div>
+          </div>
+          <h4>Selected proposed output</h4><div id="selected" class="detail"></div>
+          <p class="small">A fictional bounded correction is an implementation control. It is not evidence that BioSURE repaired a real article.</p>
+        </div>
+      </section>
+
+      <section class="step" aria-labelledby="receipt-heading">
+        <div class="step-number">04</div>
+        <div class="step-body">
+          <h3 id="receipt-heading">Inspect the content-bound receipt</h3>
+          <p>The receipt binds input and gate decision hashes. It does not authenticate the source, producer or biological meaning.</p>
+          <pre id="receipt" tabindex="0"></pre>
+        </div>
+      </section>
+    </section>
+  </main>
+  <footer>
+    <p>HyunStudio · Public excerpt credited to <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12864593/">Kim et al., DOI 10.1002/adhm.202502711</a> under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; excerpts are normalized for comparison. No full PDF, XML, figures or endorsement.</p>
+    <p><a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/RIGHTS.md">Rights</a> · <a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/report/practical-validation.md">Validation limits</a> · <a href="https://github.com/HyunStudio/BioSURE-AI4S">Source code</a></p>
+  </footer>
+</body>
+</html>
