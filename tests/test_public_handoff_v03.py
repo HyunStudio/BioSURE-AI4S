@@ -34,11 +34,12 @@ def test_handoff_discloses_video_scope_and_article_credit():
     assert "releases/latest" in report
     assert "former 2/2 review count inherited the diff flag" in report
     assert "verify_native_source.py" in readme
-    assert "159-second silent captioned demonstration" in report
+    assert "silent captioned demonstration (under three minutes)" in report
     assert "expandable before/after review" in readme
     assert "10.1038/s41467-025-65317-7" in rights
     assert "CC BY 4.0" in rights
-    assert "159 seconds" in storyboard
+    assert "runs under three minutes" in storyboard
+    assert "| Time |" not in storyboard
     assert "biosure-demo-v0319.mp4" in storyboard
     assert "three-source" in report[report.index("The verifier checks"):].lower()
 
