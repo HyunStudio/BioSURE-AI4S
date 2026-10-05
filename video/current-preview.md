@@ -1,6 +1,6 @@
-# Unpublished current-source demo preview
+# Historical local demo preview — not the released MP4
 
-This is a production record for the **local, unpublished** `biosure-demo-reviewonly-preview3-20261005.mp4` candidate. It was captured from this working tree after the public-input fail-closed change and the first-screen scope correction. Earlier local previews and public v0.3.14 footage are superseded for current behavior. This new preview is not yet an aligned public release asset.
+This is a production record for a **historical local preview**, `biosure-demo-reviewonly-preview3-20261005.mp4`. It was captured from a working tree after the public-input fail-closed change and the first-screen scope correction. Its bytes were never published. The v0.3.18 released MP4 was a separate recapture from the public source commit; the v0.3.19 release MP4 is likewise a distinct release asset. The v0.3.14 selected-edit footage is historical for behavior.
 
 - Measured video: 158.84 seconds, 1280 × 720, H.264, silent; 5,279,953 bytes. Full video decoded without error.
 - SHA-256: `5534e834b139607574306812eba3cf825cf8467f475c9afc10df01733f18aa91`.
@@ -20,4 +20,4 @@ This is a production record for the **local, unpublished** `biosure-demo-reviewo
 | 2:09–2:21 | Offline reproduction command and scope. | Reproduction is not biological validation. |
 | 2:21–2:39 | Source and limitation reminder. | Verify the original source before scientific use. |
 
-The table is the silent English caption transcript and storyboard for this candidate. Browser automation is not a participant, speed test, or independent adjudicator. Source digests and decision receipts track supplied bytes but do not authenticate an article. Publication remains blocked until source tag, rights, no-prior ZIP, CI, Pages and released video all agree. The old local preview3 (`0998dc88…`), gray-padded review-only preview2 (`54097fe3…`) and public v0.3.14 video are historical and not evidence of current behavior.
+The table is the silent English caption transcript and storyboard for this historical local preview, not a released asset. Browser automation is not a participant, speed test, or independent adjudicator. Source digests and decision receipts track supplied bytes but do not authenticate an article. The old local preview3 (`0998dc88…`), gray-padded review-only preview2 (`54097fe3…`) and public v0.3.14 video are historical and not evidence of current behavior. Use the [latest release](https://github.com/HyunStudio/BioSURE-AI4S/releases/latest) for the public MP4, source ZIP and their current digests.

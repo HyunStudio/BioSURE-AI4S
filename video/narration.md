@@ -9,4 +9,4 @@
 7. The local policy CLI reports five of five fictional contract checks and zero automatic repairs in one separate forged-reference control. This is not six of six safety, provenance authentication or biological validation.
 8. Offline reproduction checks packaged behavior. Verify the original source before any scientific use.
 
-The v0.3.18 video is silent and uses project-authored explanatory overlays. Browser automation records actual app responses only; it is not a human-use or speed study. Source credit, modifications and limits appear in RIGHTS and the public scorecard. The historical v0.3.14 video shows a fictional selected output that is no longer public-input behavior.
+The v0.3.19 video is silent and uses project-authored explanatory overlays. Browser automation records actual app responses only; it is not a human-use or speed study. Source credit, modifications and limits appear in RIGHTS and the public scorecard. The historical v0.3.14 video shows a fictional selected output that is no longer public-input behavior.
