@@ -1,0 +1,38 @@
+{
+  "schema_version": "biosure.policy-boundary-inputs/1.0",
+  "scope": "Six project-authored fictional probes; five regression contracts and one forged-reference exposure. No source authentication or biological truth is inferred.",
+  "cases": [
+    {
+      "case_id": "unsupported-replacement",
+      "entrypoint": "proposal",
+      "input": {"record_id": "unsupported-replacement", "reference_paragraphs": ["Header", "Method", "Result"], "observed_paragraphs": ["Header", "Altered method", "Result"], "proposed_paragraphs": ["Header", "Method", "Result"]}
+    },
+    {
+      "case_id": "stale-reference-multiple-mismatches",
+      "entrypoint": "workflow",
+      "input": {"record_id": "stale-reference-multiple-mismatches", "reference_paragraphs": ["Header", "Method", "Result"], "observed_paragraphs": ["Other header", "Result"]}
+    },
+    {
+      "case_id": "invented-upstream-wording",
+      "entrypoint": "proposal",
+      "input": {"record_id": "invented-upstream-wording", "reference_paragraphs": ["Header", "Method", "Result"], "observed_paragraphs": ["Header", "Result"], "proposed_paragraphs": ["Header", "Invented method", "Result"]}
+    },
+    {
+      "case_id": "url-digest-only-withheld-evidence",
+      "entrypoint": "withheld-evidence",
+      "declared_url": "https://example.org/unverified-reference",
+      "declared_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "input": {"record_id": "url-digest-only-withheld-evidence", "reference_paragraphs": ["Header", "Method", "Result"], "observed_paragraphs": ["Header", "Result"]}
+    },
+    {
+      "case_id": "supported-internal-omission",
+      "entrypoint": "workflow",
+      "input": {"record_id": "supported-internal-omission", "reference_paragraphs": ["Header", "Method", "Result"], "observed_paragraphs": ["Header", "Result"]}
+    },
+    {
+      "case_id": "forged-reference-exposure",
+      "entrypoint": "workflow",
+      "input": {"record_id": "forged-reference-exposure", "reference_paragraphs": ["Header", "Forged method", "Result"], "observed_paragraphs": ["Header", "Result"]}
+    }
+  ]
+}

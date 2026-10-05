@@ -1,0 +1,12 @@
+{
+  "schema_version": "biosure.policy-boundary-expected/1.0",
+  "input_sha256": "6463f87e5f6cdf0eac80a0c91b1fb489a6e38c8290e131e984d40387c1b78b04",
+  "cases": [
+    {"case_id": "unsupported-replacement", "classification": "contract", "expected_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"]},
+    {"case_id": "stale-reference-multiple-mismatches", "classification": "contract", "expected_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"]},
+    {"case_id": "invented-upstream-wording", "classification": "contract", "expected_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"]},
+    {"case_id": "url-digest-only-withheld-evidence", "classification": "contract", "expected_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"]},
+    {"case_id": "supported-internal-omission", "classification": "contract", "expected_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"]},
+    {"case_id": "forged-reference-exposure", "classification": "exposure", "expected_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"]}
+  ]
+}

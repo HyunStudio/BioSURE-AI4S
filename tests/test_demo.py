@@ -55,17 +55,30 @@ def test_actual_paragraph_input_uses_same_workflow_and_no_fixture_writes():
     with running_demo() as base:
         actual = post_json(base, "/api/workflow", source, {"Origin": base})
         assert actual == run_workflow(source)
-        assert actual["selected_paragraphs"] == ["Alpha", "Beta", "Gamma"]
+        assert actual["decision"]["action"] == "ABSTAIN"
+        assert actual["selected_paragraphs"] is None
+        assert actual["request"]["candidates"][0]["candidate_id"] == "reference-insertion"
         assert "gold" not in actual
     assert sorted(str(path) for path in FIXTURES.rglob("*")) == before
 
 
-def test_custom_decision_input_uses_the_same_receipt():
+def test_first_screen_separates_review_only_public_inputs_from_fixed_graph_scores():
+    html = (ROOT / "biosure/static/index.html").read_text(encoding="utf-8")
+    logic = (ROOT / "biosure/static/app.js").read_text(encoding="utf-8")
+    assert "<h1>Unverified documents stay review-only.</h1>" in html
+    assert 'id="stat-label">Fixed constructed graph test<' in html
+    assert 'byId("stat-label").textContent = "Fixed constructed graph test"' in logic
+    assert "not user-document corrections" in logic
+
+
+def test_custom_decision_input_receipt_binds_sanitized_public_request():
     source = json.loads((FIXTURES / "challenge/02-insertion-wrong-hash.json").read_text(encoding="utf-8"))
     with running_demo() as base:
         result = post_json(base, "/api/decide", source)
         assert result["decision"]["action"] == "ABSTAIN"
-        assert result["receipt"] == decide_case(FIXTURES / "challenge/02-insertion-wrong-hash.json").receipt
+        assert result["request"]["evidence"]["trusted_insertions"] == []
+        assert result["request"]["evidence"]["trusted_identities"] == []
+        assert result["receipt"]["decision"] == result["decision"]
 
 
 @pytest.mark.parametrize("body,headers,status", [

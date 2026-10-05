@@ -2,7 +2,7 @@
 
 ## What is actually demonstrated
 
-Six project-authored fictional inputs in `fixtures/workflow_examples.json` exercise actual paragraph text, not only graph hashes. Offline replay gives two bounded automatic corrections, one unchanged record and three manual-review records (substitution, boundary omission and repeated-reference ambiguity). Browser checks show applied text, review positions, receipt export and stale-result clearing. Batch triage avoids writing a replacement for every record and preserves the submitted input file. These checks establish implementation behavior only.
+Six project-authored fictional inputs in `fixtures/workflow_examples.json` exercise actual paragraph text, not only graph hashes. Current offline replay gives zero automatic corrections, one unchanged record and five review-required records; two of the latter contain bounded edit candidates, while substitution, boundary omission and repeated-reference ambiguity remain unsupported. Browser checks show review positions, receipts and stale-result clearing. Batch triage preserves the submitted input file and never selects replacement text from unverified public input. These checks establish implementation behavior only.
 
 No researcher study, time-saving measurement or independent reference adjudication has been conducted. One post-hoc selected native PDF text-layer extraction pilot is now frozen separately below; it is not a representative sample or lab validation set. Record count must not be presented as independent article count.
 

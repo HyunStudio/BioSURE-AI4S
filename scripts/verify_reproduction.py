@@ -14,6 +14,7 @@ from biosure.prospective_audit import evaluate_manifest
 from biosure.learned_upstream_audit import FOLLOWUP_LOCKED_SOURCES, evaluate_upstream_manifest
 from biosure.schema import canonical_bytes, loads_json
 from scripts.evaluate_ml import evaluate
+from scripts.evaluate_policy_boundary import verify as verify_policy_boundary
 
 
 def verify(root: Path) -> dict:
@@ -39,7 +40,7 @@ def verify(root: Path) -> dict:
             raise ValueError("stress frozen summary mismatch")
     samples = loads_json((root / "fixtures/workflow_examples.json").read_text(encoding="utf-8"))
     batch = run_batch(samples)
-    wants = [("AUTO_REPAIR", "CANDIDATE_PROPOSED"), ("AUTO_REPAIR", "CANDIDATE_PROPOSED"),
+    wants = [("ABSTAIN", "CANDIDATE_PROPOSED"), ("ABSTAIN", "CANDIDATE_PROPOSED"),
              ("ABSTAIN", "NO_CHANGE"), ("ABSTAIN", "UNSUPPORTED_DIFFERENCE"),
              ("ABSTAIN", "BOUNDARY_OMISSION"), ("ABSTAIN", "AMBIGUOUS_REFERENCE")]
     if len(samples) != len(wants):
@@ -47,9 +48,7 @@ def verify(root: Path) -> dict:
     for sample, result, wanted in zip(samples, batch["results"], wants):
         if (result["decision"]["action"], result["adapter_status"]) != wanted:
             raise ValueError("workflow action mismatch")
-        if wanted[0] == "AUTO_REPAIR" and result["selected_paragraphs"] != sample["reference_paragraphs"]:
-            raise ValueError("workflow normalized output mismatch")
-        if wanted[0] != "AUTO_REPAIR" and result["selected_paragraphs"] is not None:
+        if result["selected_paragraphs"] is not None:
             raise ValueError("workflow unexpected applied output")
     corpus = loads_json((root / 'fixtures/ml_corpus.json').read_text(encoding='utf-8'))
     replay = evaluate(corpus)
@@ -195,12 +194,14 @@ def verify(root: Path) -> dict:
         'token_dice_rank_correct': followup_compared['token_dice']['ranking_correct_units'],
         'proposal_exact': followup_compared['learned']['proposal_exact_units'],
     }
+    policy_boundary_audit = verify_policy_boundary(root)
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
             'ml': ml, 'native_pilot': pilot, 'ooc_pdf_audit': ooc_pdf_audit,
             'three_source_pdf_audit': three_source_pdf_audit,
             'prospective_ooc_audit': prospective_ooc_audit,
             'learned_upstream_audit': learned_upstream_audit,
             'followup_ooc_audit': followup_ooc_audit,
+            'policy_boundary_audit': policy_boundary_audit,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 

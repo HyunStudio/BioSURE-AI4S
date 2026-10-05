@@ -41,7 +41,7 @@ def test_judge_replay_decisions_are_exact_engine_outputs():
     public = build_judge_data(ROOT)["scenarios"][0]
     assert public["workflow"]["decision"]["action"] == "ABSTAIN"
     assert public["workflow"]["selected_paragraphs"] is None
-    assert build_judge_data(ROOT)["scenarios"][1]["workflow"]["decision"]["action"] == "AUTO_REPAIR"
+    assert build_judge_data(ROOT)["scenarios"][1]["workflow"]["decision"]["action"] == "ABSTAIN"
     assert build_judge_data(ROOT)["scenarios"][2]["proposal"]["decision"]["action"] == "ABSTAIN"
 
 

@@ -42,9 +42,10 @@ def test_fixed_fictional_sample_can_be_run_as_batch_without_gold(service):
     with post(service, json.dumps(records).encode()) as response:
         assert response.headers["Cache-Control"] == "no-store"
         result = json.load(response)
-    assert result["summary"] == {"records": 6, "automatic": 2, "unchanged": 1, "review_required": 3}
+    assert result["summary"] == {"records": 6, "automatic": 0, "unchanged": 1, "review_required": 5}
     assert [item["request"]["damaged"]["record_id"] for item in result["results"]] == [item["record_id"] for item in records]
-    assert result["results"][0]["selected_paragraphs"] == records[0]["reference_paragraphs"]
+    assert result["results"][0]["selected_paragraphs"] is None
+    assert result["results"][0]["request"]["candidates"]
     assert "gold" not in result
 
 

@@ -107,11 +107,12 @@ async function loadDataset(dataset) {
     for (const name of listing.cases) appendText(select, "option", name).value = name;
     select.value = listing.cases[0];
     select.disabled = false;
-    for (const id of ["stat-label", "workbench-title", "public-results-title"]) byId(id).textContent = listing.label;
+    byId("stat-label").textContent = "Fixed constructed graph test";
+    for (const id of ["workbench-title", "public-results-title"]) byId(id).textContent = listing.label;
     byId("dataset-note").textContent = listing.note;
     byId("dataset-count").textContent = `${summary.cases} derived cases · ${summary.source_graphs} source graphs`;
     byId("coverage").textContent = `${summary.automatic} / ${summary.cases}`;
-    byId("coverage-caption").textContent = "Automatic applications on a constructed public challenge";
+    byId("coverage-caption").textContent = "Automatic gate decisions on supplied graph evidence; not user-document corrections.";
     byId("public-summary").textContent = `${summary.exact_auto} exact automatic repairs, ${summary.abstentions} abstentions, ${summary.incorrect_auto} incorrect automatic repairs. Schema/locality: ${summary.schema_locality_baseline.automatic} applied / ${summary.schema_locality_baseline.incorrect_auto} incorrect. Hash-only evidence: ${summary.hash_evidence_baseline.automatic} applied / ${summary.hash_evidence_baseline.incorrect_auto} incorrect. Whole-graph evidence reconstruction: ${summary.evidence_reconstruction_baseline.automatic} applied / ${summary.evidence_reconstruction_baseline.incorrect_auto} incorrect. All evidence comparators receive the same declared references. ${summary.source_graphs} source graphs underlie these cases.`;
     await loadCase(select.value, dataset, version);
   } catch (error) {

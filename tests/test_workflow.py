@@ -17,12 +17,13 @@ def payload(observed=None, reference=None):
             "observed_paragraphs": observed if observed is not None else ["Alpha", "Gamma"]}
 
 
-def test_internal_omission_reconstructs_actual_paragraph_output():
+def test_internal_omission_proposes_but_does_not_select_unverified_text():
     source = payload()
     original = copy.deepcopy(source)
     result = run_workflow(source)
-    assert result["decision"]["action"] == "AUTO_REPAIR"
-    assert result["selected_paragraphs"] == ["Alpha", "Beta", "Gamma"]
+    assert result["decision"]["action"] == "ABSTAIN"
+    assert result["selected_paragraphs"] is None
+    assert result["request"]["evidence"]["trusted_insertions"] == []
     assert result["request"]["candidates"][0]["operation"] == "INSERT_PARAGRAPH"
     assert result["adapter_status"] == "CANDIDATE_PROPOSED"
     assert source == original
@@ -30,21 +31,21 @@ def test_internal_omission_reconstructs_actual_paragraph_output():
     assert "gold" not in result
 
 
-def test_exact_extra_duplicate_removed_not_legitimate_reference_repeat():
+def test_exact_extra_duplicate_is_proposed_but_not_applied():
     result = run_workflow(payload(["Alpha", "Beta", "Beta", "Gamma"]))
-    assert result["decision"]["action"] == "AUTO_REPAIR"
+    assert result["decision"]["action"] == "ABSTAIN"
     assert result["request"]["candidates"][0]["operation"] == "REMOVE_DUPLICATE"
-    assert result["selected_paragraphs"] == ["Alpha", "Beta", "Gamma"]
+    assert result["selected_paragraphs"] is None
     repeated = run_workflow(payload(["Alpha", "Beta", "Gamma"], ["Alpha", "Beta", "Beta", "Gamma"]))
     assert repeated["adapter_status"] == "AMBIGUOUS_REFERENCE"
     assert repeated["decision"]["action"] == "ABSTAIN"
     assert repeated["selected_paragraphs"] is None
 
 
-def test_nonadjacent_duplicate_before_its_original_is_repaired():
+def test_nonadjacent_duplicate_before_original_remains_review_only():
     result = run_workflow(payload(["Alpha", "Gamma", "Beta", "Gamma"]))
-    assert result["decision"]["action"] == "AUTO_REPAIR"
-    assert result["selected_paragraphs"] == ["Alpha", "Beta", "Gamma"]
+    assert result["decision"]["action"] == "ABSTAIN"
+    assert result["selected_paragraphs"] is None
 
 
 @pytest.mark.parametrize("observed,status", [
@@ -64,10 +65,10 @@ def test_unsupported_or_unchanged_input_is_not_applied(observed, status):
 
 def test_normalization_and_reference_hash_track_actual_input():
     result = run_workflow(payload([" Alpha \n ", "Gamma"]))
-    assert result["selected_paragraphs"] == ["Alpha", "Beta", "Gamma"]
+    assert result["selected_paragraphs"] is None
     changed = run_workflow(payload(reference=["Alpha", "Changed", "Gamma"]))
     assert result["reference_sha256"] != changed["reference_sha256"]
-    assert result["selected_paragraphs"] != changed["selected_paragraphs"]
+    assert result["request"]["candidates"][0]["document"] != changed["request"]["candidates"][0]["document"]
 
 
 @pytest.mark.parametrize("change", [

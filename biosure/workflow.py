@@ -21,6 +21,13 @@ def decision_payload(request: DecisionRequest) -> dict:
             "receipt": make_receipt(request, decision, "biosure-blind-v2")}
 
 
+def review_only_payload(request: DecisionRequest) -> dict:
+    """Evaluate a public graph proposal without trusting caller-supplied evidence."""
+    submitted = request.to_mapping()
+    submitted["evidence"] = {"trusted_insertions": [], "trusted_identities": []}
+    return decision_payload(parse_request(submitted))
+
+
 def _paragraphs(value: object) -> list[str]:
     if not isinstance(value, list) or not 1 <= len(value) <= 128:
         raise ValueError("supply 1 to 128 paragraphs per input")
@@ -68,7 +75,6 @@ def run_workflow(payload: dict) -> dict:
     restored = {"record_id": record_id, "blocks": ref_blocks, "citation_anchors": []}
     request = {"case_id": record_id + ":paragraph-qc", "damaged": damaged, "candidates": [],
                "evidence": {"trusted_insertions": [], "trusted_identities": []}}
-    source_id = "declared-reference:" + sha256(reference)
     status = "UNSUPPORTED_DIFFERENCE"
     applied_change = None
     if len(ref_by_hash) != len(reference):
@@ -84,10 +90,6 @@ def run_workflow(payload: dict) -> dict:
                 status = "CANDIDATE_PROPOSED"
                 applied_change = {"kind": "missing", "reference_span": [missing, missing + 1],
                                   "observed_span": [missing, missing]}
-                block = ref_blocks[missing]
-                request["evidence"]["trusted_insertions"] = [{"block_id": block["block_id"],
-                    "text_sha256": block["text_sha256"], "before_id": ref_blocks[missing - 1]["block_id"],
-                    "after_id": ref_blocks[missing + 1]["block_id"], "source_id": source_id}]
                 request["candidates"] = [{"candidate_id": "reference-insertion", "operation": "INSERT_PARAGRAPH", "document": restored}]
     elif len(observed) == len(reference) + 1:
         possible = [i for i, text in enumerate(observed)
@@ -109,17 +111,13 @@ def run_workflow(payload: dict) -> dict:
             status = "CANDIDATE_PROPOSED"
             applied_change = {"kind": "extra", "reference_span": [removed, removed],
                               "observed_span": [removed, removed + 1]}
-            duplicate = obs_blocks[removed]
-            retained = ref_by_hash[duplicate["text_sha256"]]
-            request["evidence"]["trusted_identities"] = [{"retained_block_id": retained["block_id"],
-                "duplicate_block_id": duplicate["block_id"], "text_sha256": duplicate["text_sha256"], "source_id": source_id}]
             request["candidates"] = [{"candidate_id": "reference-deduplication", "operation": "REMOVE_DUPLICATE", "document": restored}]
     result = decision_payload(parse_request(request))
     changes = [{"kind": {"delete": "missing", "insert": "extra", "replace": "changed"}[tag],
                 "reference_span": [a, b], "observed_span": [c, d]}
                for tag, a, b, c, d in SequenceMatcher(None, reference, observed, autojunk=False).get_opcodes()
                if tag != "equal"]
-    if result["decision"]["action"] == "AUTO_REPAIR" and applied_change is not None:
+    if applied_change is not None:
         changes = [applied_change]
     return {"mode": "declared_reference_paragraph_qc", "adapter_version": "biosure-paragraph-v1",
             "adapter_status": status, "reference_sha256": sha256(reference), "observed_sha256": sha256(observed),
@@ -158,13 +156,15 @@ def run_proposal(payload: dict) -> dict:
             "document": {**candidate["document"], "blocks": blocks}}]
     checked = decision_payload(parse_request(request))
     automatic = checked["decision"]["action"] == "AUTO_REPAIR"
+    proposed_for_review = bool(original["request"]["candidates"] and proposed == original["reference_paragraphs"])
     binding = {"schema_version": "biosure.proposal-receipt/1.0",
         "reference_sha256": original["reference_sha256"], "observed_sha256": original["observed_sha256"],
         "proposal_sha256": sha256(proposed), "gate_receipt_sha256": checked["receipt"]["receipt_sha256"],
         "adapter_version": "biosure-proposal-v1"}
     return {**original, **checked, "mode": "untrusted_upstream_proposal_qc",
         "proposal_receipt": {**binding, "receipt_sha256": sha256(binding)},
-        "adapter_status": "PROPOSAL_ACCEPTED" if automatic else "PROPOSAL_REJECTED",
+        "adapter_status": "PROPOSAL_ACCEPTED" if automatic else (
+            "PROPOSAL_REVIEW_REQUIRED" if proposed_for_review else "PROPOSAL_REJECTED"),
         "original_adapter_status": original["adapter_status"],
         "proposed_paragraphs": proposed, "proposal_sha256": sha256(proposed),
         "producer_assumption": "Pasted proposal origin is not authenticated; no model performance is inferred.",

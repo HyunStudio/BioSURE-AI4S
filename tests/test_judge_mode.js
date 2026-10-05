@@ -27,12 +27,13 @@ test('real public case visibly abstains and disclaims source authority', () => {
   assert.match(view.articleUrl, /PMC12864593/);
 });
 
-test('fictional bounded fix and invented proposal stay separate', () => {
-  const accepted = deriveView(bundle.scenarios[1]);
+test('fictional bounded candidate and invented proposal both stay review-only', () => {
+  const bounded = deriveView(bundle.scenarios[1]);
   const rejected = deriveView(bundle.scenarios[2]);
-  assert.equal(accepted.isFictional, true);
-  assert.equal(accepted.gateAction, 'AUTO_REPAIR');
-  assert.deepEqual(accepted.selectedParagraphs, bundle.scenarios[1].input.reference_paragraphs);
+  assert.equal(bounded.isFictional, true);
+  assert.equal(bounded.gateAction, 'ABSTAIN');
+  assert.equal(bounded.selectedParagraphs, null);
+  assert.equal(bundle.scenarios[1].workflow.request.candidates.length, 1);
   assert.equal(rejected.proposalAction, 'ABSTAIN');
   assert.equal(rejected.proposalSelectedParagraphs, null);
 });

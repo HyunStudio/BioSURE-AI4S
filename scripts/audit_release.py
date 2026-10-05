@@ -34,9 +34,9 @@ HEX64 = re.compile(r"[0-9a-f]{64}")
 
 def _allowed(relative: str) -> bool:
     parts = Path(relative).parts
-    if relative in {"README.md", "RIGHTS.md", "LICENSE", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html", "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js"}:
+    if relative in {"README.md", "RIGHTS.md", "LICENSE", "OWNER-ACTION-FIRST-PLACE.md", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html", "docs/judge/data.json", "docs/study/manifest.json", "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js"}:
         return True
-    if len(parts) == 3 and parts[:2] in {("docs", "judge"), ("docs", "study")} and Path(parts[2]).suffix in {".html", ".css", ".js", ".json"}:
+    if len(parts) == 3 and parts[:2] in {("docs", "judge"), ("docs", "study")} and Path(parts[2]).suffix in {".html", ".css", ".js"}:
         return True
     if len(parts) == 2 and parts[0] in {"biosure", "scripts", "tests"} and parts[1].endswith(".py"):
         return True

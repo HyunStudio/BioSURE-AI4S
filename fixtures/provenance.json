@@ -62,6 +62,12 @@
     },
     {
       "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "OWNER-ACTION-FIRST-PLACE.md",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
       "pattern": "pyproject.toml",
       "review_status": "approved_for_public_release",
       "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
@@ -305,6 +311,18 @@
       "pattern": "results/learned_upstream_audit.json",
       "review_status": "approved_for_public_release",
       "rights": "MIT project-generated measurements distributed with the eight sources' CC BY 4.0 attribution and change notices"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "fixtures/policy_boundary_inputs.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
+    },
+    {
+      "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
+      "pattern": "fixtures/policy_boundary_expected.json",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
     },
     {
       "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",

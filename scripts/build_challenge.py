@@ -222,7 +222,7 @@ def emit(root: Path) -> None:
             for pattern in (
                 "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js", "fixtures/workflow_examples.json",
                 "fixtures/stress_challenge/*.json", "fixtures/stress_gold/*.json", "fixtures/stress_provenance.json",
-                "README.md", "RIGHTS.md", "LICENSE", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html",
+                "README.md", "RIGHTS.md", "LICENSE", "OWNER-ACTION-FIRST-PLACE.md", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html",
                 "docs/judge/*.html", "docs/judge/*.css", "docs/judge/*.js", "docs/judge/data.json",
                 "docs/study/*.html", "docs/study/*.css", "docs/study/*.js", "docs/study/manifest.json",
                 "biosure/*.py", "biosure/static/*.html", "biosure/static/*.css", "biosure/static/*.js",
@@ -236,6 +236,7 @@ def emit(root: Path) -> None:
                 "fixtures/followup_ooc_PMC*_inputs.json", "fixtures/followup_ooc_PMC*_gold.json",
                 "fixtures/followup_ooc_manifest.json", "results/followup_ooc_decisions.json",
                 "fixtures/ml_model.json", "results/learned_upstream_audit.json",
+                "fixtures/policy_boundary_inputs.json", "fixtures/policy_boundary_expected.json",
                 "report/*.md", "video/*.md",
             )
         ],

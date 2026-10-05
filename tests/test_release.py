@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from scripts.audit_release import audit
+from scripts.audit_release import _allowed, audit
 
 
 def clean_package(tmp_path: Path) -> Path:
@@ -92,6 +92,12 @@ def test_watch_page_only_is_allowlisted_with_rights_coverage(tmp_path):
     assert audit(root) == []
     (root / "docs/unknown.html").write_text("unknown", encoding="utf-8")
     assert "non-allowlisted file: docs/unknown.html" in audit(root)
+
+
+def test_study_json_allowlist_cannot_copy_future_session_exports():
+    assert _allowed("docs/study/manifest.json")
+    assert not _allowed("docs/study/biosure-study-session.json")
+    assert not _allowed("docs/study/neutral-name.json")
 
 
 def test_stress_provenance_rejects_unreviewed_prose_fields(tmp_path: Path) -> None:

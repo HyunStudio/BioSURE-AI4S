@@ -18,8 +18,8 @@ def item(name="omission", observed=None):
 
 
 @pytest.mark.parametrize("observed,kind,reference_span,observed_span,action", [
-    (["Alpha", "Gamma"], "missing", [1, 2], [1, 1], "AUTO_REPAIR"),
-    (["Alpha", "Beta", "Beta", "Gamma"], "extra", [2, 2], [2, 3], "AUTO_REPAIR"),
+    (["Alpha", "Gamma"], "missing", [1, 2], [1, 1], "ABSTAIN"),
+    (["Alpha", "Beta", "Beta", "Gamma"], "extra", [2, 2], [2, 3], "ABSTAIN"),
     (["Alpha", "Wrong", "Gamma"], "changed", [1, 2], [1, 2], "ABSTAIN"),
 ])
 def test_review_hunks_are_literal_spans_and_do_not_override_gate(observed, kind, reference_span, observed_span, action):
@@ -41,8 +41,9 @@ def test_duplicate_preview_identifies_the_copy_actually_removed_by_candidate():
     result = run_workflow(source)
     assert result["review_changes"] == [{"kind": "extra", "reference_span": [2, 2], "observed_span": [2, 3]}]
     damaged_ids = [b["block_id"] for b in result["request"]["damaged"]["blocks"]]
-    selected_ids = [b["block_id"] for b in result["selected_output"]["blocks"]]
-    assert damaged_ids[2] not in selected_ids
+    proposed_ids = [b["block_id"] for b in result["request"]["candidates"][0]["document"]["blocks"]]
+    assert damaged_ids[2] not in proposed_ids
+    assert result["selected_output"] is None
 
 
 def test_batch_triages_changed_unchanged_and_review_without_rewriting_inputs():
@@ -50,7 +51,7 @@ def test_batch_triages_changed_unchanged_and_review_without_rewriting_inputs():
     source = [item(), item("same", ["Alpha", "Beta", "Gamma"]), item("review", ["Alpha", "Wrong", "Gamma"])]
     before = json.dumps(source)
     result = run_batch(source)
-    assert result["summary"] == {"records": 3, "automatic": 1, "unchanged": 1, "review_required": 1}
+    assert result["summary"] == {"records": 3, "automatic": 0, "unchanged": 1, "review_required": 2}
     assert [r["request"]["damaged"]["record_id"] for r in result["results"]] == ["omission", "same", "review"]
     assert result["results"][2]["selected_paragraphs"] is None
     assert json.dumps(source) == before
@@ -76,7 +77,7 @@ def cli(tmp_path, records, existing=False):
 def test_batch_cli_writes_explicit_output_after_all_records_validate(tmp_path):
     result, incoming, outgoing = cli(tmp_path, [item()])
     assert result.returncode == 0, result.stderr
-    assert json.loads(outgoing.read_text(encoding="utf-8"))["summary"]["automatic"] == 1
+    assert json.loads(outgoing.read_text(encoding="utf-8"))["summary"]["automatic"] == 0
     assert json.loads(incoming.read_text(encoding="utf-8")) == [item()]
 
 

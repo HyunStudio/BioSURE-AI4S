@@ -98,7 +98,7 @@ def test_learned_http_abstention_does_not_publish_baseline_selection(service):
         result = json.load(response)
     assert result['proposal_status'] == 'ABSTAIN'
     assert result['proposal_check'] is None
-    assert result['original_workflow_review']['decision']['action'] == 'AUTO_REPAIR'
+    assert result['original_workflow_review']['decision']['action'] == 'ABSTAIN'
     assert 'selected_paragraphs' not in result
     assert 'decision' not in result
 

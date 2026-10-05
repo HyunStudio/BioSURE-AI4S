@@ -142,6 +142,6 @@ def test_learned_abstention_does_not_expose_baseline_repair_as_selected_output()
     assert result['proposal_status'] == 'ABSTAIN'
     assert result['proposal_reason'] == 'AMBIGUOUS_MATCH'
     assert result['proposal_check'] is None
-    assert result['original_workflow_review']['decision']['action'] == 'AUTO_REPAIR'
+    assert result['original_workflow_review']['decision']['action'] == 'ABSTAIN'
     for misleading in ('decision', 'selected_paragraphs', 'selected_output', 'receipt', 'request'):
         assert misleading not in result

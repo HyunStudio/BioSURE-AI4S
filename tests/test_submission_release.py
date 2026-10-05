@@ -22,7 +22,7 @@ def test_offline_verifier_checks_all_frozen_sets_and_literal_text_workflows():
     assert report["sets"]["synthetic"] == {"cases": 8, "sources": 2, "exact": 2, "incorrect": 0, "abstentions": 6}
     assert report["sets"]["article"] == {"cases": 9, "sources": 3, "exact": 3, "incorrect": 0, "abstentions": 6}
     assert report["sets"]["stress"] == {"cases": 168, "sources": 12, "exact": 24, "incorrect": 12, "abstentions": 132}
-    assert report["workflow_examples"] == {"records": 6, "automatic": 2, "unchanged": 1, "review_required": 3}
+    assert report["workflow_examples"] == {"records": 6, "automatic": 0, "unchanged": 1, "review_required": 5}
     assert report['ml']['sources'] == {'train': 12, 'dev': 6, 'test': 6}
     assert report['ml']['learned_correct'] == 284
     assert report['ml']['best_lexical_correct'] == 284
@@ -86,16 +86,27 @@ def test_export_relocates_readme_links_to_existing_public_reports(tmp_path):
     from scripts.prepare_release import prepare
     source = approved_source(tmp_path / "source")
     (source / "report/public-submission.md").write_text("# Report", encoding="utf-8")
-    (source / "report/public-readme.md").write_text("[report](public-submission.md) [rights](../RIGHTS.md)", encoding="utf-8")
+    (source / "OWNER-ACTION-FIRST-PLACE.md").write_text("# Owner actions\n", encoding="utf-8")
+    (source / "report/public-readme.md").write_text(
+        "[report](public-submission.md) [rights](../RIGHTS.md) "
+        "[owner](../OWNER-ACTION-FIRST-PLACE.md) "
+        "[audit](../results/policy_boundary_audit.json)", encoding="utf-8")
+    (source / "results/policy_boundary_audit.json").write_text("{}", encoding="utf-8")
     provenance = source / "fixtures/provenance.json"
     value = json.loads(provenance.read_text(encoding="utf-8"))
     value["asset_groups"].append({"pattern": "report/*.md", "origin": "authored test report",
+                                  "rights": "test rights", "review_status": "approved_for_public_release"})
+    value["asset_groups"].append({"pattern": "OWNER-ACTION-FIRST-PLACE.md", "origin": "authored owner checklist",
                                   "rights": "test rights", "review_status": "approved_for_public_release"})
     provenance.write_text(json.dumps(value), encoding="utf-8")
     destination = tmp_path / "release"
     prepare(source, destination)
     assert (destination / "report/public-submission.md").is_file()
     assert (destination / "RIGHTS.md").is_file()
+    readme = (destination / "README.md").read_text(encoding="utf-8")
+    assert "[owner](OWNER-ACTION-FIRST-PLACE.md)" in readme
+    assert "[audit](results/policy_boundary_audit.json)" in readme
+    assert (destination / "results/policy_boundary_audit.json").is_file()
     from scripts.audit_release import audit
     assert audit(destination) == []
 

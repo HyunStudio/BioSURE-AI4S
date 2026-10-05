@@ -1,0 +1,17 @@
+{
+  "schema_version": "biosure.policy-boundary-audit/1.0",
+  "input_sha256": "6463f87e5f6cdf0eac80a0c91b1fb489a6e38c8290e131e984d40387c1b78b04",
+  "scope": "Five fictional policy contracts plus one separately reported forged-reference control; public adapters abstain without source authentication. No biological truth, user benefit or model superiority is tested.",
+  "contract_checks": 5,
+  "contract_passed": 5,
+  "exposure_controls": 1,
+  "exposure_auto_repairs": 0,
+  "cases": [
+    {"case_id": "unsupported-replacement", "classification": "contract", "expected_action": "ABSTAIN", "actual_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"], "reason_codes": ["NO_VALID_CANDIDATE"], "matches_frozen_expectation": true, "caller_preflight": "none", "trusted_insertions_count": 0, "selected_output_sha256": null, "decision_receipt_sha256": "34d3d0e3d5e193b25bc2178be4c0ddd4dbc3452f59aad408f3319e2da437d248", "proposal_receipt_sha256": "d9fc8ef6646456e26e40047e87e64bbb9c534e53382f748a08231b9074c08d90"},
+    {"case_id": "stale-reference-multiple-mismatches", "classification": "contract", "expected_action": "ABSTAIN", "actual_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"], "reason_codes": ["NO_VALID_CANDIDATE"], "matches_frozen_expectation": true, "caller_preflight": "none", "trusted_insertions_count": 0, "selected_output_sha256": null, "decision_receipt_sha256": "42d77618480529422b0db331a0dd614c46ebec7cd2f7dbbc78ce7a8600d2e03d", "proposal_receipt_sha256": null},
+    {"case_id": "invented-upstream-wording", "classification": "contract", "expected_action": "ABSTAIN", "actual_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"], "reason_codes": ["NO_VALID_CANDIDATE"], "matches_frozen_expectation": true, "caller_preflight": "none", "trusted_insertions_count": 0, "selected_output_sha256": null, "decision_receipt_sha256": "6ab737119a1200d1a03f46349fa8ced60d506a466616cb616fe59439bc080522", "proposal_receipt_sha256": "8d36d4d26e625626b5c311f3b268339829e6e159ed6906824fde5994e6c50c3b"},
+    {"case_id": "url-digest-only-withheld-evidence", "classification": "contract", "expected_action": "ABSTAIN", "actual_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"], "reason_codes": ["NO_VALID_CANDIDATE"], "matches_frozen_expectation": true, "caller_preflight": "public-adapter-withheld-unverified-evidence", "trusted_insertions_count": 0, "selected_output_sha256": null, "decision_receipt_sha256": "841530c7b8c8fd7fae1039f8be59995b8ebce7d21ea61c2a72e422f99a61367f", "proposal_receipt_sha256": null},
+    {"case_id": "supported-internal-omission", "classification": "contract", "expected_action": "ABSTAIN", "actual_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"], "reason_codes": ["NO_VALID_CANDIDATE"], "matches_frozen_expectation": true, "caller_preflight": "none", "trusted_insertions_count": 0, "selected_output_sha256": null, "decision_receipt_sha256": "f643810b18c9f5518668b0a46855e7b87bb03221786b9a11985cdb41c9dfd9a1", "proposal_receipt_sha256": null},
+    {"case_id": "forged-reference-exposure", "classification": "exposure", "expected_action": "ABSTAIN", "actual_action": "ABSTAIN", "expected_reason_codes": ["NO_VALID_CANDIDATE"], "reason_codes": ["NO_VALID_CANDIDATE"], "matches_frozen_expectation": true, "caller_preflight": "none", "trusted_insertions_count": 0, "selected_output_sha256": null, "decision_receipt_sha256": "7ef593cca9fc92e93671726038c81870ee6c5f80f6232818c8dc48ff73a8e319", "proposal_receipt_sha256": null}
+  ]
+}

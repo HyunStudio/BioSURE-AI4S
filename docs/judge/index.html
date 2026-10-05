@@ -21,7 +21,7 @@
     <section class="hero">
       <p class="eyebrow">AI4S · Tool &amp; Platform · 90-second inspection</p>
       <h1>Where does the AI suggestion stop?</h1>
-      <p class="lead">A declared source, a converted text layer and an AI-ranked proposal can disagree. BioSURE shows the difference, limits what may be applied, and binds the decision to a receipt. The declared source itself is <strong>not authenticated</strong>.</p>
+      <p class="lead">A declared source, a converted text layer and an AI-ranked proposal can disagree. BioSURE shows the difference and binds its review-only decision to a receipt. The declared source itself is <strong>not authenticated</strong>, so these public-input examples select no corrected output.</p>
       <p class="disclosure">This is an interactive <strong>static replay</strong> of frozen Python-engine results using public or fictional samples—not a live document checker, benchmark win, human time study or upload service. The default public case uses one complete article-page-1 title, excludes the abstract, and abstains.</p>
       <div class="controls">
         <label for="scenario">Inspect a sample</label>
@@ -69,13 +69,13 @@
       <section class="step" aria-labelledby="gate-heading">
         <div class="step-number">03</div>
         <div class="step-body">
-          <h3 id="gate-heading">See what the gate actually applies</h3>
+          <h3 id="gate-heading">See what the public-input gate withholds</h3>
           <div class="decision-grid">
             <div><span>Original conversion workflow</span><strong id="workflow-action"></strong></div>
             <div><span>Submitted proposal check</span><strong id="proposal-action"></strong></div>
           </div>
-          <h4>Selected proposed output</h4><div id="selected" class="detail"></div>
-          <p class="small">A fictional bounded correction is an implementation control. It is not evidence that BioSURE repaired a real article.</p>
+          <h4>Selected output (none without authenticated evidence)</h4><div id="selected" class="detail"></div>
+          <p class="small">A fictional bounded candidate tests review behavior, not a successful automatic correction. It is not evidence that BioSURE repaired a real article.</p>
         </div>
       </section>
 

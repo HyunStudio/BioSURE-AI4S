@@ -11,7 +11,7 @@ from urllib.parse import parse_qs, unquote, urlsplit
 
 from .evaluate import decide_case, score_case, summarize
 from .schema import canonical_bytes, parse_request, loads_json, sha256
-from .workflow import decision_payload, run_workflow, run_proposal
+from .workflow import review_only_payload, run_workflow, run_proposal
 from .batch import run_batch
 from .pdf_extract import MAX_PDF_BYTES, extract_pdf
 from .ml_review import review_paragraphs, validate_model
@@ -183,7 +183,7 @@ def make_server(fixtures: Path, host: str = "127.0.0.1", port: int = 8765) -> Th
                             or any(len(item.document.blocks) > 128 for item in request.candidates)
                             or len(request.evidence.trusted_insertions) + len(request.evidence.trusted_identities) > 256):
                         raise ValueError("decision size limit")
-                    result = decision_payload(request)
+                    result = review_only_payload(request)
                 self.json(result)
             except TimeoutError:
                 self.json({"error": "Input read timeout"}, 408)

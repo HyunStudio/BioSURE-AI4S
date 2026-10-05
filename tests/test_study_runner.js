@@ -80,16 +80,17 @@ test('plain diff presents half-open spans as readable paragraph positions', () =
   assert.equal(formatSpan([2, 2]), 'gap after paragraph 2');
 });
 
-test('BioSURE view separates model wording from each gate-selected output', () => {
+test('BioSURE view separates model wording from withheld public outputs', () => {
   const omission = manifest.tasks.find(task => task.id === 'sample-omission');
-  const applied = deriveBioSureView(omission);
-  assert.equal(applied.originalAction, 'AUTO_REPAIR');
-  assert.deepEqual(applied.originalSelected, omission.biosure.selected_paragraphs);
-  assert.deepEqual(applied.modelProposal, omission.learned.proposed_paragraphs);
-  assert.deepEqual(applied.modelGateSelected, omission.learned_gate.selected_paragraphs);
+  const reviewed = deriveBioSureView(omission);
+  assert.equal(reviewed.originalAction, 'ABSTAIN');
+  assert.equal(reviewed.originalSelected, null);
+  assert.deepEqual(reviewed.modelProposal, omission.learned.proposed_paragraphs);
+  assert.equal(reviewed.modelGateSelected, null);
   const duplicate = manifest.tasks.find(task => task.id === 'sample-duplicate');
   const abstainedModel = deriveBioSureView(duplicate);
-  assert.equal(abstainedModel.originalAction, 'AUTO_REPAIR');
+  assert.equal(abstainedModel.originalAction, 'ABSTAIN');
+  assert.equal(abstainedModel.originalSelected, null);
   assert.equal(abstainedModel.modelProposal, null);
   assert.equal(abstainedModel.modelGateAction, null);
   const publicTitle = manifest.tasks.find(task => task.id === 'public-PMC12864593-title');

@@ -72,6 +72,8 @@ def prepare(source: Path, destination: Path, *, local_preview: bool = False) -> 
         for name in PUBLIC_DOCS:
             content = content.replace("(" + name + ")", "(report/" + name + ")")
         content = content.replace("(../RIGHTS.md)", "(RIGHTS.md)")
+        content = content.replace("(../OWNER-ACTION-FIRST-PLACE.md)", "(OWNER-ACTION-FIRST-PLACE.md)")
+        content = content.replace("(../results/policy_boundary_audit.json)", "(results/policy_boundary_audit.json)")
         readme.write_text(content, encoding="utf-8", newline="\n")
         findings = audit(staging)
         def permission_only(finding: str) -> bool:

@@ -16,14 +16,15 @@ def test_review_preserves_normalized_inputs_without_applying_unsupported_text():
     assert result['observed_paragraphs'] == ['A', 'altered', 'C']
     assert result['selected_paragraphs'] is None
 
-@pytest.mark.parametrize('proposed,action', [(['A','B','C'],'AUTO_REPAIR'),
-    (['A','invented','C'],'ABSTAIN'), (['A','B','changed'],'ABSTAIN'),
-    (['A','C','B'],'ABSTAIN'), (['A','B','B','C'],'ABSTAIN')])
-def test_external_proposal_is_checked_not_silently_replaced(proposed, action):
+@pytest.mark.parametrize('proposed,status', [(['A','B','C'],'PROPOSAL_REVIEW_REQUIRED'),
+    (['A','invented','C'],'PROPOSAL_REJECTED'), (['A','B','changed'],'PROPOSAL_REJECTED'),
+    (['A','C','B'],'PROPOSAL_REJECTED'), (['A','B','B','C'],'PROPOSAL_REJECTED')])
+def test_external_proposal_is_checked_not_silently_replaced(proposed, status):
     result = workflow.run_proposal({'record_id': 'external', 'reference_paragraphs': ['A','B','C'],
         'observed_paragraphs': ['A','C'], 'proposed_paragraphs': proposed})
-    assert result['decision']['action'] == action
-    assert result['selected_paragraphs'] == (['A','B','C'] if action == 'AUTO_REPAIR' else None)
+    assert result['decision']['action'] == 'ABSTAIN'
+    assert result['selected_paragraphs'] is None
+    assert result['adapter_status'] == status
     assert result['proposed_paragraphs'] == proposed
     assert result['proposal_sha256']
 
@@ -60,7 +61,7 @@ def test_proposal_cli_is_offline_and_does_not_change_input(tmp_path, capsys):
     path = tmp_path / 'proposal.json'; path.write_text(json.dumps(body), encoding='utf-8')
     before = path.read_bytes()
     assert main(['proposal', '--input', str(path)]) == 0
-    assert json.loads(capsys.readouterr().out)['selected_paragraphs'] == ['A','B','C']
+    assert json.loads(capsys.readouterr().out)['selected_paragraphs'] is None
     assert path.read_bytes() == before
 
 def test_rejected_proposal_receipt_binds_actual_proposal_even_without_supported_edit():
@@ -71,7 +72,8 @@ def test_rejected_proposal_receipt_binds_actual_proposal_even_without_supported_
     assert first['proposal_receipt']['receipt_sha256'] != second['proposal_receipt']['receipt_sha256']
     assert first['proposal_receipt'] == workflow.run_proposal(body)['proposal_receipt']
 
-def test_external_duplicate_removal_is_accepted_with_actual_text():
+def test_external_duplicate_removal_is_review_only_even_with_actual_text():
     result = workflow.run_proposal({'record_id': 'dedup', 'reference_paragraphs': ['A','B','C'],
         'observed_paragraphs': ['A','B','B','C'], 'proposed_paragraphs': ['A','B','C']})
-    assert result['selected_paragraphs'] == ['A','B','C']
+    assert result['selected_paragraphs'] is None
+    assert result['adapter_status'] == 'PROPOSAL_REVIEW_REQUIRED'
