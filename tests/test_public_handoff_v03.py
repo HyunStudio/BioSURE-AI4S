@@ -10,7 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_watch_page_links_latest_code_and_live_app_video():
     page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
     assert "/releases/latest" in page
-    assert "/releases/download/v0.3.22/biosure-demo-v0322.mp4" in page
+    assert "/releases/download/v0.3.23/biosure-demo-v0322.mp4" in page
+    assert 'src="./media/biosure-demo-v0322.mp4"' in page
     assert "actual pasted-text" in page.lower()
     assert "live browser trial" in page.lower()
     assert "no correction is automatically applied" in page.lower()
@@ -23,7 +24,7 @@ def test_watch_page_links_latest_code_and_live_app_video():
     assert "Three-source cross-publisher PDF audit" in page
     assert "page-specific review hints" in page
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    assert project["version"] == "0.3.22"
+    assert project["version"] == "0.3.23"
     assert "pypdf[fonts]==6.19.0" in project["dependencies"]
     assert "fonttools==4.66.1" in project["dependencies"]
 
@@ -51,8 +52,8 @@ def test_current_demo_is_primary_and_old_capture_is_historical():
     report = (ROOT / "report/public-submission.md").read_text(encoding="utf-8")
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     storyboard = (ROOT / "video/storyboard.md").read_text(encoding="utf-8")
-    current = "/releases/download/v0.3.22/biosure-demo-v0322.mp4"
-    assert f'<video controls preload="metadata" aria-label="BioSURE captioned demonstration" src="https://github.com/HyunStudio/BioSURE-AI4S{current}"' in page
+    current = "/releases/download/v0.3.23/biosure-demo-v0322.mp4"
+    assert '<video controls preload="metadata" aria-label="BioSURE captioned demonstration" src="./media/biosure-demo-v0322.mp4"' in page
     assert current in report and current in readme
     assert "v0.3.14" in storyboard and "PMC12864593" in storyboard
     assert "14/16" in page and "16/16" in page
@@ -62,6 +63,7 @@ def test_current_demo_is_primary_and_old_capture_is_historical():
 def test_latest_package_explains_older_demo_and_new_followup():
     page = (ROOT / "docs/index.html").read_text(encoding="utf-8")
     report = (ROOT / "report/public-submission.md").read_text(encoding="utf-8")
+    assert "v0.3.23" in page and "v0.3.23" in report
     assert "v0.3.22" in page and "v0.3.22" in report
     assert "v0.3.19" in page and "v0.3.19" in report
     assert "v0.3.21" in report
@@ -102,7 +104,7 @@ def test_owner_checklist_points_to_current_released_video_not_historical_preview
     owner = (ROOT / "OWNER-ACTION-FIRST-PLACE.md").read_text(encoding="utf-8")
     production = (ROOT / "video/production.md").read_text(encoding="utf-8")
     preview = (ROOT / "video/current-preview.md").read_text(encoding="utf-8")
-    current = "/releases/download/v0.3.22/biosure-demo-v0322.mp4"
+    current = "/releases/download/v0.3.23/biosure-demo-v0322.mp4"
     assert current in owner
     assert current in production
     assert "current video shows v0.3.14" not in owner.lower()

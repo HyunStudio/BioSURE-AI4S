@@ -260,7 +260,9 @@ def test_missing_prior_is_explicitly_not_included_not_a_server_failure(tmp_path)
 
 
 def test_public_homepage_embeds_current_live_trial_video():
+    import hashlib
     from html.parser import HTMLParser
+    from scripts.audit_release import _allowed
 
     class VideoLinks(HTMLParser):
         def __init__(self):
@@ -277,7 +279,16 @@ def test_public_homepage_embeds_current_live_trial_video():
 
     page = VideoLinks()
     page.feed((ROOT / "docs/index.html").read_text(encoding="utf-8"))
-    current = "https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.22/biosure-demo-v0322.mp4"
-    assert page.video_sources == [current]
-    assert current in page.links
+    stream = "./media/biosure-demo-v0322.mp4"
+    download = "https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.23/biosure-demo-v0322.mp4"
+    assert page.video_sources == [stream]
+    assert download in page.links
     assert "./try/" in page.links
+    media = ROOT / "docs/media/biosure-demo-v0322.mp4"
+    assert media.is_file()
+    assert hashlib.sha256(media.read_bytes()).hexdigest().upper() == "71DB3861D40F3CF37F2690ED3007E5AEB9112D2B4B0C78AA6CC05E112DF03BEE"
+    assert _allowed("docs/media/biosure-demo-v0322.mp4")
+    assert "*.mp4 -text" in (ROOT / ".gitattributes").read_text(encoding="utf-8")
+    groups = json.loads((ROOT / "fixtures/provenance.json").read_text(encoding="utf-8"))["asset_groups"]
+    assert any(group["pattern"] == "docs/media/biosure-demo-v0322.mp4"
+               and group["review_status"] == "approved_for_public_release" for group in groups)

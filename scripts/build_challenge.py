@@ -141,6 +141,8 @@ def emit(root: Path) -> None:
                            if pattern == "fixtures/workflow_examples.json" else
                            "project-authored browser trial regression tests; see RIGHTS.md"
                            if pattern == "tests/test_browser_trial.js" else
+                           "silent project-authored automated-browser recording of the live text/PDF trial and fixed Judge replay; see RIGHTS.md for modified CC BY 4.0 title credit"
+                           if pattern == "docs/media/biosure-demo-v0322.mp4" else
                            "project-authored live browser trial interface and orchestration; external PDF.js and Pyodide code is fetched from pinned CDNs, not copied into this release; see RIGHTS.md"
                            if pattern == "docs/try/*.html" else
                            "project-authored live browser trial style; see RIGHTS.md"
@@ -194,6 +196,8 @@ def emit(root: Path) -> None:
                            if pattern.startswith("fixtures/article_") else
                            "MIT project-authored test code; synthetic data only"
                            if pattern == "tests/test_browser_trial.js" else
+                           "Project-authored recording and fictional inputs under MIT; one modified Kim et al. public title remains attributed CC BY 4.0"
+                           if pattern == "docs/media/biosure-demo-v0322.mp4" else
                            "MIT project-authored HTML; no visitor PDF or text included"
                            if pattern == "docs/try/*.html" else
                            "MIT project-authored CSS"
@@ -246,7 +250,7 @@ def emit(root: Path) -> None:
             for pattern in (
                 "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js", "tests/test_browser_trial.js", "fixtures/workflow_examples.json",
                 "fixtures/stress_challenge/*.json", "fixtures/stress_gold/*.json", "fixtures/stress_provenance.json",
-                "README.md", "RIGHTS.md", "LICENSE", "OWNER-ACTION-FIRST-PLACE.md", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html",
+                "README.md", "RIGHTS.md", "LICENSE", "OWNER-ACTION-FIRST-PLACE.md", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html", "docs/media/biosure-demo-v0322.mp4",
                 "docs/judge/*.html", "docs/judge/*.css", "docs/judge/*.js", "docs/judge/data.json",
                 "docs/study/*.html", "docs/study/*.css", "docs/study/*.js", "docs/study/manifest.json",
                 "docs/try/*.html", "docs/try/*.css", "docs/try/*.js", "docs/try/engine.zip", "docs/try/model.json",

@@ -103,6 +103,12 @@
       "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
     },
     {
+      "origin": "silent project-authored automated-browser recording of the live text/PDF trial and fixed Judge replay; see RIGHTS.md for modified CC BY 4.0 title credit",
+      "pattern": "docs/media/biosure-demo-v0322.mp4",
+      "review_status": "approved_for_public_release",
+      "rights": "Project-authored recording and fictional inputs under MIT; one modified Kim et al. public title remains attributed CC BY 4.0"
+    },
+    {
       "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",
       "pattern": "docs/judge/*.html",
       "review_status": "approved_for_public_release",
