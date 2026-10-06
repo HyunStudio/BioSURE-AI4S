@@ -51,21 +51,17 @@ def parse_policy_summary(text: str) -> dict:
 def shot_manifest() -> tuple[dict, ...]:
     return (
         {"id": "intro", "seconds": 10, "caption": "PDF conversion or AI proposals can silently change research text. BioSURE exposes differences and withholds unsupported edits."},
-        {"id": "public-abstain", "seconds": 23, "caption": "Real CC BY 4.0 article excerpt. The JATS reference is declared, not authenticated. No automatic change."},
-        {"id": "fictional-omission", "seconds": 21, "caption": "Fictional internal omission: one bounded review candidate, SOURCE UNVERIFIED. No source file is changed or output applied."},
-        {"id": "invented-proposal", "seconds": 17, "caption": "Invented upstream wording is rejected; a plausible AI suggestion is not evidence."},
-        {"id": "judge-public", "seconds": 12, "caption": "Judge Mode public article title: static replay abstains. The declared source remains unverified."},
-        {"id": "judge-fictional", "seconds": 12, "caption": "Judge Mode fictional bounded candidate: static replay abstains; no output is applied."},
-        {"id": "study", "seconds": 12, "caption": "Nine-task comparison instrument: no participants or measured time benefit yet."},
-        {"id": "policy", "seconds": 18, "caption": "Fictional contract checks 5/5; separate forged-reference control: 0/1 AUTO_REPAIR. Source not authenticated; not 6/6 safety."},
-        {"id": "replay", "seconds": 12, "caption": "Reproduce locally: python scripts/verify_reproduction.py .  Results are not biological validation."},
-        {"id": "outro", "seconds": 7, "caption": "BioSURE is an offline review aid. Verify the original source before any scientific use."},
+        {"id": "trial-text", "seconds": 24, "caption": "Paste your own text: the real Python workflow and correspondence model run inside this browser. Fictional sample; ABSTAIN, no output applied."},
+        {"id": "trial-pdf", "seconds": 42, "caption": "Import a project-authored one-page PDF text layer locally. Extracted page text is unverified. Check the original page; ABSTAIN. No output applied."},
+        {"id": "judge-public", "seconds": 12, "caption": "Judge Mode is a separate fixed-case static replay, not a live upload. Its public article sample also abstains."},
+        {"id": "policy", "seconds": 15, "caption": "Fictional contract checks 5/5; separate forged-reference control: 0/1 AUTO_REPAIR. Source not authenticated; not 6/6 safety."},
+        {"id": "replay", "seconds": 11, "caption": "Reproduce locally: python scripts/verify_reproduction.py . Results are not biological validation or a user study."},
+        {"id": "outro", "seconds": 8, "caption": "BioSURE is a review aid, not an automatic correction service. Verify the original source before scientific use."},
     )
 
 
 def validate_shots(shots: tuple[dict, ...]) -> int:
-    required = {"public-abstain", "fictional-omission", "invented-proposal", "judge-public",
-                "judge-fictional", "study", "policy"}
+    required = {"trial-text", "trial-pdf", "judge-public", "policy"}
     if not isinstance(shots, tuple) or any(not isinstance(shot, dict) for shot in shots):
         raise ValueError("invalid demo shot manifest")
     ids = [shot.get("id") for shot in shots]
@@ -84,15 +80,30 @@ def validate_shots(shots: tuple[dict, ...]) -> int:
     by_id = {shot["id"]: shot["caption"] for shot in shots}
     if ("conversion" not in by_id["intro"].lower() or "unsupported" not in by_id["intro"].lower()):
         raise ValueError("demo opening must state the problem and bounded value")
-    if ("not authenticated" not in by_id["public-abstain"].lower()
-            or "SOURCE UNVERIFIED" not in by_id["fictional-omission"]
-            or "No source file" not in by_id["fictional-omission"]
+    if ("inside this browser" not in by_id["trial-text"]
+            or "ABSTAIN" not in by_id["trial-text"]
+            or "PDF text layer locally" not in by_id["trial-pdf"]
+            or "unverified" not in by_id["trial-pdf"]
+            or "No output applied" not in by_id["trial-pdf"]
             or "static replay" not in by_id["judge-public"].lower()
-            or "static replay" not in by_id["judge-fictional"].lower()
-            or "no participants" not in by_id["study"].lower()
             or not all(phrase in by_id["policy"] for phrase in ("5/5", "0/1", "AUTO_REPAIR", "forged-reference"))):
         raise ValueError("demo captions conceal the source or policy boundary")
     return total
+
+
+def write_fictional_pdf(path: Path) -> None:
+    """Make the one-page project-authored input used by the recorded PDF trial."""
+    from reportlab.pdfgen.canvas import Canvas
+
+    pdf = Canvas(str(path), pagesize=(612, 792))
+    pdf.setTitle("BioSURE fictional PDF trial")
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(72, 710, "Fictional document-conversion control")
+    pdf.setFont("Helvetica", 13)
+    pdf.drawString(72, 665, "Fictional chip inlet closed.")
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(72, 90, "Project-authored demonstration. Not a research article or clinical record.")
+    pdf.save()
 
 
 def evidence_card(kind: str, policy: dict) -> str:
@@ -122,6 +133,12 @@ def evidence_card(kind: str, policy: dict) -> str:
 def require_ui_state(label: str, actual: str, expected: str) -> None:
     if expected not in actual:
         raise ValueError(f"{label} displayed {actual!r}, expected {expected!r}")
+
+
+def require_pdf_review_state(changes: str, gate: str, selected: str) -> None:
+    """The authored PDF includes page furniture, so its chunk is CHANGED, not MISSING."""
+    if not changes.startswith("CHANGED ·") or not gate.startswith("ABSTAIN") or "No output applied" not in selected:
+        raise ValueError("PDF trial did not show the expected changed review and abstention")
 
 
 @contextmanager
@@ -246,8 +263,8 @@ def render(source_root: Path, output: Path, chrome_executable: Path | None = Non
         raise ValueError("capture script and --root must use the same source tree")
     shots = shot_manifest()
     validate_shots(shots)
-    if not (root / "fixtures/workflow_examples.json").is_file() or not (root / "docs/judge/data.json").is_file():
-        raise ValueError("source root lacks BioSURE fixtures or Judge Mode")
+    if not (root / "docs/try/engine.zip").is_file() or not (root / "docs/judge/data.json").is_file():
+        raise ValueError("source root lacks the live browser trial or Judge Mode")
     if chrome_executable is not None and not chrome_executable.is_file():
         raise ValueError("Chrome executable not found")
     try:
@@ -261,7 +278,9 @@ def render(source_root: Path, output: Path, chrome_executable: Path | None = Non
     policy = _policy_output(root)
     with tempfile.TemporaryDirectory(prefix="biosure-demo-") as temporary:
         temp = Path(temporary)
-        with _local_servers(root) as (app_url, docs_url):
+        pdf_file = temp / "fictional-chip-conversion.pdf"
+        write_fictional_pdf(pdf_file)
+        with _local_servers(root) as (_, docs_url):
             with sync_playwright() as playwright:
                 launch = {"executable_path": str(chrome_executable)} if chrome_executable else {"channel": "chrome"}
                 browser = playwright.chromium.launch(headless=True, **launch)
@@ -273,55 +292,49 @@ def render(source_root: Path, output: Path, chrome_executable: Path | None = Non
                     page.set_viewport_size({"width": 1280, "height": 720})
                     video = page.video
                     try:
-                        page.goto(app_url, wait_until="domcontentloaded")
+                        page.goto(docs_url + "try/", wait_until="domcontentloaded")
                         if page.evaluate("({width: innerWidth, height: innerHeight})") != {"width": 1280, "height": 720}:
                             raise ValueError("demo browser viewport does not match recorded frame")
-                        page.locator("#paragraph-check").wait_for()
+                        page.locator("#run").wait_for(state="visible")
+                        require_ui_state("live trial ready", page.locator("#status").inner_text(), "Ready")
                         _hold(page, by_id["intro"])
 
-                        page.locator("#load-public-extraction").click()
-                        page.locator("#public-source-link-row").wait_for(state="visible")
-                        page.locator("#reference-ack").check()
-                        page.locator("#run-workflow").click()
-                        page.wait_for_function("['NO AUTOMATIC CHANGE', 'INPUT NOT ACCEPTED'].some(text => document.getElementById('workflow-status').textContent.includes(text))")
-                        require_ui_state("public case", page.locator("#workflow-status").inner_text(), "NO AUTOMATIC CHANGE")
-                        require_ui_state("public source", page.locator("#public-source-note").inner_text(), "CC BY 4.0")
-                        checked_states.append("public-abstain")
-                        page.locator("#workflow-status").scroll_into_view_if_needed()
-                        _hold(page, by_id["public-abstain"])
+                        reference = "Fictional chip inlet closed.\n\nFictional chip flow rate five."
+                        observed = "Fictional chip inlet closed."
+                        page.locator("#reference").fill(reference)
+                        page.locator("#observed").fill(observed)
+                        page.locator("#ack").check()
+                        page.locator("#run").click()
+                        page.locator("#result").wait_for(state="visible", timeout=90000)
+                        require_ui_state("pasted-text gate", page.locator("#gate-action").inner_text(), "ABSTAIN")
+                        require_ui_state("pasted-text selection", page.locator("#selected").inner_text(), "No output applied")
+                        require_ui_state("pasted-text diff", page.locator("#changes").inner_text(), "MISSING")
+                        checked_states.append("trial-text")
+                        page.locator("#gate-action").scroll_into_view_if_needed()
+                        _hold(page, by_id["trial-text"])
 
-                        page.locator("#load-example").click()
-                        page.locator("#reference-ack").check()
-                        page.locator("#run-workflow").click()
-                        try:
-                            page.wait_for_function("['NO AUTOMATIC CHANGE', 'INPUT NOT ACCEPTED'].some(text => document.getElementById('workflow-status').textContent.includes(text))")
-                        except Exception as error:
-                            raise ValueError("fictional omission did not finish: "
-                                             + page.locator("#workflow-status").inner_text() + " / "
-                                             + page.locator("#workflow-reason").inner_text()) from error
-                        if page.locator("#workflow-status").inner_text() == "INPUT NOT ACCEPTED":
-                            raise ValueError("fictional omission rejected: " + page.locator("#workflow-reason").inner_text())
-                        require_ui_state("fictional omission", page.locator("#workflow-status").inner_text(), "NO AUTOMATIC CHANGE")
-                        require_ui_state("fictional omission output", page.locator("#workflow-output").inner_text(), "No output applied")
-                        if not page.locator("#workflow-receipt").inner_text().strip():
-                            raise ValueError("fictional omission lacks a visible decision receipt")
-                        checked_states.append("fictional-omission")
-                        page.locator("#workflow-status").scroll_into_view_if_needed()
-                        _hold(page, by_id["fictional-omission"])
-
-                        reference = page.locator("#reference-input").input_value().split("\n\n")
-                        if len(reference) != 4:
-                            raise ValueError("fictional reference shape changed")
-                        page.locator("#proposal-panel").evaluate("element => element.open = true")
-                        invented = [reference[0], "Invented detail: the source reports a different assay preparation.",
-                                    reference[2], reference[3]]
-                        page.locator("#proposal-input").fill("\n\n".join(invented))
-                        page.locator("#run-proposal").click()
-                        page.wait_for_function("document.getElementById('workflow-reason').textContent.includes('PROPOSAL_REJECTED')")
-                        require_ui_state("invented proposal", page.locator("#workflow-status").inner_text(), "NO AUTOMATIC CHANGE")
-                        checked_states.append("invented-proposal")
-                        page.locator("#workflow-status").scroll_into_view_if_needed()
-                        _hold(page, by_id["invented-proposal"])
+                        page.goto(docs_url + "try/", wait_until="domcontentloaded")
+                        page.locator("#reference").fill(reference)
+                        page.locator("#pdf-file").set_input_files(str(pdf_file))
+                        page.locator("#import-pdf").click()
+                        page.wait_for_function("document.getElementById('status').textContent.includes('Extracted 1 page-text chunk')", timeout=90000)
+                        extracted = page.locator("#observed").input_value()
+                        require_ui_state("PDF extraction", extracted, observed)
+                        if "Fictional chip flow rate five." in extracted:
+                            raise ValueError("PDF unexpectedly contains the missing reference paragraph")
+                        _caption(page, "Synthetic one-page PDF imported in browser memory. Extracted page text is not a verified paragraph or source.")
+                        page.wait_for_timeout(16000)
+                        page.locator("#ack").check()
+                        page.locator("#pdf-ack").check()
+                        page.locator("#run").click()
+                        page.locator("#result").wait_for(state="visible", timeout=90000)
+                        require_pdf_review_state(page.locator("#changes").inner_text(),
+                                                 page.locator("#gate-action").inner_text(),
+                                                 page.locator("#selected").inner_text())
+                        checked_states.append("trial-pdf")
+                        page.locator("#gate-action").scroll_into_view_if_needed()
+                        _caption(page, by_id["trial-pdf"]["caption"])
+                        page.wait_for_timeout((by_id["trial-pdf"]["seconds"] - 16) * 1000)
 
                         page.goto(docs_url + "judge/", wait_until="domcontentloaded")
                         page.locator("#run-audit").wait_for(state="visible")
@@ -332,18 +345,6 @@ def render(source_root: Path, output: Path, chrome_executable: Path | None = Non
                         checked_states.append("judge-public")
                         page.locator("#workflow-action").scroll_into_view_if_needed()
                         _hold(page, by_id["judge-public"])
-                        page.locator("#scenario").select_option("fictional-omission")
-                        page.locator("#run-audit").click()
-                        require_ui_state("Judge fictional control", page.locator("#source-type").inner_text(), "FICTIONAL CONTROL")
-                        require_ui_state("Judge fictional gate", page.locator("#workflow-action").inner_text(), "ABSTAIN")
-                        checked_states.append("judge-fictional")
-                        page.locator("#workflow-action").scroll_into_view_if_needed()
-                        _hold(page, by_id["judge-fictional"])
-
-                        page.goto(docs_url + "study/", wait_until="domcontentloaded")
-                        page.locator("#start").wait_for(state="visible")
-                        require_ui_state("study disclosure", page.locator("#intro").inner_text(), "no participants")
-                        _hold(page, by_id["study"])
 
                         page.set_content(evidence_card("policy", policy))
                         _hold(page, by_id["policy"])

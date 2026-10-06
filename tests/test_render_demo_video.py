@@ -65,14 +65,10 @@ def test_shot_validation_enforces_duration_and_disclosures():
 
     shots = shot_manifest()
     assert validate_shots(shots) <= 180
-    assert {shot["id"] for shot in shots} >= {
-        "public-abstain", "fictional-omission", "invented-proposal", "judge-public",
-        "judge-fictional", "study", "policy"
-    }
+    assert {shot["id"] for shot in shots} >= {"trial-text", "trial-pdf", "judge-public", "policy"}
     by_id = {shot["id"]: shot for shot in shots}
     assert by_id["judge-public"]["seconds"] >= 8
-    assert by_id["judge-fictional"]["seconds"] >= 8
-    assert [shot["id"] for shot in shots].index("judge-public") < [shot["id"] for shot in shots].index("judge-fictional")
+    assert [shot["id"] for shot in shots].index("trial-pdf") < [shot["id"] for shot in shots].index("judge-public")
     missing = tuple(shot for shot in shots if shot["id"] != "policy")
     with pytest.raises(ValueError, match="policy"):
         validate_shots(missing)
@@ -89,6 +85,48 @@ def test_shot_validation_enforces_duration_and_disclosures():
     generic[0]["caption"] = "A tool checks text."
     with pytest.raises(ValueError, match="problem"):
         validate_shots(generic)
+
+
+def test_current_demo_requires_real_text_and_pdf_trial_with_review_only_result():
+    from scripts.render_demo_video import shot_manifest, validate_shots
+
+    shots = shot_manifest()
+    by_id = {shot["id"]: shot for shot in shots}
+    assert validate_shots(shots) <= 180
+    assert {"trial-text", "trial-pdf", "judge-public"} <= set(by_id)
+    assert "browser" in by_id["trial-text"]["caption"].lower()
+    assert "PDF" in by_id["trial-pdf"]["caption"]
+    assert "ABSTAIN" in by_id["trial-pdf"]["caption"]
+    assert "No output applied" in by_id["trial-pdf"]["caption"]
+    assert "static replay" in by_id["judge-public"]["caption"].lower()
+
+
+def test_video_pdf_is_fictional_single_page_with_extractable_text(tmp_path):
+    from pypdf import PdfReader
+    from scripts.render_demo_video import write_fictional_pdf
+
+    source = tmp_path / "fictional-demo.pdf"
+    write_fictional_pdf(source)
+    pages = PdfReader(str(source)).pages
+    assert len(pages) == 1
+    assert "Fictional chip inlet closed." in pages[0].extract_text()
+    assert "Fictional chip flow rate five." not in pages[0].extract_text()
+
+
+def test_video_pdf_requires_actual_changed_review_and_abstention():
+    from scripts.render_demo_video import require_pdf_review_state
+
+    require_pdf_review_state("CHANGED · reference paragraphs 1–2, observed paragraph 1",
+                             "ABSTAIN · NO_VALID_CANDIDATE",
+                             "No output applied. Review the original source manually.")
+    for changes, gate, selected in (
+        ("MISSING · reference paragraph 2", "ABSTAIN", "No output applied"),
+        ("", "ABSTAIN", "No output applied"),
+        ("CHANGED", "AUTO_REPAIR", "No output applied"),
+        ("CHANGED", "ABSTAIN", "Applied edit"),
+    ):
+        with pytest.raises(ValueError, match="PDF trial"):
+            require_pdf_review_state(changes, gate, selected)
 
 
 def test_evidence_cards_separate_policy_from_reproduction_and_close():
@@ -196,5 +234,4 @@ def test_render_records_actual_app_and_static_replay(tmp_path):
     assert len(result["sha256"]) == 64
     assert result["policy_summary"] == {"contract_checks": 5, "contract_passed": 5,
                                         "exposure_auto_repairs": 0}
-    assert result["checked_states"] == ["public-abstain", "fictional-omission",
-                                        "invented-proposal", "judge-public", "judge-fictional"]
+    assert result["checked_states"] == ["trial-text", "trial-pdf", "judge-public"]

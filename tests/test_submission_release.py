@@ -257,3 +257,27 @@ def test_missing_prior_is_explicitly_not_included_not_a_server_failure(tmp_path)
         server.shutdown()
         server.server_close()
         worker.join(timeout=2)
+
+
+def test_public_homepage_embeds_current_live_trial_video():
+    from html.parser import HTMLParser
+
+    class VideoLinks(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.video_sources = []
+            self.links = []
+
+        def handle_starttag(self, tag, attrs):
+            attrs = dict(attrs)
+            if tag == "video":
+                self.video_sources.append(attrs.get("src"))
+            elif tag == "a":
+                self.links.append(attrs.get("href"))
+
+    page = VideoLinks()
+    page.feed((ROOT / "docs/index.html").read_text(encoding="utf-8"))
+    current = "https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.22/biosure-demo-v0322.mp4"
+    assert page.video_sources == [current]
+    assert current in page.links
+    assert "./try/" in page.links
