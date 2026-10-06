@@ -2,10 +2,12 @@
 
 import json
 import importlib
+import io
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+from zipfile import ZipFile
 
 import pytest
 
@@ -30,6 +32,8 @@ def test_browser_engine_build_is_repeatable_and_detects_stale_source(tmp_path):
     root = source_tree(tmp_path)
     build(root)
     first = (root / "docs/try/engine.zip").read_bytes()
+    with ZipFile(io.BytesIO(first)) as archive:
+        assert all(info.create_system == 3 for info in archive.infolist())
     assert (root / "docs/try/model.json").read_bytes() == (root / "fixtures/ml_model.json").read_bytes()
     build(root)
     assert (root / "docs/try/engine.zip").read_bytes() == first

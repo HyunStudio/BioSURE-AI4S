@@ -17,6 +17,7 @@ def _archive(root: Path) -> bytes:
     with ZipFile(buffer, "w") as archive:
         for name in MODULES:
             info = ZipInfo(f"biosure/{name}", date_time=(1980, 1, 1, 0, 0, 0))
+            info.create_system = 3  # Fix ZIP headers across Windows and Unix builds.
             info.compress_type = ZIP_DEFLATED
             info.external_attr = 0o100644 << 16
             archive.writestr(info, (root / "biosure" / name).read_bytes(), compress_type=ZIP_DEFLATED,
