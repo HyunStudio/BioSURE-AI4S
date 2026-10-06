@@ -139,6 +139,18 @@ def emit(root: Path) -> None:
                 "pattern": pattern,
                 "origin": ("project-authored fictional paragraph inputs; no experimental observations or article quotations"
                            if pattern == "fixtures/workflow_examples.json" else
+                           "project-authored browser trial regression tests; see RIGHTS.md"
+                           if pattern == "tests/test_browser_trial.js" else
+                           "project-authored live browser trial interface and orchestration; external PDF.js and Pyodide code is fetched from pinned CDNs, not copied into this release; see RIGHTS.md"
+                           if pattern == "docs/try/*.html" else
+                           "project-authored live browser trial style; see RIGHTS.md"
+                           if pattern == "docs/try/*.css" else
+                           "project-authored browser trial JavaScript; external PDF.js and Pyodide code is fetched from pinned CDNs, not copied into this release; see RIGHTS.md"
+                           if pattern == "docs/try/*.js" else
+                           "deterministic ZIP of approved biosure Python modules, built by scripts/build_browser_engine.py; see RIGHTS.md"
+                           if pattern == "docs/try/engine.zip" else
+                           "byte-identical generated copy of fixtures/ml_model.json, trained from attributed CC BY 4.0 excerpts; see RIGHTS.md"
+                           if pattern == "docs/try/model.json" else
                            "CC BY 4.0 PMC JATS article-derived hashes; see fixtures/article_provenance.json and RIGHTS.md"
                            if pattern.startswith("fixtures/article_") else
                            "24 explicitly CC BY 4.0 PMC JATS articles; full per-record authors, title, DOI, URL, license and excerpt/change notice in corpus and RIGHTS.md"
@@ -180,6 +192,18 @@ def emit(root: Path) -> None:
                            "project-authored synthetic or project-owned source; see RIGHTS.md"),
                 "rights": ("CC BY 4.0 hash-only derivatives; verified article attribution and change notice retained; owner-authorized no-prior export"
                            if pattern.startswith("fixtures/article_") else
+                           "MIT project-authored test code; synthetic data only"
+                           if pattern == "tests/test_browser_trial.js" else
+                           "MIT project-authored HTML; no visitor PDF or text included"
+                           if pattern == "docs/try/*.html" else
+                           "MIT project-authored CSS"
+                           if pattern == "docs/try/*.css" else
+                           "MIT project-authored JavaScript; no visitor PDF or text included"
+                           if pattern == "docs/try/*.js" else
+                           "MIT project-authored Python source duplicated exactly for browser execution; no private-prior modules"
+                           if pattern == "docs/try/engine.zip" else
+                           "Project-generated model weights under MIT, source corpus attribution remains CC BY 4.0; no source PDF or full article"
+                           if pattern == "docs/try/model.json" else
                            "CC BY 4.0 attributed paragraph excerpts and constructed-variant source material; no source XML, PDF, images or patient data packaged"
                            if pattern == "fixtures/ml_corpus.json" else
                            "CC BY 4.0 attributed short excerpts; no publisher PDF, figures or full article packaged"
@@ -220,11 +244,12 @@ def emit(root: Path) -> None:
                 "review_status": "approved_for_public_release",
             }
             for pattern in (
-                "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js", "fixtures/workflow_examples.json",
+                "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js", "tests/test_browser_trial.js", "fixtures/workflow_examples.json",
                 "fixtures/stress_challenge/*.json", "fixtures/stress_gold/*.json", "fixtures/stress_provenance.json",
                 "README.md", "RIGHTS.md", "LICENSE", "OWNER-ACTION-FIRST-PLACE.md", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html",
                 "docs/judge/*.html", "docs/judge/*.css", "docs/judge/*.js", "docs/judge/data.json",
                 "docs/study/*.html", "docs/study/*.css", "docs/study/*.js", "docs/study/manifest.json",
+                "docs/try/*.html", "docs/try/*.css", "docs/try/*.js", "docs/try/engine.zip", "docs/try/model.json",
                 "biosure/*.py", "biosure/static/*.html", "biosure/static/*.css", "biosure/static/*.js",
                 "scripts/*.py", "tests/*.py", "fixtures/provenance.json",
                 "fixtures/challenge/*.json", "fixtures/gold/*.json", "results/*.json",

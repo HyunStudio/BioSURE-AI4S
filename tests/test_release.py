@@ -100,6 +100,14 @@ def test_study_json_allowlist_cannot_copy_future_session_exports():
     assert not _allowed("docs/study/neutral-name.json")
 
 
+def test_browser_trial_allowlist_excludes_visitor_files():
+    for name in ("index.html", "style.css", "app.js", "pdf.js", "engine-worker.js",
+                 "engine.zip", "model.json"):
+        assert _allowed("docs/try/" + name)
+    assert not _allowed("docs/try/visitor.pdf")
+    assert not _allowed("docs/try/upload.json")
+
+
 def test_stress_provenance_rejects_unreviewed_prose_fields(tmp_path: Path) -> None:
     root = clean_package(tmp_path)
     value = json.loads((ROOT / "fixtures/stress_provenance.json").read_text(encoding="utf-8"))

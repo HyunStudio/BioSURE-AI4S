@@ -19,6 +19,12 @@
       "rights": "MIT project-authored material; owner-authorized audited no-prior export only, excluded prior/manuscript copies not licensed"
     },
     {
+      "origin": "project-authored browser trial regression tests; see RIGHTS.md",
+      "pattern": "tests/test_browser_trial.js",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored test code; synthetic data only"
+    },
+    {
       "origin": "project-authored fictional paragraph inputs; no experimental observations or article quotations",
       "pattern": "fixtures/workflow_examples.json",
       "review_status": "approved_for_public_release",
@@ -143,6 +149,36 @@
       "pattern": "docs/study/manifest.json",
       "review_status": "approved_for_public_release",
       "rights": "CC BY 4.0 attributed modified titles for three public tasks; original project-generated instrument, decisions and six fictional controls under MIT, no PDF/XML/figures or participant results"
+    },
+    {
+      "origin": "project-authored live browser trial interface and orchestration; external PDF.js and Pyodide code is fetched from pinned CDNs, not copied into this release; see RIGHTS.md",
+      "pattern": "docs/try/*.html",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored HTML; no visitor PDF or text included"
+    },
+    {
+      "origin": "project-authored live browser trial style; see RIGHTS.md",
+      "pattern": "docs/try/*.css",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored CSS"
+    },
+    {
+      "origin": "project-authored browser trial JavaScript; external PDF.js and Pyodide code is fetched from pinned CDNs, not copied into this release; see RIGHTS.md",
+      "pattern": "docs/try/*.js",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored JavaScript; no visitor PDF or text included"
+    },
+    {
+      "origin": "deterministic ZIP of approved biosure Python modules, built by scripts/build_browser_engine.py; see RIGHTS.md",
+      "pattern": "docs/try/engine.zip",
+      "review_status": "approved_for_public_release",
+      "rights": "MIT project-authored Python source duplicated exactly for browser execution; no private-prior modules"
+    },
+    {
+      "origin": "byte-identical generated copy of fixtures/ml_model.json, trained from attributed CC BY 4.0 excerpts; see RIGHTS.md",
+      "pattern": "docs/try/model.json",
+      "review_status": "approved_for_public_release",
+      "rights": "Project-generated model weights under MIT, source corpus attribution remains CC BY 4.0; no source PDF or full article"
     },
     {
       "origin": "project-authored synthetic or project-owned source; see RIGHTS.md",

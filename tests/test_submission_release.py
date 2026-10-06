@@ -120,6 +120,23 @@ def test_standalone_profile_can_reexport_without_private_checkout_templates(tmp_
     assert (second / "README.md").read_bytes() == (first / "README.md").read_bytes()
 
 
+def test_public_trial_assets_are_exported_and_stale_engine_is_blocked(tmp_path):
+    from scripts.prepare_release import prepare
+    from scripts.audit_release import audit
+    from scripts.build_browser_engine import build
+    destination = tmp_path / "release"
+    prepare(ROOT, destination)
+    for name in ("index.html", "style.css", "app.js", "pdf.js", "engine-worker.js",
+                 "engine.zip", "model.json"):
+        assert (destination / "docs/try" / name).is_file()
+    build(destination, check=True)
+    archive = destination / "docs/try/engine.zip"
+    archive.write_bytes(b"stale")
+    assert any("stale browser engine asset" in finding for finding in audit(destination))
+    archive.unlink()
+    assert "missing browser trial asset: docs/try/engine.zip" in audit(destination)
+
+
 def test_unapproved_rights_make_no_release_directory(tmp_path):
     from scripts.prepare_release import prepare
     source = approved_source(tmp_path / "source")

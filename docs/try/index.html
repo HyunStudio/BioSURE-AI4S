@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Try the real BioSURE review-only Python engine on your own text or a PDF text layer, locally in your browser.">
+  <title>Try BioSURE — live browser review</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./pdf.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">BioSURE <span>Live trial</span></a>
+    <nav aria-label="Project links">
+      <a href="../judge/">Fixed-case Judge Mode</a>
+      <a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/latest">Offline full app</a>
+      <a href="https://github.com/HyunStudio/BioSURE-AI4S/blob/main/report/public-scorecard.md">Evidence</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">AI4S · no login · no installation · no API key</p>
+      <h1>Test your own document-conversion text.</h1>
+      <p class="lead">Compare a declared reference with an observed PDF conversion. The real BioSURE Python text workflow and trained paragraph-correspondence model run <strong>inside your browser</strong>. They identify review locations and may propose wording copied from your declared reference; they do not authenticate that source or approve an edit.</p>
+      <p class="privacy">Your PDF and paragraph text are processed in browser memory, not uploaded to BioSURE or a model service. Version-pinned <a href="https://pyodide.org/en/0.26.4/">Pyodide</a> and <a href="https://mozilla.github.io/pdf.js/">PDF.js</a> code may download from jsDelivr; the CDN sees ordinary connection metadata, not your document bytes. Do not use patient or confidential data in a competition demo.</p>
+    </section>
+
+    <section class="workspace" aria-labelledby="input-heading">
+      <h2 id="input-heading">1. Supply two versions</h2>
+      <p>Paste paragraph text separated by blank lines. For a PDF, import its text layer into one side, then compare every extracted page with the original and correct reading order, spacing and paragraph boundaries yourself. Scanned PDFs need OCR or manual transcription outside this page.</p>
+      <div class="inputs">
+        <div><label for="reference">Declared reference</label><textarea id="reference" rows="10" spellcheck="false" placeholder="Paste source text, with blank lines between paragraphs."></textarea></div>
+        <div><label for="observed">Observed conversion</label><textarea id="observed" rows="10" spellcheck="false" placeholder="Paste converted text, with blank lines between paragraphs."></textarea></div>
+      </div>
+      <div class="import-row">
+        <label for="pdf-file">Optional PDF text-layer import (16 MiB, 32 pages max)</label>
+        <input id="pdf-file" type="file" accept=".pdf,application/pdf">
+        <label for="pdf-target">Place in</label>
+        <select id="pdf-target"><option value="observed">Observed conversion</option><option value="reference">Declared reference</option></select>
+        <button id="import-pdf" type="button" class="secondary">Extract locally</button>
+      </div>
+      <p class="warning">PDF extraction yields unverified <strong>page-text chunks, not paragraphs</strong>. It can omit images, tables, equations, or rearrange columns. A file hash or your acknowledgement is not proof that the reference is genuine.</p>
+      <label class="check"><input id="ack" type="checkbox"> I understand that the declared reference is unverified and will inspect the original source myself.</label>
+      <label class="check"><input id="pdf-ack" type="checkbox"> If I imported a PDF, I checked and corrected its page text against the visible pages.</label>
+      <button id="run" type="button" class="primary">Run review-only check →</button>
+      <p id="status" role="status" aria-live="polite">Loading browser interface…</p>
+    </section>
+
+    <section id="result" class="results" aria-label="Review result" hidden>
+      <p class="eyebrow">Source unverified · no automatic correction</p>
+      <h2>2. Inspect the differences and decision</h2>
+      <div class="inputs">
+        <div><h3>Declared reference</h3><pre id="view-reference"></pre></div>
+        <div><h3>Observed conversion</h3><pre id="view-observed"></pre></div>
+      </div>
+      <h3>Changed paragraph positions</h3><pre id="changes"></pre>
+      <h3>Model correspondence</h3><p id="model"></p>
+      <h3>Model proposal, if any</h3><pre id="proposal"></pre>
+      <h3>Public-input gate</h3><p id="gate-action" class="decision"></p>
+      <h3>Selected output</h3><p id="selected"></p>
+      <details><summary>Content-bound engine receipts</summary><pre id="receipt"></pre></details>
+      <p class="warning">The fitted model ranks paragraph correspondence only. The receipt binds supplied content and a decision, not source authenticity, producer identity, scientific truth, or clinical safety.</p>
+    </section>
+
+    <section class="more">
+      <h2>What this trial does not do</h2>
+      <p>There is no OCR, trustworthy source verification, biological adjudication or automatic repair of arbitrary public input. For richer PDF extraction warnings, batch review and fully offline operation, use the <a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/latest">local source release</a>. To inspect frozen, reproducible examples without supplying text, use <a href="../judge/">Judge Mode</a>. The current video shows v0.3.19, not this live browser trial.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -16,6 +16,7 @@ if __name__ == "__main__":
     sys.dont_write_bytecode = True
 from biosure.schema import parse_document, parse_request, sha256
 from biosure.ml_review import validate_model
+from scripts.build_browser_engine import build as check_browser_engine
 
 
 REQUIRED = ("README.md", "RIGHTS.md", "LICENSE", "fixtures/provenance.json")
@@ -34,7 +35,10 @@ HEX64 = re.compile(r"[0-9a-f]{64}")
 
 def _allowed(relative: str) -> bool:
     parts = Path(relative).parts
-    if relative in {"README.md", "RIGHTS.md", "LICENSE", "OWNER-ACTION-FIRST-PLACE.md", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html", "docs/judge/data.json", "docs/study/manifest.json", "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js"}:
+    if relative in {"README.md", "RIGHTS.md", "LICENSE", "OWNER-ACTION-FIRST-PLACE.md", "pyproject.toml", ".gitignore", ".gitattributes", ".github/workflows/ci.yml", "docs/index.html", "docs/judge/data.json", "docs/study/manifest.json", "tests/test_browser_logic.js", "tests/test_judge_mode.js", "tests/test_study_runner.js", "tests/test_browser_trial.js"}:
+        return True
+    if relative in {f"docs/try/{name}" for name in ("index.html", "style.css", "app.js", "pdf.js",
+                                                       "engine-worker.js", "engine.zip", "model.json")}:
         return True
     if len(parts) == 3 and parts[:2] in {("docs", "judge"), ("docs", "study")} and Path(parts[2]).suffix in {".html", ".css", ".js"}:
         return True
@@ -299,6 +303,16 @@ def audit(root: Path) -> list[str]:
                 parse_document(json.loads((root / name).read_text(encoding="utf-8")))
         except (OSError, UnicodeError, ValueError):
             findings.append(f"invalid stress case: {name}")
+    if any(name.startswith("docs/try/") for name in files):
+        required_trial = {f"docs/try/{name}" for name in ("index.html", "style.css", "app.js", "pdf.js",
+                                                       "engine-worker.js", "engine.zip", "model.json")}
+        for missing in sorted(required_trial - set(files)):
+            findings.append(f"missing browser trial asset: {missing}")
+        if required_trial.issubset(files):
+            try:
+                check_browser_engine(root, check=True)
+            except (OSError, ValueError) as error:
+                findings.append(str(error))
     return sorted(set(findings))
 
 

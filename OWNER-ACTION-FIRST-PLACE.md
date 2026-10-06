@@ -6,7 +6,7 @@ future external-usability tool, **not a submission prerequisite**. No volunteer,
 independent adjudicator, registration or Kaggle Writeup has been completed by
 this file. Codex/GPT are development tools, not teammates or validators.
 
-The [official AI4S page](https://www.kaggle.com/competitions/ai-4-s-open-innovation-artificial-intelligence-for-life-scien/overview/url)
+The [official AI4S page](https://www.kaggle.com/competitions/ai-4-s-open-innovation-artificial-intelligence-for-life-scien/overview)
 lists the preliminary round through **October 10, 2026** and says a separate
 registration form is required *before* the official Kaggle Writeup; an
 unregistered team is ineligible for judging and awards. Confirm the exact
@@ -18,7 +18,7 @@ Only the owner can decide to register and submit; this checklist does not do so.
 | Block | Owner action and evidence to retain privately |
 |---|---|
 | 0–10 min | **OWNER ACTION:** Verify the official closing clock, complete the separate registration form if proceeding, and confirm HyunStudio / HyunGi Hwang as the one-person team. Do not assume a GitHub release is a Kaggle submission. |
-| 10–20 min | Open the [public code release](https://github.com/HyunStudio/BioSURE-AI4S/releases/latest), [current video](https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.19/biosure-demo-v0319.mp4), [watch page](https://hyunstudio.github.io/BioSURE-AI4S/), [Judge Mode](https://hyunstudio.github.io/BioSURE-AI4S/judge/) and [study instrument](https://hyunstudio.github.io/BioSURE-AI4S/study/) without login. The current video shows review-only behavior, two static Judge cases and the study introduction; the older v0.3.14 selected-edit scene is historical. |
+| 10–20 min | Open the [public code release](https://github.com/HyunStudio/BioSURE-AI4S/releases/latest), [live browser trial](https://hyunstudio.github.io/BioSURE-AI4S/try/) with non-confidential text and a PDF text layer, [v0.3.19 video](https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.19/biosure-demo-v0319.mp4), [watch page](https://hyunstudio.github.io/BioSURE-AI4S/), [Judge Mode](https://hyunstudio.github.io/BioSURE-AI4S/judge/) and [study instrument](https://hyunstudio.github.io/BioSURE-AI4S/study/) without login. The video predates the browser trial; it shows review-only behavior, two static Judge cases and the study introduction. The older v0.3.14 selected-edit scene is historical. |
 | 20–30 min | Check the public report and scorecard against the exact released code, video and result files. Preserve the negative learned comparison and natural-case abstentions. Do not claim a participant study or independent domain review. |
 | 30–40 min | **OWNER ACTION:** Finalize the official Kaggle Writeup with category `Tool & Platform`, public video/code/report links, one-person team information and accurate AI-tool disclosure, then submit it in Kaggle. Confirm receipt in the account interface. |
 
