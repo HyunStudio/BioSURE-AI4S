@@ -15,7 +15,7 @@ function loadEngine() {
     const modelJson = await model.text();
     JSON.parse(modelJson);
     return { pyodide, modelJson };
-  })();
+  })().catch(error => { enginePromise = undefined; throw error; });
   return enginePromise;
 }
 

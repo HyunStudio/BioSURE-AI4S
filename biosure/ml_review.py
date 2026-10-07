@@ -9,7 +9,7 @@ import math
 import re
 import unicodedata
 from collections import Counter
-from decimal import Decimal
+from decimal import Decimal, DecimalException
 
 from .schema import sha256
 from .workflow import run_workflow
@@ -28,7 +28,20 @@ def _text(text: str) -> str:
 
 
 def _numbers(text: str) -> list[str]:
-    return sorted(str(Decimal(value).normalize()) for value in _NUMBER.findall(text))
+    def normalize(value: str) -> str:
+        try:
+            sign, digits, exponent = Decimal(value).as_tuple()
+        except DecimalException:
+            # Extreme exponents stay visible as lexical discrepancies; never crash review.
+            return value.casefold()
+        if not any(digits):
+            return '0'
+        digits = list(digits)
+        while digits[-1] == 0:
+            digits.pop()
+            exponent += 1
+        return str(Decimal((sign, tuple(digits), exponent)))
+    return sorted(normalize(value) for value in _NUMBER.findall(text))
 
 
 def _negations(text: str) -> list[str]:

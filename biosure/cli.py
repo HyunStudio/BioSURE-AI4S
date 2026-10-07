@@ -15,7 +15,8 @@ from .pdf_extract import MAX_PDF_BYTES, extract_pdf
 
 
 def _write_json(path: Path, value: object) -> None:
-    path.write_bytes(canonical_bytes(value))
+    with path.open("xb") as output:
+        output.write(canonical_bytes(value))
 
 
 def blind_evaluate(cases: Path, gold: Path, out: Path) -> dict:
@@ -23,9 +24,13 @@ def blind_evaluate(cases: Path, gold: Path, out: Path) -> dict:
     if not case_paths:
         raise ValueError("no challenge cases found")
     out.mkdir(parents=True, exist_ok=True)
+    outputs = [out / name for name in ("decisions.jsonl", "summary.json", "cases.json")]
+    if any(path.exists() for path in outputs):
+        raise ValueError("evaluation output already exists; choose a fresh output directory")
     decisions = [decide_case(path) for path in case_paths]
     # Persist every outcome-free receipt before opening any gold path.
-    (out / "decisions.jsonl").write_bytes(b"".join(canonical_bytes(record.receipt) for record in decisions))
+    with outputs[0].open("xb") as output:
+        output.write(b"".join(canonical_bytes(record.receipt) for record in decisions))
     results = [score_case(record, gold / path.name) for path, record in zip(case_paths, decisions)]
     summary = {"mode": "candidate_dependent_public_evaluation", **summarize(results)}
     _write_json(out / "summary.json", summary)

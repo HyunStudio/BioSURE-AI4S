@@ -23,16 +23,19 @@
       }
       if (pdf.numPages > 32) throw new Error('PDF must be at most 32 pages.');
       const chunks = [];
+      let extractedLength = 0;
       const warnings = ['UNVERIFIED_PAGE_TEXT'];
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
         const page = await pdf.getPage(pageNumber);
         const content = await page.getTextContent();
         const parts = [];
+        if (pageNumber > 1) extractedLength += 2;
         for (const item of content.items || []) {
           if (typeof item.str !== 'string') continue;
-          if (item.str) parts.push(item.str);
-          if (item.hasEOL) parts.push('\n');
-          else if (item.str) parts.push(' ');
+          if (item.str) { parts.push(item.str); extractedLength += item.str.length; }
+          if (item.hasEOL) { parts.push('\n'); extractedLength++; }
+          else if (item.str) { parts.push(' '); extractedLength++; }
+          if (extractedLength > 262144) throw new Error('PDF extracted text exceeds 262144 characters.');
         }
         const chunk = parts.join('').trim();
         if (!chunk) warnings.push(`NO_TEXT_ON_PAGE_${pageNumber}`);

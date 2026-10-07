@@ -75,6 +75,13 @@ test('malformed PDF yields an actionable error', async () => {
   await assert.rejects(extractPdf(localFile(), pdfjs), /Could not read PDF/);
 });
 
+test('expanded PDF text is bounded before assembling a browser input', async () => {
+  const { extractPdf } = load();
+  const { pdfjs, calls } = reader([[{ str: 'x'.repeat(262145), hasEOL: false }]]);
+  await assert.rejects(extractPdf(localFile(), pdfjs), /262144 characters/);
+  assert.equal(calls.destroyed, true);
+});
+
 function trial() { return require('../docs/try/app.js'); }
 
 function fakeRoot() {
@@ -169,6 +176,19 @@ test('editing input during PDF extraction releases disabled controls and discard
   assert.equal(root.getElementById('run').disabled, false);
 });
 
+test('failed PDF import leaves existing pasted text available for correction', async () => {
+  const { initTrial } = trial();
+  const root = fakeRoot();
+  initTrial(root, {runEngine: async () => ({}), getPdfJs: async () => ({}),
+    extractPdf: async () => { throw new Error('Could not read PDF text layer'); }});
+  root.getElementById('observed').value = 'keep my edits';
+  root.getElementById('pdf-target').value = 'observed';
+  root.getElementById('pdf-file').files = [{name: 'damaged.pdf'}];
+  await root.getElementById('import-pdf').fire('click');
+  assert.equal(root.getElementById('observed').value, 'keep my edits');
+  assert.match(root.getElementById('status').textContent, /Could not read PDF/);
+});
+
 test('browser worker evaluates current input through packaged Python, never a frozen sample', async () => {
   const source = fs.readFileSync(path.join(__dirname, '../docs/try/engine-worker.js'), 'utf8');
   const posted = [], fetched = [], globals = new Map();
@@ -198,4 +218,28 @@ test('browser worker evaluates current input through packaged Python, never a fr
   assert.equal(posted[0].id, 7);
   assert.equal(posted[0].result.workflow.observed_paragraphs[0], 'visitor text');
   assert.deepEqual(fetched, ['./engine.zip', './model.json']);
+});
+
+test('browser worker can retry loading after a transient runtime failure', async () => {
+  const source = fs.readFileSync(path.join(__dirname, '../docs/try/engine-worker.js'), 'utf8');
+  const posted = [];
+  let attempts = 0;
+  const pyodide = {
+    FS: { writeFile() {} }, globals: { set() {} },
+    runPython(code) { return code.includes('propose_learned')
+      ? JSON.stringify({workflow:{selected_paragraphs:null},learned:{proposal_status:'ABSTAIN'}})
+      : undefined; },
+  };
+  const context = vm.createContext({
+    self: {postMessage: value => posted.push(value)},
+    importScripts: () => {},
+    loadPyodide: async () => { if (++attempts === 1) throw new Error('temporary CDN failure'); return pyodide; },
+    fetch: async () => ({ok:true, arrayBuffer:async()=>new Uint8Array([1]).buffer,
+      text:async()=>'{}'}), Uint8Array, JSON, Error,
+  });
+  vm.runInContext(source, context);
+  await context.self.onmessage({data:{id:1,payload:{record_id:'one'}}});
+  await context.self.onmessage({data:{id:2,payload:{record_id:'two'}}});
+  assert.match(posted[0].error, /temporary CDN failure/);
+  assert.ok(posted[1].result);
 });

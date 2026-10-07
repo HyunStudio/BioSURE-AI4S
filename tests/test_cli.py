@@ -40,6 +40,18 @@ def test_blind_evaluate_writes_decisions_before_summary(tmp_path: Path) -> None:
     assert "correct" not in decisions
 
 
+def test_blind_evaluate_refuses_to_replace_existing_output(tmp_path: Path) -> None:
+    decisions = tmp_path / 'decisions.jsonl'
+    decisions.write_text('existing receipt\n', encoding='utf-8')
+    result = run_cli(
+        'blind-evaluate', '--cases', str(ROOT / 'fixtures' / 'challenge'),
+        '--gold', str(ROOT / 'fixtures' / 'gold'), '--out', str(tmp_path),
+    )
+    assert result.returncode == 2
+    assert decisions.read_text(encoding='utf-8') == 'existing receipt\n'
+    assert not (tmp_path / 'summary.json').exists()
+
+
 def test_legacy_demo_is_visibly_oracle_labeled() -> None:
     result = run_cli("legacy-demo")
     if not (ROOT / "biosure/legacy.py").is_file():

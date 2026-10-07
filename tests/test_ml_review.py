@@ -36,6 +36,18 @@ def test_critical_tokens_report_actual_changes_and_decimal_equivalence(reference
     assert ml_review.critical_changes(reference, observed)['flags'] == expected
 
 
+def test_extreme_exponents_are_reviewed_without_decimal_overflow():
+    result = ml_review.critical_changes('Dose 1e1000000 mg.', 'Dose 1e999999 mg.')
+    assert result['flags'] == ['NUMBER_CHANGED']
+    assert ml_review.pair_features('Dose 1e1000000 mg.', 'Dose 1e999999 mg.')[6] == 0.0
+
+
+def test_long_numbers_do_not_lose_last_digit_to_decimal_context_rounding():
+    result = ml_review.critical_changes('Dose 12345678901234567890123456780 mg.',
+                                        'Dose 12345678901234567890123456781 mg.')
+    assert result['flags'] == ['NUMBER_CHANGED']
+
+
 def test_model_cannot_apply_unsupported_difference_even_with_high_correspondence():
     model = ml_review.train_model(training_rows())
     payload = {'record_id':'ml', 'reference_paragraphs':['Header.', 'Drug at 0.5 mg.', 'Closing.'],

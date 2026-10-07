@@ -119,7 +119,6 @@
       }
       invalidate();
       const current = version;
-      get(target).value = '';
       get('import-pdf').disabled = true;
       get('run').disabled = true;
       get('status').textContent = 'Reading PDF text layer in this browser…';
