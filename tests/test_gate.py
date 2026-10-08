@@ -63,6 +63,21 @@ def test_valid_duplicate_removal_auto_repairs() -> None:
     assert (decision.action, decision.candidate_id) == ("AUTO_REPAIR", "good")
 
 
+def test_duplicate_removal_rejects_noncanonical_removed_paragraph() -> None:
+    for field, value in (("section_level", 1), ("target_id", "figure-7")):
+        payload = duplicate()
+        payload["damaged"]["blocks"][1][field] = value
+        assert decide(parse_request(payload)).action == "ABSTAIN"
+
+
+def test_duplicate_removal_rejects_noncanonical_retained_paragraph() -> None:
+    for field, value in (("section_level", 1), ("target_id", "figure-7")):
+        payload = duplicate()
+        payload["damaged"]["blocks"][0][field] = value
+        payload["candidates"][0]["document"]["blocks"][0][field] = value
+        assert decide(parse_request(payload)).action == "ABSTAIN"
+
+
 def test_wrong_executable_payload_abstains_without_source_change() -> None:
     good = insertion()
     bad = copy.deepcopy(good)

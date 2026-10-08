@@ -4,27 +4,27 @@ This is a preparation checklist, not evidence of first-place readiness. BioSURE
 is a one-person HyunStudio team led by HyunGi Hwang. The study runner is a
 future external-usability tool, **not a submission prerequisite**. No volunteer,
 independent adjudicator, registration or Kaggle Writeup has been completed by
-this file. Codex/GPT are development tools, not teammates or validators.
+this file. Codex/GPT and Claude are development tools, not teammates or validators.
 
 The [official AI4S page](https://www.kaggle.com/competitions/ai-4-s-open-innovation-artificial-intelligence-for-life-scien/overview)
 lists the preliminary round through **October 10, 2026** and says a separate
 registration form is required *before* the official Kaggle Writeup; an
 unregistered team is ineligible for judging and awards. Confirm the exact
 closing clock and timezone in the signed-in Kaggle interface and submit early.
-Only the owner can decide to register and submit; this checklist does not do so.
+Only the owner can authorize registration and submission; this checklist does not prove either occurred.
 
 ## Owner-only submission actions
 
 | Block | Owner action and evidence to retain privately |
 |---|---|
 | 0–10 min | **OWNER ACTION:** Verify the official closing clock, complete the separate registration form if proceeding, and confirm HyunStudio / HyunGi Hwang as the one-person team. Do not assume a GitHub release is a Kaggle submission. |
-| 10–20 min | Open the [public code release](https://github.com/HyunStudio/BioSURE-AI4S/releases/latest), [live browser trial](https://hyunstudio.github.io/BioSURE-AI4S/try/) with non-confidential text and a PDF text layer, [v0.3.24 MP4 download](https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.24/biosure-demo-v0322.mp4), [streaming watch page](https://hyunstudio.github.io/BioSURE-AI4S/), [Judge Mode](https://hyunstudio.github.io/BioSURE-AI4S/judge/) and [study instrument](https://hyunstudio.github.io/BioSURE-AI4S/study/) without login. The unchanged v0.3.22 recording shows normal browser text/PDF inputs ending in abstention and distinguishes one static Judge case; it does not show the v0.3.24 edge-case fixes. The older v0.3.19 and v0.3.14 recordings are historical. |
+| 10–20 min | Open the [public code release](https://github.com/HyunStudio/BioSURE-AI4S/releases/latest), [live browser trial](https://hyunstudio.github.io/BioSURE-AI4S/try/) with non-confidential text and a PDF text layer, [v0.3.25 MP4 download](https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.25/biosure-demo-v0322.mp4), [streaming watch page](https://hyunstudio.github.io/BioSURE-AI4S/), [Judge Mode](https://hyunstudio.github.io/BioSURE-AI4S/judge/) and [study instrument](https://hyunstudio.github.io/BioSURE-AI4S/study/) without login. The unchanged v0.3.22 recording shows normal browser text/PDF inputs ending in abstention and distinguishes one static Judge case; it does not show the v0.3.24 edge-case fixes or v0.3.25 local-import hints and internal replay. The older v0.3.19 and v0.3.14 recordings are historical. |
 | 20–30 min | Check the public report and scorecard against the exact released code, video and result files. Preserve the negative learned comparison and natural-case abstentions. Do not claim a participant study or independent domain review. |
 | 30–40 min | **OWNER ACTION:** Finalize the official Kaggle Writeup with category `Tool & Platform`, public video/code/report links, one-person team information and accurate AI-tool disclosure, then submit it in Kaggle. Confirm receipt in the account interface. |
 
 External participants, domain adjudication and a cross-disciplinary team bonus
 are optional future opportunities, not eligibility gates or completed evidence.
-Do not add students, Codex/GPT or outside advisers as team members. A solo
+Do not add students, Codex/GPT, Claude or outside advisers as team members. A solo
 automated rehearsal is a software test, not a participant result.
 
 ## Optional exploratory usability pilot

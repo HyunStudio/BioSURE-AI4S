@@ -111,6 +111,16 @@ def test_export_relocates_readme_links_to_existing_public_reports(tmp_path):
     assert audit(destination) == []
 
 
+def test_export_includes_pdf_structure_audit_report(tmp_path):
+    from scripts.prepare_release import prepare
+    source = approved_source(tmp_path / "source")
+    report = source / "report/pdf-structure-audit.md"
+    report.write_text("# PDF structure audit\n\nSame-article JATS, not independent truth.\n", encoding="utf-8")
+    destination = tmp_path / "release"
+    prepare(source, destination)
+    assert (destination / "report/pdf-structure-audit.md").read_bytes() == report.read_bytes()
+
+
 def test_standalone_profile_can_reexport_without_private_checkout_templates(tmp_path):
     from scripts.prepare_release import prepare
     source = approved_source(tmp_path / "source")
@@ -280,7 +290,7 @@ def test_public_homepage_embeds_current_live_trial_video():
     page = VideoLinks()
     page.feed((ROOT / "docs/index.html").read_text(encoding="utf-8"))
     stream = "./media/biosure-demo-v0322.mp4"
-    download = "https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.24/biosure-demo-v0322.mp4"
+    download = "https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.25/biosure-demo-v0322.mp4"
     assert page.video_sources == [stream]
     assert download in page.links
     assert "./try/" in page.links

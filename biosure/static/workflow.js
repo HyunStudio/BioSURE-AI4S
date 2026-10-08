@@ -148,13 +148,17 @@ async function importPdf() {
       const item = document.createElement('li');
       const label = hint.kind === 'CROSS_EXTRACTOR_SPACING_SUGGESTION' ? 'Possible word spacing (not applied)'
         : hint.kind === 'TEXT_SPACING_ARTIFACTS' ? 'Check broken letter spacing'
-        : hint.kind === 'LINE_END_HYPHEN_REQUIRES_REVIEW' ? 'Check line-break hyphen' : 'Review text layer';
+        : hint.kind === 'LINE_END_HYPHEN_REQUIRES_REVIEW' ? 'Check line-break hyphen'
+        : hint.kind === 'PROBABLE_CAPTION_OR_PAGE_FURNITURE' ? 'Possible caption or page header inside text (not removed)'
+        : 'Review text layer';
       item.textContent = `Page ${hint.page} · ${label}: ${hint.excerpt}${hint.suggestion ? ' → ' + hint.suggestion : ''}`;
       hintList.append(item);
     }
+    const furniture = data.warnings.includes('CAPTION_OR_PAGE_FURNITURE_REQUIRES_REVIEW')
+      ? ' Figure/table captions or page headers may be spliced into body text; remove them manually where they interrupt a paragraph.' : '';
     const truncated = data.warnings.includes('REVIEW_HINTS_TRUNCATED')
       ? ' The location list is capped; inspect every page, not just the listed examples.' : '';
-    status.textContent = `Extracted ${data.paragraphs.length} unverified page-text chunk(s) from ${data.pages} page(s) into ${target}. These are NOT paragraph boundaries. Compare reading order against each page, then split/correct text manually before checking.${warning}${noText}${spacing}${crosscheck}${crosscheckMissing}${hyphen}${truncated}`;
+    status.textContent = `Extracted ${data.paragraphs.length} unverified page-text chunk(s) from ${data.pages} page(s) into ${target}. These are NOT paragraph boundaries. Compare reading order against each page, then split/correct text manually before checking.${warning}${noText}${spacing}${crosscheck}${crosscheckMissing}${hyphen}${furniture}${truncated}`;
   } catch (error) {
     if (version === workflowVersion) status.textContent = error.message;
   } finally {

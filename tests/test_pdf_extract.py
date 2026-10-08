@@ -209,3 +209,53 @@ def test_image_only_page_requires_review_with_no_invented_text():
 @pytest.mark.parametrize('blob', [b'',b'not pdf',b'%PDF-1.4'+b'X'*16_777_216], ids=['empty','not-pdf','oversized'])
 def test_invalid_or_oversize_file_fails(blob):
     with pytest.raises(ValueError): extract_pdf(blob)
+
+
+def furniture_pdf():
+    stream = BytesIO()
+    doc = canvas.Canvas(stream, pagesize=(595, 842))
+    doc.drawString(50, 800, 'Advanced Science, 2026 3 of 31')
+    doc.drawString(50, 772, 'The chip was perfused for three days and the')
+    doc.drawString(50, 756, 'FIGURE 2 Schematic of the perfusion circuit.')
+    doc.drawString(50, 740, 'barrier remained intact throughout culture.')
+    doc.drawString(50, 724, 'Figure 2 shows that the barrier remained intact.')
+    doc.showPage(); doc.save()
+    return stream.getvalue()
+
+
+def test_caption_and_page_furniture_are_located_but_never_removed():
+    result = extract_pdf(furniture_pdf())
+    text = ' '.join(item['text'] for item in result['paragraphs'])
+    assert 'FIGURE 2 Schematic of the perfusion circuit.' in text
+    assert 'Advanced Science, 2026 3 of 31' in text
+    assert 'CAPTION_OR_PAGE_FURNITURE_REQUIRES_REVIEW' in result['warnings']
+    flagged = [hint['excerpt'] for hint in result['review_hints']
+               if hint['kind'] == 'PROBABLE_CAPTION_OR_PAGE_FURNITURE']
+    assert 'FIGURE 2 Schematic of the perfusion circuit.' in flagged
+    assert 'Advanced Science, 2026 3 of 31' in flagged
+    # An in-text figure reference and ordinary body lines are not flagged.
+    assert not any(item.startswith(('Figure 2 shows', 'The chip', 'barrier')) for item in flagged)
+
+
+@pytest.mark.parametrize('line', [
+    'Fig. 1 | Mini-bladder model of the human urothelium',
+    'FIG 3 Cytokine production in the maternal chamber',
+    'Figure 4. Barrier integrity after reperfusion',
+    'TABLE 1 Versatility of composites',
+    'Nature Communications | (2026) 17:2322 5',
+    'Infection and Immunity December 2025 Volume 93 Issue 12 10.1128/iai.00346-25 2',
+    'Received: 14 February 2025',
+])
+def test_caption_and_furniture_patterns(line):
+    from biosure.pdf_extract import _furniture_hints
+    assert _furniture_hints([line], 1)
+
+
+@pytest.mark.parametrize('line', [
+    'Figure 2 shows that cells remained viable',
+    'cells were seeded in 3 of 4 wells and the medium',
+    'as described previously (doi:10.1038/s41467-026-68573-3).',
+])
+def test_body_text_is_not_flagged_as_furniture(line):
+    from biosure.pdf_extract import _furniture_hints
+    assert not _furniture_hints([line], 1)

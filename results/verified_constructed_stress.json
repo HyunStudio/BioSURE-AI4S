@@ -1,0 +1,398 @@
+{
+  "arms": {
+    "control_no_provider": {
+      "abstention_reasons": {
+        "UNSUPPORTED_CANDIDATE_SET": 24,
+        "UNVERIFIED_SOURCE": 144
+      },
+      "abstentions": 168,
+      "automatic": 0,
+      "by_condition": {
+        "conflicting-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "extra-metadata": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "forged-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "insert-good": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "missing-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "no-change": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "remove-good": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "reordered": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "supported-ambiguity": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "unrelated-edit": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-hash": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-id": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-location": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-retained": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        }
+      },
+      "cases": 168,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "control_stale_version": {
+      "abstention_reasons": {
+        "UNSUPPORTED_CANDIDATE_SET": 24,
+        "UNVERIFIED_SOURCE": 144
+      },
+      "abstentions": 168,
+      "automatic": 0,
+      "by_condition": {
+        "conflicting-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "extra-metadata": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "forged-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "insert-good": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "missing-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "no-change": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "remove-good": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "reordered": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "supported-ambiguity": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "unrelated-edit": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-hash": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-id": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-location": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-retained": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        }
+      },
+      "cases": 168,
+      "exact_auto": 0,
+      "incorrect_auto": 0
+    },
+    "public_caller_evidence_gate": {
+      "abstention_reasons": {
+        "AMBIGUOUS_CANDIDATES": 12,
+        "CONFLICTING_EVIDENCE": 12,
+        "NO_VALID_CANDIDATE": 108
+      },
+      "abstentions": 132,
+      "automatic": 36,
+      "by_condition": {
+        "conflicting-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "extra-metadata": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "forged-evidence": {
+          "automatic": 12,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 12
+        },
+        "insert-good": {
+          "automatic": 12,
+          "cases": 12,
+          "exact_auto": 12,
+          "incorrect_auto": 0
+        },
+        "missing-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "no-change": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "remove-good": {
+          "automatic": 12,
+          "cases": 12,
+          "exact_auto": 12,
+          "incorrect_auto": 0
+        },
+        "reordered": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "supported-ambiguity": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "unrelated-edit": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-hash": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-id": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-location": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-retained": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        }
+      },
+      "cases": 168,
+      "exact_auto": 24,
+      "incorrect_auto": 12
+    },
+    "verified_source": {
+      "abstention_reasons": {
+        "SOURCE_GRAPH_MISMATCH": 96,
+        "UNSUPPORTED_CANDIDATE_SET": 24
+      },
+      "abstentions": 120,
+      "automatic": 48,
+      "by_condition": {
+        "conflicting-evidence": {
+          "automatic": 12,
+          "cases": 12,
+          "exact_auto": 12,
+          "incorrect_auto": 0
+        },
+        "extra-metadata": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "forged-evidence": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "insert-good": {
+          "automatic": 12,
+          "cases": 12,
+          "exact_auto": 12,
+          "incorrect_auto": 0
+        },
+        "missing-evidence": {
+          "automatic": 12,
+          "cases": 12,
+          "exact_auto": 12,
+          "incorrect_auto": 0
+        },
+        "no-change": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "remove-good": {
+          "automatic": 12,
+          "cases": 12,
+          "exact_auto": 12,
+          "incorrect_auto": 0
+        },
+        "reordered": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "supported-ambiguity": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "unrelated-edit": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-hash": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-id": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-location": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        },
+        "wrong-retained": {
+          "automatic": 0,
+          "cases": 12,
+          "exact_auto": 0,
+          "incorrect_auto": 0
+        }
+      },
+      "cases": 168,
+      "exact_auto": 48,
+      "incorrect_auto": 0
+    }
+  },
+  "challenge_sha256": "eb8be38d501add9a6fa8fb07da5c42f0ba4518b98197f093f82620bd3fd6e2fc",
+  "provider_extractor_version": "biosure-constructed-envelope/1",
+  "schema_version": "biosure.verified-constructed-stress/1.0",
+  "scope": "Constructed mechanics check: an operator-controlled fixture provider serves the generator's undamaged stress source graphs and all caller evidence is discarded. Source and gold share an origin by construction. Not source authentication, a natural-document result, the prospective verified-source arm, or a public route.",
+  "source_graphs": 12
+}

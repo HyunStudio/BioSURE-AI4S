@@ -25,6 +25,16 @@ _SHORT_PREFIX = re.compile(r'\b([A-Za-z]{1,2})\s+[A-Za-z]{5,}\b')
 _SHORT_WORDS = frozenset({'a', 'i', 'an', 'as', 'at', 'be', 'by', 'do', 'go',
                           'he', 'if', 'in', 'is', 'it', 'me', 'my', 'no', 'of',
                           'on', 'or', 's', 'so', 'to', 'up', 'us', 'we'})
+# Captions and page furniture (running heads, page counters, licence and
+# submission notes) that a text layer can splice into the middle of a body
+# paragraph, typically at column or page breaks in two-column layouts.
+_CAPTION_START = re.compile(
+    r'^(?:FIGURE|Figure|FIG|Fig\.?|TABLE|Table|Scheme|SCHEME)\s*\d+[A-Za-z]?\s*(?:[|.:]|\s+[A-Z(])')
+_PAGE_FURNITURE = re.compile(
+    r'^\d{1,3}\s?of\s?\d{1,3}\b|\b\d{1,3}\s?of\s?\d{1,3}$|^(?:Received|Accepted|Published|Revised)\b'
+    r'|Creative Commons|\b10\.\d{4,9}/\S+\s+\d{1,3}$|Check for updates|https?://doi\.org/|^©|\(\d{4}\)\s*\d+:\d+'
+    r'|^(?:Article\s*)?https?://|^www\.')
+_FURNITURE_MAX_LINE = 160
 _SHORT_UNITS = frozenset({'cm', 'kg', 'km', 'mg', 'ml', 'mm', 'ms', 'ng',
                           'nm', 'ns', 'pm', 'ug', 'um'})
 
@@ -137,6 +147,16 @@ def _line_break_excerpt(left: str, right: str) -> str:
     return before + ' / ' + after
 
 
+def _furniture_hints(lines: list[str], page: int) -> list[dict[str, str]]:
+    """Locate lines that look like captions or page furniture; never remove them."""
+    hints = []
+    for line in lines:
+        if _CAPTION_START.match(line) or (len(line) <= _FURNITURE_MAX_LINE and _PAGE_FURNITURE.search(line)):
+            hints.append({'page': page, 'kind': 'PROBABLE_CAPTION_OR_PAGE_FURNITURE',
+                          'excerpt': line[:120]})
+    return hints
+
+
 def _normalise_lines(value: str) -> tuple[str, bool]:
     value = unicodedata.normalize('NFKC', value)
     lines = [part.strip() for part in value.splitlines() if part.strip()]
@@ -226,6 +246,12 @@ def extract_pdf(data: bytes) -> dict:
                                        'excerpt': _review_excerpt(raw, spaced.start(), spaced.end())})
                 else:
                     warnings.add('REVIEW_HINTS_TRUNCATED')
+            furniture = _furniture_hints([line.strip() for line in raw.splitlines() if line.strip()], number)
+            if furniture:
+                warnings.add('CAPTION_OR_PAGE_FURNITURE_REQUIRES_REVIEW')
+                # Structural interruptions are listed before glyph-level hints.
+                for hint in reversed(furniture):
+                    page_hints.insert(0, hint)
             groups, split = _chunks(raw)
             if not groups:
                 warnings.add('NO_TEXT_LAYER')

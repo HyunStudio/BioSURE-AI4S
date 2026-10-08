@@ -18,14 +18,24 @@ def digest(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+SOURCE_COUNT = 12
+
+
+def source_document(source: int) -> dict:
+    """The authored, undamaged source graph for one stress source (1-based)."""
+    size = (16, 32, 64)[(source - 1) // 4]
+    blocks = [{"block_id": f"p{i + 1}", "kind": "paragraph", "section_level": 0,
+               "target_id": None, "text_sha256": digest(f"fictitious-ooc-conversion-source-{source}:paragraph-{i}")}
+              for i in range(size)]
+    return {"record_id": f"stress-source-{source:02d}", "blocks": blocks, "citation_anchors": []}
+
+
 def build_cases() -> dict[str, tuple[dict, dict]]:
     cases = {}
-    for source in range(1, 13):
-        size = (16, 32, 64)[(source - 1) // 4]
-        blocks = [{"block_id": f"p{i + 1}", "kind": "paragraph", "section_level": 0,
-                   "target_id": None, "text_sha256": digest(f"fictitious-ooc-conversion-source-{source}:paragraph-{i}")}
-                  for i in range(size)]
-        gold = {"record_id": f"stress-source-{source:02d}", "blocks": blocks, "citation_anchors": []}
+    for source in range(1, SOURCE_COUNT + 1):
+        gold = source_document(source)
+        blocks = gold["blocks"]
+        size = len(blocks)
         middle = size // 2
         missing = blocks[middle]
         damaged = copy.deepcopy(gold)

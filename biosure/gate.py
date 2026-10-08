@@ -74,13 +74,16 @@ def _conflicting_evidence(request: DecisionRequest) -> bool:
 
 def _valid_remove(request: DecisionRequest, candidate: Candidate) -> bool:
     removed = _removed_block(request.damaged, candidate.document)
-    if removed is None or removed.kind != "paragraph":
+    if (removed is None or removed.kind != "paragraph" or removed.section_level != 0
+            or removed.target_id is not None):
         return False
     retained = {block.block_id: block for block in candidate.document.blocks}
     return any(
         item.duplicate_block_id == removed.block_id
         and item.retained_block_id in retained
         and retained[item.retained_block_id].kind == "paragraph"
+        and retained[item.retained_block_id].section_level == 0
+        and retained[item.retained_block_id].target_id is None
         and retained[item.retained_block_id].text_sha256 == removed.text_sha256 == item.text_sha256
         for item in request.evidence.trusted_identities
     )

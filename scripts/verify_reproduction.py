@@ -15,6 +15,7 @@ from biosure.learned_upstream_audit import FOLLOWUP_LOCKED_SOURCES, evaluate_ups
 from biosure.schema import canonical_bytes, loads_json
 from scripts.evaluate_ml import evaluate
 from scripts.evaluate_policy_boundary import verify as verify_policy_boundary
+from scripts.evaluate_verified_constructed import evaluate as evaluate_verified_constructed
 
 
 def verify(root: Path) -> dict:
@@ -195,6 +196,13 @@ def verify(root: Path) -> dict:
         'proposal_exact': followup_compared['learned']['proposal_exact_units'],
     }
     policy_boundary_audit = verify_policy_boundary(root)
+    verified_replay = evaluate_verified_constructed(root)
+    if verified_replay != loads_json((root / 'results/verified_constructed_stress.json').read_text(encoding='utf-8')):
+        raise ValueError('verified-source constructed stress replay mismatch')
+    arm = verified_replay['arms']['verified_source']
+    verified_constructed_stress = {key: arm[key] for key in ('cases', 'exact_auto', 'incorrect_auto', 'abstentions')}
+    if verified_constructed_stress != {'cases': 168, 'exact_auto': 48, 'incorrect_auto': 0, 'abstentions': 120}:
+        raise ValueError('verified-source constructed stress expected counts mismatch')
     return {"passed": True, "sets": measured, "workflow_examples": batch["summary"],
             'ml': ml, 'native_pilot': pilot, 'ooc_pdf_audit': ooc_pdf_audit,
             'three_source_pdf_audit': three_source_pdf_audit,
@@ -202,6 +210,7 @@ def verify(root: Path) -> dict:
             'learned_upstream_audit': learned_upstream_audit,
             'followup_ooc_audit': followup_ooc_audit,
             'policy_boundary_audit': policy_boundary_audit,
+            'verified_constructed_stress': verified_constructed_stress,
             "scope": "Implementation replay only; not an independent user study, reference authentication or biological validation."}
 
 

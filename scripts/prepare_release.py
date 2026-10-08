@@ -20,7 +20,7 @@ PUBLIC_DOCS = {"public-submission.md", "workflow-scenario.md", "practical-valida
                "public-readme.md", "public-rights.md", "public-scorecard.md",
                "ooc-pdf-audit-protocol.md", "three-source-ooc-pdf-audit-protocol.md",
                "prospective-ooc-audit-protocol.md", "followup-ooc-audit-protocol.md",
-               "pdf-spacing-crosscheck.md"}
+               "pdf-spacing-crosscheck.md", "pdf-structure-audit.md"}
 GENERATED_ROOTS = {".git", "biosure_ai4s.egg-info", ".pytest_cache"}
 GENERATED_PARTS = {"__pycache__"}
 
