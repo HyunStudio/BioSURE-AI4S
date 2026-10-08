@@ -22,7 +22,7 @@
     <section class="hero">
       <p class="eyebrow">AI4S · no login · no installation · no API key</p>
       <h1>Test your own document-conversion text.</h1>
-      <p class="lead">Compare a declared reference with an observed PDF conversion. The real BioSURE Python text workflow and trained paragraph-correspondence model run <strong>inside your browser</strong>. They identify review locations and may propose wording copied from your declared reference; they do not authenticate that source or approve an edit.</p>
+      <p class="lead">Compare a declared reference with an observed PDF conversion. The real BioSURE Python text workflow and trained paragraph-correspondence model run <strong>inside your browser</strong>. They identify review locations and may propose wording copied from your declared reference; they do not authenticate that source or approve an edit. Number, unit and negation alerts for paired changed paragraphs are prompts for manual checking, not corrections.</p>
       <p class="privacy">BioSURE does not intentionally upload your PDF or paragraph text to its server or a model service; processing occurs in browser memory. Version-pinned <a href="https://pyodide.org/en/0.26.4/">Pyodide</a> and <a href="https://mozilla.github.io/pdf.js/">PDF.js</a> code download from jsDelivr and execute in your browser, so privacy depends on that third-party code and your browser. Do not use patient or confidential data in a competition demo.</p>
     </section>
 
@@ -55,6 +55,8 @@
         <div><h3>Observed conversion</h3><pre id="view-observed"></pre></div>
       </div>
       <h3>Changed paragraph positions</h3><pre id="changes"></pre>
+      <h3>Critical token alerts</h3><pre id="critical-alerts"></pre>
+      <p id="critical-note" class="warning"></p>
       <h3>Model correspondence</h3><p id="model"></p>
       <h3>Model proposal, if any</h3><pre id="proposal"></pre>
       <h3>Public-input gate</h3><p id="gate-action" class="decision"></p>

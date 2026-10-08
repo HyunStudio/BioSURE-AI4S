@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const { execFileSync } = require('node:child_process');
 
 function load() { return require('../docs/try/pdf.js'); }
 
@@ -184,7 +185,8 @@ test('review result renders script-looking text literally and rejects an applied
     decision: {action: 'ABSTAIN', reason_codes: ['NO_VALID_CANDIDATE']},
     selected_paragraphs: null, receipt: {receipt_sha256: 'abc'},
   }, learned: {proposal_status: 'ABSTAIN', proposal_reason: 'LOW_CONFIDENCE',
-    proposed_paragraphs: null, correspondences: [], upstream_receipt: {receipt_sha256: 'def'}} };
+    proposed_paragraphs: null, correspondences: [], upstream_receipt: {receipt_sha256: 'def'}},
+  critical_alerts: [], critical_unchecked_spans: [] };
   renderResult(root, result);
   assert.match(root.getElementById('view-reference').textContent, /<script>/);
   assert.match(root.getElementById('view-observed').textContent, /<img>/);
@@ -195,6 +197,153 @@ test('review result renders script-looking text literally and rejects an applied
   unsafe.workflow.decision.action = 'AUTO_REPAIR';
   unsafe.workflow.selected_paragraphs = ['forged'];
   assert.throws(() => renderResult(root, unsafe), /review-only/);
+});
+
+test('critical token alerts render changed values as text without applying an edit', () => {
+  const { renderResult } = trial();
+  const root = fakeRoot();
+  const result = {workflow: {
+    reference_paragraphs: ['Dose 5 mg.', 'Cells did not recover.'],
+    observed_paragraphs: ['Dose 50 mg.', 'Cells did recover.'],
+    review_changes: [{kind:'changed',reference_span:[0,2],observed_span:[0,2]}],
+    decision:{action:'ABSTAIN',reason_codes:['NO_VALID_CANDIDATE']},
+    selected_paragraphs:null,receipt:{receipt_sha256:'abc'},
+  }, learned:{proposal_status:'ABSTAIN',proposal_reason:'LOW_CONFIDENCE',
+    proposed_paragraphs:null,upstream_receipt:{receipt_sha256:'def'}},
+  critical_unchecked_spans: [],
+  critical_alerts:[
+    {reference_index:0,observed_index:0,flags:['NUMBER_CHANGED'],
+      reference_tokens:{numbers:['5'],units:['mg'],negations:[]},
+      observed_tokens:{numbers:['5E+1'],units:['mg'],negations:[]}},
+    {reference_index:1,observed_index:1,flags:['NEGATION_CHANGED'],
+      reference_tokens:{numbers:[],units:[],negations:['not']},
+      observed_tokens:{numbers:[],units:[],negations:[]}},
+  ]};
+  renderResult(root,result);
+  const text = root.getElementById('critical-alerts').textContent;
+  assert.match(text, /NUMBER_CHANGED: 5 → 50 \(mg\)/);
+  assert.match(text, /NEGATION_CHANGED: not → ∅/);
+  assert.match(root.getElementById('critical-note').textContent, /review|not a correction/i);
+  assert.equal(root.getElementById('selected').textContent, 'No output applied. Review the original source manually.');
+  assert.equal(root.getElementById('gate-action').textContent, 'ABSTAIN · NO_VALID_CANDIDATE');
+  const benign = structuredClone(result);
+  benign.critical_alerts = [];
+  renderResult(root,benign);
+  assert.equal(root.getElementById('critical-alerts').textContent, 'no lexical alert');
+});
+
+test('critical display subtracts unchanged number tokens and discloses unpaired spans', () => {
+  const { renderResult } = trial();
+  const root = fakeRoot();
+  const result = {workflow: {
+    reference_paragraphs:['Dose 5 and 10 mg.'],
+    observed_paragraphs:['Dose 50 and 10 mg.','New paragraph.'],
+    review_changes:[{kind:'changed',reference_span:[0,1],observed_span:[0,2]}],
+    decision:{action:'ABSTAIN',reason_codes:['NO_VALID_CANDIDATE']},
+    selected_paragraphs:null,receipt:{receipt_sha256:'abc'},
+  },learned:{proposal_status:'ABSTAIN',proposal_reason:'LOW_CONFIDENCE',
+    proposed_paragraphs:null,upstream_receipt:{receipt_sha256:'def'}},
+  critical_alerts:[{reference_index:0,observed_index:0,flags:['NUMBER_CHANGED'],
+    reference_tokens:{numbers:['10','5'],units:['mg'],negations:[]},
+    observed_tokens:{numbers:['10','5E+1'],units:['mg'],negations:[]}}],
+  critical_unchecked_spans:[{reference_span:[0,1],observed_span:[0,2]}]};
+  renderResult(root,result);
+  const displayed = root.getElementById('critical-alerts').textContent;
+  assert.match(displayed,/NUMBER_CHANGED: 5 → 50/);
+  assert.doesNotMatch(displayed,/50 \(mg\)/);
+  assert.doesNotMatch(displayed,/10, 5/);
+  assert.match(displayed,/lexical check not performed/i);
+  assert.equal(root.getElementById('selected').textContent,'No output applied. Review the original source manually.');
+});
+
+test('number alert does not label a changed year with an unrelated unit', () => {
+  const { renderResult } = trial();
+  const root = fakeRoot();
+  const result = {workflow:{
+    reference_paragraphs:['In 2024, dose 5 mg.'],
+    observed_paragraphs:['In 2025, dose 5 mg.'],
+    review_changes:[{kind:'changed',reference_span:[0,1],observed_span:[0,1]}],
+    decision:{action:'ABSTAIN',reason_codes:['NO_VALID_CANDIDATE']},
+    selected_paragraphs:null,receipt:{receipt_sha256:'abc'},
+  },learned:{proposal_status:'ABSTAIN',proposal_reason:'LOW_CONFIDENCE',
+    proposed_paragraphs:null,upstream_receipt:{receipt_sha256:'def'}},
+  critical_alerts:[{reference_index:0,observed_index:0,flags:['NUMBER_CHANGED'],
+    reference_tokens:{numbers:['2024','5'],units:['mg'],negations:[]},
+    observed_tokens:{numbers:['2025','5'],units:['mg'],negations:[]}}],
+  critical_unchecked_spans:[]};
+  renderResult(root,result);
+  const displayed = root.getElementById('critical-alerts').textContent;
+  assert.match(displayed,/NUMBER_CHANGED: 2024 → 2025/);
+  assert.doesNotMatch(displayed,/2025 \(mg\)/);
+});
+
+async function runRealPythonWorker(payload) {
+  const source = fs.readFileSync(path.join(__dirname, '../docs/try/engine-worker.js'), 'utf8');
+  const modelJson = fs.readFileSync(path.join(__dirname, '../docs/try/model.json'), 'utf8');
+  const messages = [], globals = new Map();
+  const script = `import ast, os
+payload_json = os.environ['BIOSURE_PAYLOAD_JSON']
+model_json = os.environ['BIOSURE_MODEL_JSON']
+tree = ast.parse(os.environ['BIOSURE_WORKER_CODE'])
+last = tree.body.pop()
+exec(compile(tree, '<browser-worker>', 'exec'))
+print(eval(compile(ast.Expression(last.value), '<browser-worker>', 'eval')))
+`;
+  const pyodide = {
+    FS:{writeFile(){}},globals:{set:(name,value)=>globals.set(name,value)},
+    runPython(code){
+      if (!code.includes('propose_learned')) return;
+      return execFileSync(process.env.PYTHON || 'python', ['-B','-c',script], {
+        cwd:path.join(__dirname,'..'),encoding:'utf8',
+        env:{...process.env,PYTHONIOENCODING:'utf-8',BIOSURE_PAYLOAD_JSON:globals.get('payload_json'),
+          BIOSURE_MODEL_JSON:globals.get('model_json'),BIOSURE_WORKER_CODE:code},
+      }).trim();
+    },
+  };
+  const context = vm.createContext({self:{postMessage:message=>messages.push(message)},
+    importScripts:()=>{},loadPyodide:async()=>pyodide,
+    fetch:async url=>({ok:true,arrayBuffer:async()=>new Uint8Array([1]).buffer,
+      text:async()=>url==='./model.json'?modelJson:''}),Uint8Array,JSON,Error});
+  vm.runInContext(source,context);
+  await context.self.onmessage({data:{id:19,payload}});
+  assert.equal(messages[0].error,undefined,messages[0].error);
+  return messages[0].result;
+}
+
+test('real Python worker reports number, unit, and negation changes without changing the gate', async () => {
+  const result = await runRealPythonWorker({record_id:'critical-trial',
+    reference_paragraphs:['Anchor A.','Dose 5 mg.','Anchor B.','Use 5 mL of medium.',
+      'Anchor C.','Cells did not recover.'],
+    observed_paragraphs:['Anchor A.','Dose 50 mg.','Anchor B.','Use 5 uL of medium.',
+      'Anchor C.','Cells did recover.']});
+  assert.deepEqual(result.critical_alerts.map(item=>item.flags),[
+    ['NUMBER_CHANGED'],['UNIT_CHANGED'],['NEGATION_CHANGED']]);
+  assert.deepEqual(result.critical_alerts.map(item=>item.reference_index),[1,3,5]);
+  assert.equal(result.critical_alerts[0].reference_tokens.numbers[0],'5');
+  assert.equal(result.critical_alerts[0].observed_tokens.numbers[0],'5E+1');
+  assert.equal(result.critical_alerts[1].reference_tokens.units[0],'mL');
+  assert.equal(result.critical_alerts[1].observed_tokens.units[0],'μL');
+  assert.equal(result.workflow.decision.action,'ABSTAIN');
+  assert.equal(result.workflow.selected_paragraphs,null);
+});
+
+test('real Python worker gives no lexical alert for wording-only change', async () => {
+  const result = await runRealPythonWorker({record_id:'benign-trial',
+    reference_paragraphs:['Cells remained viable.'],observed_paragraphs:['Cells appeared viable.']});
+  assert.deepEqual(result.critical_alerts,[]);
+  assert.equal(result.workflow.decision.action,'ABSTAIN');
+  assert.equal(result.workflow.selected_paragraphs,null);
+});
+
+test('real Python worker marks unequal changed spans as unchecked instead of claiming no alert', async () => {
+  const result = await runRealPythonWorker({record_id:'unpaired-trial',
+    reference_paragraphs:['Anchor A.','Dose 5 mg.','Anchor B.'],
+    observed_paragraphs:['Anchor A.','Dose 50 mg.','New paragraph.','Anchor B.']});
+  assert.deepEqual(result.critical_alerts,[]);
+  assert.deepEqual(result.critical_unchecked_spans.map(item=>item.reference_span),[[1,2]]);
+  assert.deepEqual(result.critical_unchecked_spans.map(item=>item.observed_span),[[1,3]]);
+  assert.equal(result.workflow.decision.action,'ABSTAIN');
+  assert.equal(result.workflow.selected_paragraphs,null);
 });
 
 test('worker failure rejects instead of showing a frozen or invented result', async () => {

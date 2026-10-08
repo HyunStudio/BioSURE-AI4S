@@ -4,7 +4,8 @@
 
   const PDFJS_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.mjs';
   const PDFJS_WORKER_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.mjs';
-  const OUTPUT_IDS = ['view-reference', 'view-observed', 'changes', 'model', 'proposal',
+  const OUTPUT_IDS = ['view-reference', 'view-observed', 'changes', 'critical-alerts',
+    'critical-note', 'model', 'proposal',
     'gate-action', 'selected', 'receipt'];
 
   function prepareInput(referenceText, observedText) {
@@ -61,10 +62,36 @@
     return end === start + 1 ? `paragraph ${start + 1}` : `paragraphs ${start + 1}–${end}`;
   }
 
+  function readableNumber(token) {
+    const integer = /^([+-]?)(\d{1,15})E\+(\d{1,2})$/.exec(token);
+    if (!integer) return token;
+    const zeroCount = Number(integer[3]);
+    return integer[2].length + zeroCount <= 15
+      ? integer[1] + integer[2] + '0'.repeat(zeroCount) : token;
+  }
+
+  function changedTokens(left, right) {
+    const counts = new Map();
+    for (const token of right) counts.set(token, (counts.get(token) || 0) + 1);
+    return left.filter(token => {
+      const count = counts.get(token) || 0;
+      if (!count) return true;
+      counts.set(token, count - 1);
+      return false;
+    });
+  }
+
+  function adjacentUnit(number, unit, paragraph) {
+    const escape = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(^|[^\\w.])${escape(readableNumber(number))}\\s*${escape(unit)}(?!\\w)`).test(paragraph);
+  }
+
   function renderResult(root, result) {
     const workflow = result && result.workflow;
     const learned = result && result.learned;
-    if (!workflow || !learned || !workflow.decision || !workflow.receipt ||
+    if (!workflow || !learned || !Array.isArray(result.critical_alerts) ||
+        !Array.isArray(result.critical_unchecked_spans) ||
+        !workflow.decision || !workflow.receipt ||
         workflow.decision.action === 'AUTO_REPAIR' || workflow.selected_paragraphs != null) {
       throw new Error('Invalid review-only engine result; no output displayed.');
     }
@@ -73,6 +100,35 @@
     const changes = (workflow.review_changes || []).map(change =>
       `${change.kind.toUpperCase()} · reference ${formatSpan(change.reference_span)}, observed ${formatSpan(change.observed_span)}`);
     root.getElementById('changes').textContent = changes.join('\n') || 'No paragraph difference after whitespace normalization.';
+    const tokenKind = {NUMBER_CHANGED:'numbers', UNIT_CHANGED:'units', NEGATION_CHANGED:'negations'};
+    const alerts = result.critical_alerts.flatMap(item => (item.flags || []).map(flag => {
+      const kind = tokenKind[flag];
+      if (!kind) return `${flag}: inspect the original source.`;
+      const left = item.reference_tokens?.[kind] || [];
+      const right = item.observed_tokens?.[kind] || [];
+      const show = values => (flag === 'NUMBER_CHANGED' ? values.map(readableNumber) : values).join(', ') || '∅';
+      const removed = changedTokens(left, right);
+      const added = changedTokens(right, left);
+      const context = flag === 'NUMBER_CHANGED' &&
+        removed.length === 1 && added.length === 1 &&
+        item.reference_tokens?.units?.length === 1 &&
+        item.reference_tokens.units[0] === item.observed_tokens?.units?.[0] &&
+        adjacentUnit(removed[0], item.reference_tokens.units[0],
+          workflow.reference_paragraphs[item.reference_index]) &&
+        adjacentUnit(added[0], item.observed_tokens.units[0],
+          workflow.observed_paragraphs[item.observed_index])
+        ? ` (${item.reference_tokens.units[0]})` : '';
+      return `Reference paragraph ${item.reference_index + 1} → observed paragraph ${item.observed_index + 1}: ` +
+        `${flag}: ${show(removed)} → ${show(added)}${context}`;
+    }));
+    const unchecked = result.critical_unchecked_spans.map(item =>
+      `Lexical check not performed for unpaired changed span: reference ${formatSpan(item.reference_span)}, ` +
+      `observed ${formatSpan(item.observed_span)}. Inspect both versions manually.`);
+    root.getElementById('critical-alerts').textContent =
+      alerts.concat(unchecked).join('\n') || 'no lexical alert';
+    root.getElementById('critical-note').textContent =
+      'Lexical alerts cover positionally paired changed paragraphs only and request manual review; ' +
+      'they are not corrections or biological judgments. Inspect missing or extra paragraphs separately.';
     root.getElementById('model').textContent =
       `${learned.proposal_status} · ${learned.proposal_reason}. The model ranks correspondence; it does not authenticate a source.`;
     root.getElementById('proposal').textContent = learned.proposed_paragraphs
