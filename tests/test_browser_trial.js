@@ -82,6 +82,71 @@ test('expanded PDF text is bounded before assembling a browser input', async () 
   assert.equal(calls.destroyed, true);
 });
 
+test('PDF.js caption and furniture hints match the seven Python-positive lines without editing text', async () => {
+  const { extractPdf } = load();
+  const lines = [
+    'Fig. 1 | Mini-bladder model of the human urothelium',
+    'FIG 3 Cytokine production in the maternal chamber',
+    'Figure 4. Barrier integrity after reperfusion',
+    'TABLE 1 Versatility of composites',
+    'Nature Communications | (2026) 17:2322 5',
+    'Infection and Immunity December 2025 Volume 93 Issue 12 10.1128/iai.00346-25 2',
+    'Received: 14 February 2025',
+  ];
+  const { pdfjs } = reader([lines.map(str => ({ str, hasEOL: true }))]);
+  const result = await extractPdf(localFile(), pdfjs);
+  assert.equal(result.text, lines.join('\n'));
+  assert.ok(result.warnings.includes('CAPTION_OR_PAGE_FURNITURE_REQUIRES_REVIEW'));
+  assert.deepEqual(result.review_hints, lines.map(excerpt => ({
+    page: 1, kind: 'PROBABLE_CAPTION_OR_PAGE_FURNITURE', excerpt,
+  })));
+});
+
+test('PDF.js does not mislabel the three Python-negative body lines', async () => {
+  const { extractPdf } = load();
+  const lines = [
+    'Figure 2 shows that cells remained viable',
+    'cells were seeded in 3 of 4 wells and the medium',
+    'as described previously (doi:10.1038/s41467-026-68573-3).',
+  ];
+  const { pdfjs } = reader([lines.map(str => ({ str, hasEOL: true }))]);
+  const result = await extractPdf(localFile(), pdfjs);
+  assert.equal(result.text, lines.join('\n'));
+  assert.deepEqual(result.review_hints, []);
+  assert.equal(result.warnings.includes('CAPTION_OR_PAGE_FURNITURE_REQUIRES_REVIEW'), false);
+});
+
+test('PDF.js uses Python-compatible Unicode digits, word boundaries, and code-point limits for hints', async () => {
+  const { extractPdf } = load();
+  const within = '©' + '😀'.repeat(79); // 80 Unicode code points, 159 UTF-16 units.
+  const boundary = '©' + '😀'.repeat(159); // 160 code points, 319 UTF-16 units.
+  const beyond = '©' + '😀'.repeat(160); // 161 code points.
+  const lines = ['Figure ٢. Authored result', 'Receivedβ', within, boundary, beyond];
+  const { pdfjs } = reader([lines.map(str => ({ str, hasEOL: true }))]);
+  const result = await extractPdf(localFile(), pdfjs);
+  assert.equal(result.text, lines.join('\n'));
+  assert.deepEqual(result.review_hints.map(hint => hint.excerpt), [
+    lines[0], within, [...boundary].slice(0, 120).join(''),
+  ]);
+  assert.ok(result.review_hints.every(hint => [...hint.excerpt].length <= 120));
+});
+
+test('PDF.js bounds furniture hints at 64 and retains later-page coverage', async () => {
+  const { extractPdf } = load();
+  const first = Array.from({ length: 70 }, (_, index) => ({
+    str: `FIGURE ${index + 1} | A source line ${index + 1} with context ${'x'.repeat(120)}`,
+    hasEOL: true,
+  }));
+  const { pdfjs } = reader([first, [{ str: 'TABLE 1. Later-page legend', hasEOL: true }]]);
+  const result = await extractPdf(localFile(), pdfjs);
+  assert.equal(result.review_hints.length, 64);
+  assert.ok(result.review_hints.every(hint => hint.excerpt.length <= 120));
+  assert.ok(result.review_hints.some(hint => hint.page === 2));
+  assert.ok(result.warnings.includes('REVIEW_HINTS_TRUNCATED'));
+  assert.ok(result.text.includes('FIGURE 70 | A source line 70'));
+  assert.ok(result.text.includes('TABLE 1. Later-page legend'));
+});
+
 function trial() { return require('../docs/try/app.js'); }
 
 function fakeRoot() {
@@ -187,6 +252,22 @@ test('failed PDF import leaves existing pasted text available for correction', a
   await root.getElementById('import-pdf').fire('click');
   assert.equal(root.getElementById('observed').value, 'keep my edits');
   assert.match(root.getElementById('status').textContent, /Could not read PDF/);
+});
+
+test('PDF import status names caption hints as manual review, never an applied removal', async () => {
+  const { initTrial } = trial();
+  const root = fakeRoot();
+  initTrial(root, {runEngine: async () => ({}), getPdfJs: async () => ({}),
+    extractPdf: async () => ({text: 'Body\nFIGURE 2 Caption', pages: 1,
+      warnings: ['CAPTION_OR_PAGE_FURNITURE_REQUIRES_REVIEW'],
+      review_hints: [{page: 1, kind: 'PROBABLE_CAPTION_OR_PAGE_FURNITURE',
+        excerpt: 'FIGURE 2 Caption'}]})});
+  root.getElementById('pdf-file').files = [{name: 'example.pdf'}];
+  root.getElementById('pdf-target').value = 'observed';
+  await root.getElementById('import-pdf').fire('click');
+  assert.equal(root.getElementById('observed').value, 'Body\nFIGURE 2 Caption');
+  assert.match(root.getElementById('status').textContent, /Page 1.*FIGURE 2 Caption/);
+  assert.match(root.getElementById('status').textContent, /not removed|never removed/i);
 });
 
 test('browser worker evaluates current input through packaged Python, never a frozen sample', async () => {

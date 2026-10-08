@@ -129,9 +129,16 @@
         get(target).value = extracted.text;
         pdfImported = true;
         const missing = extracted.warnings.filter(item => item.startsWith('NO_TEXT_ON_PAGE_'));
+        const furniture = extracted.warnings.includes('CAPTION_OR_PAGE_FURNITURE_REQUIRES_REVIEW')
+          ? ' Possible captions or page headers may interrupt body text; inspect the visible pages. Text was not removed.' : '';
+        const hints = (extracted.review_hints || []).map(hint =>
+          `Page ${hint.page}: Possible caption or page header inside text (not removed): ${hint.excerpt}`);
+        const truncated = extracted.warnings.includes('REVIEW_HINTS_TRUNCATED')
+          ? ' Hint list capped at 64; inspect every page.' : '';
         get('status').textContent = `Extracted ${extracted.pages} page-text chunk(s) locally. ` +
           `These are not verified paragraphs; compare every page, split/correct the text, then acknowledge PDF review.` +
-          (missing.length ? ` ${missing.length} page(s) had no text layer.` : '');
+          (missing.length ? ` ${missing.length} page(s) had no text layer.` : '') + furniture +
+          (hints.length ? ` ${hints.join(' | ')}` : '') + truncated;
       } catch (error) {
         if (current === version) get('status').textContent = error.message;
       } finally {

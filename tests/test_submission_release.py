@@ -290,7 +290,7 @@ def test_public_homepage_embeds_current_live_trial_video():
     page = VideoLinks()
     page.feed((ROOT / "docs/index.html").read_text(encoding="utf-8"))
     stream = "./media/biosure-demo-v0322.mp4"
-    download = "https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.25/biosure-demo-v0322.mp4"
+    download = "https://github.com/HyunStudio/BioSURE-AI4S/releases/download/v0.3.26/biosure-demo-v0322.mp4"
     assert page.video_sources == [stream]
     assert download in page.links
     assert "./try/" in page.links

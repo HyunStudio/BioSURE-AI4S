@@ -40,7 +40,7 @@
         <select id="pdf-target"><option value="observed">Observed conversion</option><option value="reference">Declared reference</option></select>
         <button id="import-pdf" type="button" class="secondary">Extract locally</button>
       </div>
-      <p class="warning">PDF extraction yields unverified <strong>page-text chunks, not paragraphs</strong>. Split any chunk longer than 4096 characters into checked paragraphs before running a review. Extraction can omit images, tables, equations, or rearrange columns. A file hash or your acknowledgement is not proof that the reference is genuine.</p>
+      <p class="warning">PDF extraction yields unverified <strong>page-text chunks, not paragraphs</strong>. Possible captions or page headers are flagged for manual review, never removed. Split any chunk longer than 4096 characters into checked paragraphs before running a review. Extraction can omit images, tables, equations, or rearrange columns. A file hash or your acknowledgement is not proof that the reference is genuine.</p>
       <label class="check"><input id="ack" type="checkbox"> I understand that the declared reference is unverified and will inspect the original source myself.</label>
       <label class="check"><input id="pdf-ack" type="checkbox"> If I imported a PDF, I checked and corrected its page text against the visible pages.</label>
       <button id="run" type="button" class="primary">Run review-only check →</button>
@@ -65,7 +65,7 @@
 
     <section class="more">
       <h2>What this trial does not do</h2>
-      <p>There is no OCR, trustworthy source verification, biological adjudication or automatic repair of arbitrary public input. For richer PDF extraction warnings, batch review and fully offline operation, use the <a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/latest">local source release</a>. To inspect frozen, reproducible examples without supplying text, use <a href="../judge/">Judge Mode</a>. <a href="../">Watch the current live-trial demonstration</a>.</p>
+      <p>There is no OCR, trustworthy source verification, biological adjudication or automatic repair of arbitrary public input. Browser caption/page-header hints have not been scored on the 15-source local-import audit. For additional PDF spacing and hyphen warnings, batch review and fully offline operation, use the <a href="https://github.com/HyunStudio/BioSURE-AI4S/releases/latest">local source release</a>. To inspect frozen, reproducible examples without supplying text, use <a href="../judge/">Judge Mode</a>. <a href="../">Watch the earlier live-trial demonstration</a>.</p>
     </section>
   </main>
 </body>
